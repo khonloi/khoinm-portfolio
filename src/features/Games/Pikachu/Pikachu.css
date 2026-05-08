@@ -1,0 +1,377 @@
+.pikachu-container {
+    padding: 16px;
+    background-color: var(--windows-grey);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    height: 100%;
+    user-select: none;
+    position: relative;
+}
+
+.pikachu-header-container,
+.pikachu-grid-outer-container,
+.pikachu-timer-wrapper {
+    position: relative;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.pikachu-header-layer-1,
+.pikachu-grid-wrapper,
+.pikachu-timer-container {
+    border-left: 2px solid var(--windows-grey-dark);
+    border-top: 2px solid var(--windows-grey-dark);
+    padding-right: 2px;
+    padding-bottom: 2px;
+    z-index: 1;
+    box-sizing: border-box;
+}
+
+.pikachu-header-layer-2,
+.pikachu-grid-layer-2,
+.pikachu-timer-layer-2 {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    border-right: 2px solid var(--windows-white);
+    border-bottom: 2px solid var(--windows-white);
+    z-index: 2;
+    box-sizing: border-box;
+}
+
+.pikachu-header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--windows-grey);
+    padding: 8px 16px;
+    gap: 16px;
+    box-sizing: border-box;
+}
+
+.pikachu-header-left {
+    display: flex;
+    gap: 16px;
+}
+
+.pikachu-header-center {
+    flex-grow: 1;
+    margin: 0 20px;
+}
+
+.pikachu-header-right {
+    display: flex;
+    align-items: center;
+}
+
+.pikachu-program-button {
+    min-width: 100px;
+    width: 6rem;
+    height: 2rem;
+    font-weight: normal;
+}
+
+.pikachu-program-button .window-button-layer-3 {
+    padding: 2px 10px;
+}
+
+.pikachu-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.pikachu-stat-label {
+    font-size: 10px;
+    font-weight: bold;
+    color: var(--windows-grey-dark);
+}
+
+.pikachu-stat-value {
+    font-family: "DS-DIGI", monospace;
+    font-size: 24px;
+    color: #ff0000;
+}
+
+.pikachu-timer-container {
+    height: 18px;
+    background-color: #222;
+    position: relative;
+    width: 100%;
+}
+
+.pikachu-timer-bar {
+    height: 100%;
+    background-color: #00ff00;
+    transition: width 0.1s linear;
+}
+
+.pikachu-grid-wrapper {
+    padding: 4px;
+    background-color: var(--windows-black);
+}
+
+.pikachu-grid {
+    display: grid;
+    position: relative;
+    width: fit-content;
+    height: fit-content;
+    margin: 0 auto;
+}
+
+.pikachu-cell.window-button {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    min-height: 44px;
+}
+
+
+
+.pikachu-cell.pikachu-padding-cell,
+.pikachu-cell.pikachu-empty {
+    visibility: hidden !important;
+    pointer-events: none;
+}
+
+
+.pikachu-tile-icon {
+    font-family: "Pixel Operator", monospace;
+    font-size: 24px;
+}
+
+/* Path Rendering */
+.pikachu-path-svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 100;
+}
+
+.pikachu-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: var(--windows-grey);
+    border: 2px outset var(--windows-white);
+    padding: 30px;
+    box-shadow: 10px 10px 30px rgba(0, 0, 0, 0.5);
+    z-index: 20;
+    text-align: center;
+}
+
+.pikachu-game-over-box h2 {
+    margin-top: 0;
+    color: #ff0000;
+}
+
+.pikachu-footer {
+    display: flex;
+    gap: 20px;
+}
+
+.pikachu-win95-btn {
+    padding: 6px 16px;
+    background-color: var(--windows-grey);
+    border: 2px outset var(--windows-white);
+    font-family: var(--main-font);
+    cursor: pointer;
+}
+
+.pikachu-win95-btn:active {
+    border-style: inset;
+}
+
+/* High Contrast Alphanumeric Tile Colors (A-Z) */
+.pikachu-tile-1 {
+    color: #D50000;
+}
+
+.pikachu-tile-2 {
+    color: #00C853;
+}
+
+.pikachu-tile-3 {
+    color: #2962FF;
+}
+
+.pikachu-tile-4 {
+    color: #FFA000;
+}
+
+.pikachu-tile-5 {
+    color: #AA00FF;
+}
+
+.pikachu-tile-6 {
+    color: #FF6D00;
+}
+
+.pikachu-tile-7 {
+    color: #00B8D4;
+}
+
+.pikachu-tile-8 {
+    color: #C51162;
+}
+
+.pikachu-tile-9 {
+    color: #3E2723;
+}
+
+.pikachu-tile-10 {
+    color: #004D40;
+}
+
+.pikachu-tile-11 {
+    color: #304FFE;
+}
+
+.pikachu-tile-12 {
+    color: #827717;
+}
+
+.pikachu-tile-13 {
+    color: #558B2F;
+}
+
+.pikachu-tile-14 {
+    color: #BF360C;
+}
+
+.pikachu-tile-15 {
+    color: #263238;
+}
+
+.pikachu-tile-16 {
+    color: #7B1FA2;
+}
+
+.pikachu-tile-17 {
+    color: #01579B;
+}
+
+.pikachu-tile-18 {
+    color: #1B5E20;
+}
+
+.pikachu-tile-19 {
+    color: #AEEA00;
+}
+
+.pikachu-tile-20 {
+    color: #DD2C00;
+}
+
+.pikachu-tile-21 {
+    color: #212121;
+}
+
+.pikachu-tile-22 {
+    color: #00BFA5;
+}
+
+.pikachu-tile-23 {
+    color: #6200EA;
+}
+
+.pikachu-tile-24 {
+    color: #C2185B;
+}
+
+.pikachu-tile-25 {
+    color: #512DA8;
+}
+
+.pikachu-tile-26 {
+    color: #0D47A1;
+}
+
+/* Mobile Responsive Design (Portrait-Friendly) */
+@media screen and (max-width: 850px) {
+    .pikachu-container {
+        padding: 4px;
+        gap: 8px;
+        overflow: hidden;
+    }
+
+    .pikachu-grid-wrapper {
+        padding: 2px;
+        overflow-x: auto;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+
+    .pikachu-grid {
+        gap: 1px;
+    }
+
+    .pikachu-cell.window-button {
+        width: 18px;
+        height: 22px;
+        min-width: 18px;
+        min-height: 22px;
+    }
+
+    .pikachu-cell .pikachu-tile-icon {
+        font-size: 11px;
+    }
+
+    .pikachu-header {
+        padding: 4px;
+        gap: 8px;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .pikachu-header-left {
+        width: 100%;
+        justify-content: space-around;
+        gap: 4px;
+    }
+
+    .pikachu-header-center {
+        width: 100%;
+        margin: 4px 0;
+    }
+
+    .pikachu-header-right {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .pikachu-stat-value {
+        font-size: 13px;
+    }
+
+    .pikachu-stat-label {
+        font-size: 8px;
+    }
+
+    .pikachu-program-button {
+        width: 100%;
+        max-width: 150px;
+        height: 1.5rem;
+        font-size: 11px;
+    }
+
+    .pikachu-timer-container {
+        height: 8px;
+    }
+
+    /* Connection line width on mobile */
+    .pikachu-path-svg polyline {
+        stroke-width: 0.6;
+    }
+}

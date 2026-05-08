@@ -1,0 +1,13 @@
+@import "tailwindcss";
+@config "../tailwind.config.js";
+
+/* Global styles */
+:root {
+  font-family: var(--main-font);
+  color-scheme: light; /* Force light-like rendering for Win95 feel */
+}
+
+body {
+  margin: 0;
+  overflow: hidden;
+}

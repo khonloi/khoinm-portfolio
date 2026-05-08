@@ -1,0 +1,182 @@
+@font-face {
+  font-family: "DS-DIGI";
+  src: url("../../../assets/fonts/DS-DIGIB.TTF") format("truetype");
+}
+
+.line98-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: var(--windows-grey);
+  font-family: var(--main-font);
+  user-select: none;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.line98-header {
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 16px;
+  background-color: #220000;
+  box-sizing: border-box;
+  margin-bottom: 0px;
+  border-bottom: 2px solid var(--windows-grey-dark);
+}
+
+.line98-score-board {
+  display: flex;
+  gap: 15px;
+}
+
+.line98-score-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.line98-score-label {
+  font-size: 12px;
+  color: var(--windows-grey-dark);
+}
+
+.line98-score-value,
+.line98-digital-value {
+  font-family: "DS-DIGI";
+  font-size: 36px;
+  color: #ff0000;
+}
+
+
+.line98-timer-display {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+
+.line98-grid {
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  grid-template-rows: repeat(9, 1fr);
+  gap: 2px;
+  background-color: var(--windows-black);
+  border: 2px inset var(--windows-white);
+  padding: 2px;
+  width: 360px;
+  height: 360px;
+  margin: 16px;
+}
+
+.line98-cell {
+  width: 100%;
+  height: 100%;
+  background-color: var(--windows-grey);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  box-shadow: inset 1.5px 1.5px var(--windows-white), inset -1.5px -1.5px var(--windows-grey-dark);
+}
+
+
+.line98-ball {
+  width: 70%;
+  height: 70%;
+  border-radius: 0;
+  position: relative;
+  transition: transform 0.1s steps(2);
+  box-shadow: inset 3px 3px rgba(255, 255, 255, 0.6), inset -3px -3px rgba(0, 0, 0, 0.4);
+}
+
+.line98-ball-ghost {
+  width: 30%;
+  height: 30%;
+  opacity: 0.5;
+  box-shadow: none;
+  background-image: none !important;
+}
+
+.line98-selected .line98-ball {
+  transform: scale(1.1);
+  animation: line98-bounce 0.6s infinite ease-in-out;
+}
+
+@keyframes line98-bounce {
+
+  0%,
+  100% {
+    transform: scale(1.1) translateY(0);
+  }
+
+  50% {
+    transform: scale(1.1) translateY(-3px);
+  }
+}
+
+/* Ball Colors */
+.line98-ball-1 {
+  background-color: #ff0000;
+}
+
+.line98-ball-2 {
+  background-color: #00ff00;
+}
+
+.line98-ball-3 {
+  background-color: #0000ff;
+}
+
+.line98-ball-4 {
+  background-color: #ffff00;
+}
+
+.line98-ball-5 {
+  background-color: #ff00ff;
+}
+
+.line98-ball-6 {
+  background-color: #00ffff;
+}
+
+.line98-ball-7 {
+  background-color: #ff8800;
+}
+
+.line98-game-over {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: var(--windows-grey);
+  border: 2px outset var(--windows-white);
+  padding: 20px;
+  text-align: center;
+  z-index: 10;
+  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.5);
+}
+
+.line98-footer {
+  width: 360px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.line98-controls {
+  margin: 0 10px;
+  display: flex;
+  align-items: center;
+}
+
+.line98-sound-btn {
+  min-width: 110px;
+}
+
+.line98-restart-btn {
+  font-size: 11px;
+}

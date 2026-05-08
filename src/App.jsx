@@ -1,0 +1,53 @@
+import React, { useState, useCallback, useEffect } from 'react';
+import Desktop from './components/Desktop';
+import BSOD from './components/BSOD';
+import { setCursorVariables } from './data/cursors';
+import { Studio } from 'sanity';
+import sanityConfig from '../sanity.config';
+import './App.css';
+
+function App() {
+  const [isFullScreen, setIsFullScreen] = useState(false);
+  const [isBSODActive, setIsBSODActive] = useState(false);
+
+  if (window.location.pathname.startsWith('/editor')) {
+    return <Studio config={sanityConfig} />;
+  }
+
+  // Initialize cursor variables on mount
+  useEffect(() => {
+    setCursorVariables();
+  }, []);
+
+  const handleFullScreenChange = useCallback((isFullScreenActive) => {
+    setIsFullScreen(isFullScreenActive);
+  }, []);
+
+  const triggerBSOD = useCallback(() => {
+    setIsBSODActive(true);
+  }, []);
+
+  return (
+    <div className={`App ${isFullScreen ? 'fullscreen' : ''}`}>
+      <Desktop 
+        onFullScreenChange={handleFullScreenChange} 
+        onTriggerBSOD={triggerBSOD} 
+      />
+
+      <div className="mobile-safe-buffer" />
+
+
+      {isBSODActive && <BSOD onClose={() => setIsBSODActive(false)} />}
+
+      {/* Hidden preloader for custom cursors to prevent flickers */}
+      <div style={{ position: 'fixed', opacity: 0, pointerEvents: 'none', zIndex: -1 }}>
+        <div style={{ cursor: 'var(--cursor-arrow)' }}></div>
+        <div style={{ cursor: 'var(--cursor-link)' }}></div>
+        <div style={{ cursor: 'var(--cursor-wait)' }}></div>
+        <div style={{ cursor: 'var(--cursor-busy)' }}></div>
+      </div>
+    </div>
+  );
+}
+
+export default App;

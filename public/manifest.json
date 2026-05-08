@@ -1,0 +1,19 @@
+{
+  "name": "ＰＡＮＥ９７",
+  "short_name": "PANE97",
+  "description": "Retro Windows 95/98 style homepage",
+  "start_url": "./",
+  "display": "standalone",
+  "icons": [
+    {
+      "src": "./favicon.ico",
+      "sizes": "16x16",
+      "type": "image/x-icon"
+    }
+  ],
+  "categories": [
+    "entertainment",
+    "productivity"
+  ],
+  "lang": "en"
+}

@@ -1,0 +1,50 @@
+@font-face {
+  font-family: "W95FA";
+  src: url("../assets/fonts/W95FA.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Pixel Operator";
+  src: url("../assets/fonts/PixelOperator.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Modern DOS";
+  src: url("../assets/fonts/ModernDOS8x16.ttf") format("truetype");
+}
+
+:root {
+  /* Fonts */
+  --main-font: "W95FA", "MS Sans Serif", "Tahoma", sans-serif;
+  --button-font: "Pixel Operator", "MS Sans Serif", "Tahoma", sans-serif;
+  --terminal-font: "Modern DOS", "MS Sans Serif", "Tahoma", sans-serif;
+  --number-font: "MS Sans Serif", "Tahoma", sans-serif;
+
+  /* Colors - Standard Windows 95 Palette */
+  --windows-grey: #c0c0c0;
+  --windows-white: #ffffff;
+  --windows-black: #000000;
+  --windows-grey-dark: #808080;
+  --windows-grey-light: #dfdfdf;
+  --windows-grey-shade-1: #e0e0e0;
+  --windows-dos-grey: #aaaaaa;
+
+  /* Brand/System Colors */
+  --windows-blue: #0575d8;
+  --windows-blue-bright: #316ac5;
+  --windows-yellow: #f9f1a5;
+  --windows-teal: #3a9cc6;
+  --windows-purple: #b26b93;
+
+
+  /* UI Element Colors */
+
+  /* Backgrounds */
+  --body-bg: linear-gradient(to bottom, #5a63a6, #8a73c2, #cf7fa0);
+
+  /* Cursor variables - will be set by JavaScript */
+  --cursor-arrow: auto;
+  --cursor-link: pointer;
+  --cursor-wait: wait;
+  --cursor-busy: wait;
+}

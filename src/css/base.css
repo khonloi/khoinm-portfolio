@@ -1,0 +1,31 @@
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+body {
+  background: linear-gradient(to bottom, #5a63a6, #8a73c2, #cf7fa0);
+}
+
+body {
+  font-family: var(--main-font);
+}
+
+a,
+a:link,
+a:visited,
+.draggable,
+.dragging,
+.moveable,
+.draggable-item,
+.windows-icon,
+button {
+  cursor: var(--cursor-link);
+}
