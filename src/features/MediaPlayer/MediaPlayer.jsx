@@ -1,8 +1,6 @@
 import React, { useState, useRef, useCallback, memo, useEffect } from "react";
 import Button from "../../components/Button";
 import treeIcon from "../../assets/icons/Tree.ico";
-import { mediaFiles } from "../../data/media/content";
-import { desktopItems } from "../../config/programConfig";
 
 import playIcon from "../../assets/icons/music/play.svg";
 import pauseIcon from "../../assets/icons/music/pause.svg";
@@ -11,7 +9,7 @@ import prevIcon from "../../assets/icons/music/prev.svg";
 import nextIcon from "../../assets/icons/music/next.svg";
 import ejectIcon from "../../assets/icons/music/eject.svg";
 
-const MediaPlayer = memo(({ id, fileContent }) => {
+const MediaPlayer = memo(({ id, fileContent, crop43 }) => {
   const [mediaSrc, setMediaSrc] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -24,21 +22,8 @@ const MediaPlayer = memo(({ id, fileContent }) => {
 
   useEffect(() => { }, [id]); // Placeholder for logic below
 
-  // Find program config
-  const isCropped = (() => {
-    const findItem = (items) => {
-      for (const item of items) {
-        if (item.id === id) return item;
-        if (item.contents) {
-          const found = findItem(item.contents);
-          if (found) return found;
-        }
-      }
-      return null;
-    };
-    const item = findItem(desktopItems);
-    return item?.crop43;
-  })();
+  // Use the crop43 prop directly from window data
+  const isCropped = crop43;
 
   const getYouTubeParams = (url) => {
     if (!url) return { videoId: null, playlistId: null };
@@ -119,7 +104,7 @@ const MediaPlayer = memo(({ id, fileContent }) => {
   );
 
   useEffect(() => {
-    const src = fileContent || (id && mediaFiles[id]);
+    const src = fileContent;
     if (src) {
       const { videoId, playlistId } = getYouTubeParams(src);
       setMediaSrc(src);

@@ -1,6 +1,5 @@
 import React, { useState, memo, useEffect } from "react";
 import Input from "../../components/Input";
-import { textFiles } from "../../data/text/content";
 
 const Notebook = memo(({ id, fileContent }) => {
   const [text, setText] = useState("");
@@ -8,8 +7,6 @@ const Notebook = memo(({ id, fileContent }) => {
   useEffect(() => {
     if (fileContent) {
       setText(fileContent);
-    } else if (id && textFiles[id]) {
-      setText(textFiles[id]);
     } else {
       setText("");
     }

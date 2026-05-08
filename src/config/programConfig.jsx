@@ -362,7 +362,7 @@ export const renderWindowContent = (windowId, windowTitle, onClose, icon, onTrig
   if (winData.filetype === 'vid') Component = windowContentRegistry['media'];
 
   if (Component) {
-    return <Component onClose={onClose} id={windowId} fileContent={winData.fileContent} />;
+    return <Component onClose={onClose} id={windowId} {...winData} />;
   }
 
   // If the program is not implemented, there is a chance to BSOD

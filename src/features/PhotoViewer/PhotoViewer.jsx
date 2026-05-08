@@ -1,5 +1,4 @@
 import React, { useState, memo, useEffect, useRef } from "react";
-import { imageFiles } from "../../data/images/content";
 import LayeredBox from "../../components/LayeredBox";
 import monaLisaIcon from "../../assets/icons/Microsoft Windows 3 Mona Lisa.ico";
 
@@ -9,7 +8,7 @@ const PhotoViewer = memo(({ id, fileContent }) => {
   const fileInputRef = useRef(null);
 
   useEffect(() => {
-    const source = fileContent || (id && imageFiles[id]);
+    const source = fileContent;
     if (source) {
       setImgSrc(source);
       setImgInfo(prev => ({
