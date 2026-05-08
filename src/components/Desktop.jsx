@@ -116,11 +116,17 @@ const Desktop = memo(({ onFullScreenChange, onTriggerBSOD }) => {
     Object.entries(folderMap).forEach(([folderId, dynamicItems]) => {
       const folder = map.get(folderId);
       if (folder) {
-        // Option A: Append dynamic items
-        // folder.contents = [...folder.contents, ...dynamicItems];
-        
-        // Option B: Replace contents (User said "adjust the items in folder", usually means they want control)
         folder.contents = dynamicItems;
+        // Also index sub-folders inside dynamic content
+        const processDynamic = (items) => {
+          items.forEach(item => {
+            if (item.type === "folder") {
+              map.set(item.id, item);
+              if (item.contents) processDynamic(item.contents);
+            }
+          });
+        };
+        processDynamic(dynamicItems);
       }
     });
     

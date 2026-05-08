@@ -126,15 +126,12 @@ export const useWindowManager = () => {
   }, [minimizedWindowIds, playWindowSound]);
 
   const handleMinimizeWindow = useCallback(async (windowId, windowData) => {
-    const item = desktopItemsMap.get(windowId);
-    const iconSrc = item?.iconSrc;
-
     setMinimizedWindows(prev => {
       if (prev.some(w => w.id === windowId)) return prev;
       return [...prev, {
         id: windowId,
         title: windowData.title,
-        icon: iconSrc,
+        icon: windowData.iconSrc,
       }];
     });
 

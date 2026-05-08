@@ -72,15 +72,6 @@ export const ICON_MAP = {
   cdDriveIcon,
 };
 
-// External web icons
-const discordIcon = "https://preview.redd.it/discords-logo-v0-w1oj8uddc3671.png?auto=webp&s=1634c801affc83a90b787ad0d75c55496fbf6ded";
-const facebookIcon = "https://upload.wikimedia.org/wikipedia/commons/b/b8/2021_Facebook_icon.svg";
-const githubIcon = "https://upload.wikimedia.org/wikipedia/commons/9/91/Octicons-mark-github.svg";
-const telegramIcon = "https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg";
-const zaloIcon = "https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Icon_of_Zalo.svg/1024px-Icon_of_Zalo.svg.png";
-const gashIcon = "https://gash-frontend.vercel.app/assets/favicon-DWQAxs3C.ico";
-const kuizuIcon = "https://kuizu-fe.vercel.app/vite.svg";
-
 // Unified desktop items configuration
 export const desktopItems = [
   {
