@@ -36,10 +36,15 @@ export const useWindowInstance = ({
     if (initialMaximizedState) return { x: 0, y: MENU_BAR_HEIGHT_CONST };
     return getInitialPos(initialPosition);
   });
-  const [windowDimensions, setWindowDimensions] = useState({ width: 0, height: 0 });
+  const [windowDimensions, setWindowDimensions] = useState({
+    width: 0,
+    height: 0,
+  });
   const [isLoading, setIsLoading] = useState(true);
   const [isMaximized, setIsMaximized] = useState(initialMaximizedState);
-  const [preMaximizePosition, setPreMaximizePosition] = useState(() => getInitialPos(initialPosition));
+  const [preMaximizePosition, setPreMaximizePosition] = useState(() =>
+    getInitialPos(initialPosition)
+  );
   const [preMobileState, setPreMobileState] = useState(null);
   const [isFullScreenActive, setIsFullScreenActive] = useState(isFullScreen);
   const [touchStartTime, setTouchStartTime] = useState(null);
@@ -49,8 +54,7 @@ export const useWindowInstance = ({
   // Drag logic - calling this early to get elementRef
   const handlePositionChange = useCallback(
     (_, newPos) => {
-      if (!isMaximized && !isMobile && !isFullScreenActive)
-        setPosition(newPos);
+      if (!isMaximized && !isMobile && !isFullScreenActive) setPosition(newPos);
     },
     [isMaximized, isMobile, isFullScreenActive]
   );
@@ -61,7 +65,9 @@ export const useWindowInstance = ({
     previewPosition,
     handleMouseDown,
     handleTouchStart: dragTouchStart,
-  } = useDragDrop(id, position, handlePositionChange, onFocus, { useOutline: true });
+  } = useDragDrop(id, position, handlePositionChange, onFocus, {
+    useOutline: true,
+  });
 
   // Track dimensions when dragging starts
   useEffect(() => {
@@ -114,11 +120,11 @@ export const useWindowInstance = ({
       }, 150);
     };
 
-    window.addEventListener("resize", handleResize);
+    window.addEventListener('resize', handleResize);
     handleResize();
 
     return () => {
-      window.removeEventListener("resize", handleResize);
+      window.removeEventListener('resize', handleResize);
       clearTimeout(resizeTimer);
     };
   }, [
@@ -134,14 +140,14 @@ export const useWindowInstance = ({
   // Handle ESC key to close full-screen window
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if (e.key === "Escape" && isFullScreenActive) {
+      if (e.key === 'Escape' && isFullScreenActive) {
         onFullScreenChange?.(false);
         onClose(id);
       }
     };
 
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isFullScreenActive, id, onClose, onFullScreenChange]);
 
   // Handle loading timer
@@ -155,7 +161,14 @@ export const useWindowInstance = ({
 
   // Center window logic
   useEffect(() => {
-    if (isLoading || isMobile || isMinimized || isMaximized || isFullScreenActive || hasCentered)
+    if (
+      isLoading ||
+      isMobile ||
+      isMinimized ||
+      isMaximized ||
+      isFullScreenActive ||
+      hasCentered
+    )
       return;
 
     if (!initialPosition || !initialPosition.shouldCenter) {
@@ -183,8 +196,14 @@ export const useWindowInstance = ({
       const availableHeight = viewportHeight - MENU_BAR_HEIGHT;
       const centerY = MENU_BAR_HEIGHT + (availableHeight - windowHeight) / 2;
 
-      const finalX = Math.max(0, Math.min(centerX, viewportWidth - windowWidth));
-      const finalY = Math.max(MENU_BAR_HEIGHT, Math.min(centerY, viewportHeight - windowHeight));
+      const finalX = Math.max(
+        0,
+        Math.min(centerX, viewportWidth - windowWidth)
+      );
+      const finalY = Math.max(
+        MENU_BAR_HEIGHT,
+        Math.min(centerY, viewportHeight - windowHeight)
+      );
 
       setPosition({ x: finalX, y: finalY });
       setPreMaximizePosition({ x: finalX, y: finalY });
@@ -194,7 +213,7 @@ export const useWindowInstance = ({
     const requestId = requestAnimationFrame(() => {
       requestAnimationFrame(centerWindow);
     });
-    
+
     return () => cancelAnimationFrame(requestId);
   }, [
     isLoading,
@@ -211,8 +230,8 @@ export const useWindowInstance = ({
   const handleTitleBarMouseDown = useCallback(
     (e) => {
       if (
-        !e.target.closest(".window-title-bar") ||
-        e.target.closest(".control-button") ||
+        !e.target.closest('.window-title-bar') ||
+        e.target.closest('.control-button') ||
         isMaximized ||
         isMobile ||
         isFullScreenActive
@@ -226,8 +245,8 @@ export const useWindowInstance = ({
   const handleTitleBarTouchStart = useCallback(
     (e) => {
       if (
-        !e.target.closest(".window-title-bar") ||
-        e.target.closest(".control-button") ||
+        !e.target.closest('.window-title-bar') ||
+        e.target.closest('.control-button') ||
         isMaximized ||
         isMobile ||
         isFullScreenActive
@@ -299,42 +318,44 @@ export const useWindowInstance = ({
     }
   }, [id, onClose]);
 
-  return useMemo(() => ({
-    elementRef,
-    position,
-    isLoading,
-    isMaximized,
-    isMobile,
-    isFullScreenActive,
-    windowDimensions,
-    previewPosition,
-    isDragging,
-    hasCentered,
-    handleTitleBarMouseDown,
-    handleTouchStart,
-    handleTouchEnd,
-    handleMinimizeClick,
-    handleMaximizeClick,
-    handleCloseClick,
-    MENU_BAR_HEIGHT,
-  }), [
-    elementRef,
-    position,
-    isLoading,
-    isMaximized,
-    isMobile,
-    isFullScreenActive,
-    windowDimensions,
-    previewPosition,
-    isDragging,
-    hasCentered,
-    handleTitleBarMouseDown,
-    handleTouchStart,
-    handleTouchEnd,
-    handleMinimizeClick,
-    handleMaximizeClick,
-    handleCloseClick,
-    MENU_BAR_HEIGHT,
-  ]);
+  return useMemo(
+    () => ({
+      elementRef,
+      position,
+      isLoading,
+      isMaximized,
+      isMobile,
+      isFullScreenActive,
+      windowDimensions,
+      previewPosition,
+      isDragging,
+      hasCentered,
+      handleTitleBarMouseDown,
+      handleTouchStart,
+      handleTouchEnd,
+      handleMinimizeClick,
+      handleMaximizeClick,
+      handleCloseClick,
+      MENU_BAR_HEIGHT,
+    }),
+    [
+      elementRef,
+      position,
+      isLoading,
+      isMaximized,
+      isMobile,
+      isFullScreenActive,
+      windowDimensions,
+      previewPosition,
+      isDragging,
+      hasCentered,
+      handleTitleBarMouseDown,
+      handleTouchStart,
+      handleTouchEnd,
+      handleMinimizeClick,
+      handleMaximizeClick,
+      handleCloseClick,
+      MENU_BAR_HEIGHT,
+    ]
+  );
 };
-

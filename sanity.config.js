@@ -9,7 +9,7 @@ import onlineAccountList from './sanity/schemas/onlineAccountList';
 
 export default defineConfig({
   name: 'default',
-  title: 'Hayami Admin',
+  title: 'Pane Operator',
 
   projectId: import.meta.env.VITE_SANITY_PROJECT_ID,
   dataset: import.meta.env.VITE_SANITY_DATASET || 'production',
@@ -19,6 +19,13 @@ export default defineConfig({
   plugins: [structureTool()],
 
   schema: {
-    types: [newsArticle, aboutInfo, certificateList, projectList, stuffList, onlineAccountList],
+    types: [
+      newsArticle,
+      aboutInfo,
+      certificateList,
+      projectList,
+      stuffList,
+      onlineAccountList,
+    ],
   },
 });

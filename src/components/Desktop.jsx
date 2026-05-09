@@ -111,7 +111,7 @@ const Desktop = memo(({ onFullScreenChange, onTriggerBSOD }) => {
       });
     };
     processItems(allDesktopItems);
-    
+
     // Merge dynamic folder contents from Sanity
     Object.entries(folderMap).forEach(([folderId, dynamicItems]) => {
       const folder = map.get(folderId);
@@ -129,7 +129,7 @@ const Desktop = memo(({ onFullScreenChange, onTriggerBSOD }) => {
         processDynamic(dynamicItems);
       }
     });
-    
+
     return map;
   }, [allDesktopItems, folderMap]);
 
@@ -199,12 +199,12 @@ const Desktop = memo(({ onFullScreenChange, onTriggerBSOD }) => {
   // Determine if there are any windows currently visible or minimized (requiring the safe area)
   const hasActiveWindows = useMemo(() => {
     // Check if any open window is finished loading or is a dialog
-    const hasVisibleContent = openWindows.some(win => 
+    const hasVisibleContent = openWindows.some(win =>
       win.isDialog || windowLoadingStates[win.id] === false
     );
     // Check if there are any minimized windows in the taskbar
     const hasMinimizedWindows = minimizedWindows.length > 0;
-    
+
     return hasVisibleContent || hasMinimizedWindows;
   }, [openWindows, windowLoadingStates, minimizedWindows.length]);
 

@@ -120,7 +120,7 @@ export const desktopItems = [
   },
   {
     id: "welcome",
-    label: "Welcome to Hayami",
+    label: "Welcome to Pane",
     iconSrc: noteIcon,
     type: "icon",
     isMaximizable: false,
@@ -285,6 +285,8 @@ export const desktopItems = [
     label: "CD Drive",
     iconSrc: cdDriveIcon,
     type: "icon",
+    filetype: "vid",
+    fileContent: "https://www.youtube.com/watch?v=JlFFdhXYwxo&list=PLAGMKTzSFy3v-qvn9juYtbU08SagyosLp",
     isMaximizable: true,
     position: "right",
   },
