@@ -43,11 +43,17 @@ const validateField = (fieldName, value) => {
   const rules = VALIDATION_RULES[fieldName];
   if (!rules) return '';
 
+  let validationValue = value;
+  if (fieldName === 'message') {
+    // Strip HTML tags for length validation so formatting doesn't eat the limit
+    validationValue = value.replace(/<[^>]*>/g, '');
+  }
+
   if (fieldName === 'name' || fieldName === 'message') {
-    if (value.length < rules.min) {
+    if (validationValue.length < rules.min) {
       return rules.errorMessages.tooShort;
     }
-    if (value.length > rules.max) {
+    if (validationValue.length > rules.max) {
       return rules.errorMessages.tooLong;
     }
   }
