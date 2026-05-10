@@ -10,7 +10,7 @@ const Taskbar = memo(({ minimizedWindows, onRestore, isCollapsed, onToggleCollap
   return (
     <div
       style={{ bottom: 'calc(var(--safe-bottom-buffer, 0px))' }}
-      className={`fixed left-0 z-[10000] flex h-12 items-center justify-center bg-windows-grey border-t-2 border-r-2 border-windows-white border-r-windows-grey-dark outline-2 outline-windows-black ${isCollapsed ? 'w-12' : 'w-max'} transition-all`}
+      className={`fixed left-0 z-[10000] flex h-[56px] items-center justify-center bg-windows-grey border-t-2 border-r-2 border-windows-white border-r-windows-grey-dark outline-2 outline-windows-black w-max transition-all`}
     >
       {!isCollapsed && (
         <div className="flex gap-3 p-2">
@@ -18,6 +18,7 @@ const Taskbar = memo(({ minimizedWindows, onRestore, isCollapsed, onToggleCollap
             <Button
               key={window.id}
               variant="control"
+              className="h-10 w-10"
               onClick={() => onRestore(window.id)}
               title={`Restore ${window.title}`}
             >
@@ -25,7 +26,7 @@ const Taskbar = memo(({ minimizedWindows, onRestore, isCollapsed, onToggleCollap
                 <img
                   src={window.icon}
                   alt=""
-                  className="h-5 w-5 object-contain"
+                  className="h-7 w-7 object-contain"
                 />
               )}
             </Button>
@@ -35,7 +36,7 @@ const Taskbar = memo(({ minimizedWindows, onRestore, isCollapsed, onToggleCollap
       <div className="p-2">
         <Button
           variant="control"
-          className="text-windows-black font-button text-2xl"
+          className="h-10 w-6 text-windows-black font-button text-2xl"
           onClick={onToggleCollapse}
           title={isCollapsed ? "Expand Taskbar" : "Collapse Taskbar"}
         >

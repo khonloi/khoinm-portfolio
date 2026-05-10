@@ -136,7 +136,6 @@ const Desktop = memo(({ onFullScreenChange, onTriggerBSOD }) => {
   const renderFolderContent = useCallback(
     (folderId) => {
       const folderData = folderDataMap.get(folderId);
-      if (!folderData) return <div role="alert">Folder not found</div>;
 
       return (
         <Explorer

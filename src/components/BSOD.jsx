@@ -49,13 +49,13 @@ const BSOD = ({ onClose }) => {
     <div className="fixed w-screen h-dvh z-[999999] flex items-center justify-center font-terminal cursor-none bg-[#ad0056] text-white p-8 text-base sm:text-xl">
       <div className="w-full max-w-[43rem]">
         <div className="flex justify-center">
-          <span className="bg-windows-grey text-[#ad0056] py-0.5 px-3 font-bold text-lg sm:text-xl tracking-wide mb-5">Haiyami</span>
+          <span className="bg-windows-grey text-[#ad0056] py-0.5 px-3 font-bold text-lg sm:text-xl tracking-wide mb-5">Pane</span>
         </div>
 
         <div className="[&_p]:leading-relaxed [&_p]:my-4">
           <p>An error has occurred. To continue:</p>
 
-          <p>Press Esc or double-tap to return to Haiyami, or</p>
+          <p>Press Esc or double-tap to return to Pane, or</p>
 
           <p>
             Press CTRL+R or Reset button to restart your browser.

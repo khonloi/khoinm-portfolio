@@ -3,13 +3,7 @@ import Dialog from "./Dialog";
 import monitorMoonIcon from "../assets/icons/Microsoft Windows 3 Post-It.ico";
 import keyGrayIcon from "../assets/icons/Microsoft Windows 3 Keys.ico";
 
-// Poetic shutdown messages
-const shutdownMessages = [
-  "Will you finally let the tide pull you under?",
-  "Are you ready to exhale for the last time?",
-  "Shall we erase the ink from the skin?",
-  "Do you wish to come in from the cold?"
-];
+const shutdownMessage = "Do you want to exit your session?";
 
 const formatTime = (date) => {
   // Use 24-hour time format
@@ -31,7 +25,6 @@ const formatDate = (date) => {
 const MenuBar = ({ visible = true, onShutdown }) => {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [showShutdownDialog, setShowShutdownDialog] = useState(false);
-  const [shutdownMessage, setShutdownMessage] = useState("");
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -41,9 +34,6 @@ const MenuBar = ({ visible = true, onShutdown }) => {
     return () => clearInterval(timer);
   }, []);
   const handleShutdownClick = () => {
-    // Pick a random shutdown message
-    const randomMessage = shutdownMessages[Math.floor(Math.random() * shutdownMessages.length)];
-    setShutdownMessage(randomMessage);
     setShowShutdownDialog(true);
   };
 

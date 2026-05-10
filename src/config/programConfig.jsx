@@ -89,7 +89,7 @@ export const desktopItems = [
     type: "folder",
     position: "left",
     contents: [
-      { id: "loading_certs", label: "Loading CMS data...", iconSrc: docIcon, type: "icon" }
+      { id: "loading_certs", label: "Loading CMS data", iconSrc: docIcon, type: "icon" }
     ],
   },
   {
@@ -99,7 +99,7 @@ export const desktopItems = [
     type: "folder",
     position: "left",
     contents: [
-      { id: "loading_projects", label: "Loading CMS data...", iconSrc: logoIcon, type: "icon" }
+      { id: "loading_projects", label: "Loading CMS data", iconSrc: logoIcon, type: "icon" }
     ],
   },
   {
@@ -134,7 +134,7 @@ export const desktopItems = [
     type: "folder",
     position: "right",
     contents: [
-      { id: "loading_accounts", label: "Loading CMS data...", iconSrc: briefcaseIcon, type: "icon" }
+      { id: "loading_accounts", label: "Loading CMS data", iconSrc: briefcaseIcon, type: "icon" }
     ],
   },
   {
@@ -277,7 +277,7 @@ export const desktopItems = [
     type: "folder",
     position: "right",
     contents: [
-      { id: "loading_stuff", label: "Loading CMS data...", iconSrc: folderIcon, type: "icon" }
+      { id: "loading_stuff", label: "Loading CMS data", iconSrc: folderIcon, type: "icon" }
     ],
   },
   {
@@ -308,6 +308,8 @@ const MatrixRain = lazy(() => import("../features/MatrixRain/MatrixRain"));
 const FragileWorld = lazy(() => import("../features/FragileWorld/FragileWorld"));
 const Notebook = lazy(() => import("../features/Notebook/Notebook"));
 const PhotoViewer = lazy(() => import("../features/PhotoViewer/PhotoViewer"));
+const Standby = lazy(() => import("../features/Standby/Standby"));
+
 
 
 // Window content registry for better maintainability and performance
@@ -352,6 +354,7 @@ const windowContentRegistry = {
   pixelart1: PhotoViewer,
   pixelart2: PhotoViewer,
   pixelart3: PhotoViewer,
+  standby: Standby,
 };
 
 // Window content renderer function - optimized with registry lookup

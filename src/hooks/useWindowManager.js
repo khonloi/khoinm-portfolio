@@ -140,7 +140,7 @@ export const useWindowManager = () => {
           {
             id: windowId,
             title: windowData.title,
-            icon: windowData.iconSrc,
+            icon: windowData.icon,
           },
         ];
       });
