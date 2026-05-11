@@ -24,9 +24,9 @@ export const useCMSContent = () => {
 
             // Automatic icon assignment based on filetype IF iconSrc is not manually provided
             if (!iconSrc && !item.customIconUrl) {
-              if (item.filetype === 'txt') iconSrc = 'docIcon';
-              else if (item.filetype === 'img') iconSrc = 'monaLisaIcon';
-              else if (item.filetype === 'vid') iconSrc = 'mediaIcon';
+              if (item.filetype === 'txt') iconSrc = 'winDocumentsIcon';
+              else if (item.filetype === 'img') iconSrc = 'winMonaLisaIcon';
+              else if (item.filetype === 'vid') iconSrc = 'winMediaPlayerIcon';
             }
 
             const transformedItem = {

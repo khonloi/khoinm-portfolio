@@ -1,12 +1,12 @@
 import React, { useState, useMemo, memo, useCallback } from "react";
 import LayeredBox from "../../components/LayeredBox";
-import folderIcon from "../../assets/icons/Microsoft Windows 3 Folder.ico";
-import folderOpenIcon from "../../assets/icons/Microsoft Windows 3 Folder Open Document.ico";
-import docIcon from "../../assets/icons/Microsoft Windows 3 Documents.ico";
+import winFolderIcon from "../../assets/icons/Microsoft Windows 3 Folder.ico";
+import winFolderOpenDocumentIcon from "../../assets/icons/Microsoft Windows 3 Folder Open Document.ico";
+import winDocumentsIcon from "../../assets/icons/Microsoft Windows 3 Documents.ico";
 import { SKILLS_DATA } from "../../data/skills";
 
-import swissKnifeIcon from "../../assets/icons/Microsoft Windows 3 Swiss Army Knife.ico";
-import briefcaseIcon from "../../assets/icons/Microsoft Windows 3 Briefcase.ico";
+import winSwissArmyKnifeIcon from "../../assets/icons/Microsoft Windows 3 Swiss Army Knife.ico";
+import winBriefcaseIcon from "../../assets/icons/Microsoft Windows 3 Briefcase.ico";
 
 import { useAbout } from "../../hooks/useAbout";
 import { PortableText } from "@portabletext/react";
@@ -58,7 +58,7 @@ const About = memo(() => {
             onClick={() => toggleFolder(folder.id)}
           >
             <img
-              src={openFolders[folder.id] ? folderOpenIcon : folderIcon}
+              src={openFolders[folder.id] ? winFolderOpenDocumentIcon : winFolderIcon}
               alt="Folder"
               className="w-5"
             />{" "}
@@ -70,7 +70,7 @@ const About = memo(() => {
                 {folder.skills.map((skill, index) => (
                   <li key={`${folder.id}-${index}`} className="relative mb-2 flex items-center gap-2 pl-1 before:absolute before:-left-3.25 before:h-px before:w-2.5 before:bg-windows-black before:content-['']">
                     <img
-                      src={docIcon}
+                      src={winDocumentsIcon}
                       alt="Document"
                       className="w-5"
                     />{" "}
@@ -108,7 +108,7 @@ const About = memo(() => {
         <hr className="my-4 border-0 border-t-2 border-t-windows-grey border-b-2 border-b-windows-grey-dark" />
         <div className="mb-4">
           <h3 className="m-0 mb-4 flex items-center gap-2 font-bold text-lg">
-            <img src={swissKnifeIcon} alt="" className="w-6" />
+            <img src={winSwissArmyKnifeIcon} alt="" className="w-6" />
             About Me
           </h3>
           <div className="space-y-4 leading-relaxed">
@@ -124,7 +124,7 @@ const About = memo(() => {
 
         <div className="mb-4">
           <h3 className="m-0 mb-4 flex items-center gap-2 font-bold text-lg">
-            <img src={briefcaseIcon} alt="" className="w-6" />
+            <img src={winBriefcaseIcon} alt="" className="w-6" />
             My Experience
           </h3>
           <div className="space-y-5">

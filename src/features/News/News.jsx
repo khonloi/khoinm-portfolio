@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useRef, memo } from "react";
 import Button from "../../components/Button";
-import internetIcon from "../../assets/icons/Microsoft Windows 3 International.ico";
+import winInternationalIcon from "../../assets/icons/Microsoft Windows 3 International.ico";
 import treeIcon from "../../assets/icons/Tree.ico";
 import { useNews } from "../../hooks/useNews";
 import ReactMarkdown from "react-markdown";
@@ -72,7 +72,7 @@ const HomePage = memo(({ articles, onNavigate }) => {
           <div className="flex-1 max-w-full sm:max-w-[500px] h-[85px] border border-windows-grey-dark bg-[#f8f8f8] flex items-center p-4 relative overflow-hidden">
             <div className="flex items-center gap-4">
               <div className="flex flex-col items-center justify-center">
-                <img src={internetIcon} className="w-9 h-9 object-contain" alt="" />
+                <img src={winInternationalIcon} className="w-9 h-9 object-contain" alt="" />
               </div>
               <div className="flex flex-col">
                 <span className="text-lg font-black text-[#800000] leading-none uppercase">LATEST UPDATES DAILY</span>
@@ -210,7 +210,7 @@ const HomePage = memo(({ articles, onNavigate }) => {
         <aside className="hidden lg:flex w-[190px] flex-col p-4 gap-6 bg-windows-white shrink-0 md:sticky overflow-y-auto scrollbar-none border-2 border-[#ececec] z-20">
           <div className="flex flex-col gap-5">
             {[
-              { label: "State Radio", color: "bg-[#fff2e6]", logo: internetIcon },
+              { label: "State Radio", color: "bg-[#fff2e6]", logo: winInternationalIcon },
               { label: "Cultural Heritage", color: "bg-white", border: true, accent: "#800000" },
               { label: "Workers' Paradise Hotel", color: "bg-[#fdfdfd]", border: true, text: "#4d2600" },
               { label: "SINMUN ONLINE", color: "bg-[#004080]", text: "white" },

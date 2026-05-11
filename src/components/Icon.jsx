@@ -1,8 +1,8 @@
 import React, { useState, useCallback, memo, useEffect, useRef } from 'react';
 import { useDragDrop } from '../hooks/useDragDrop';
 import { useContrastColor } from '../hooks/useContrastColor';
-import defaultBlankIcon from '../assets/icons/Microsoft Windows 3 Window Blank.ico';
-import folderIcon from '../assets/icons/Microsoft Windows 3 Folder.ico';
+import winWindowBlankIcon from '../assets/icons/Microsoft Windows 3 Window Blank.ico';
+import winFolderIcon from '../assets/icons/Microsoft Windows 3 Folder.ico';
 import shortcutIcon from '../assets/icons/Microsoft Windows 3 Shortcut.ico';
 
 /**
@@ -35,7 +35,7 @@ const Icon = memo(({
     const clickTimeoutRef = useRef(null);
 
     const imageRef = useRef(null);
-    const effectiveIcon = iconSrc || (type === 'folder' ? folderIcon : defaultBlankIcon);
+    const effectiveIcon = iconSrc || (type === 'folder' ? winFolderIcon : winWindowBlankIcon);
     const isDraggable = draggable !== undefined ? draggable : true;
 
     // Drag and drop integration
@@ -149,7 +149,7 @@ const Icon = memo(({
                     alt=""
                     className="h-full w-full object-contain"
                     onLoad={() => setIsImageLoaded(true)}
-                    onError={(e) => { e.target.src = defaultBlankIcon; }}
+                    onError={(e) => { e.target.src = winWindowBlankIcon; }}
                     draggable="false"
                 />
                 {link && (

@@ -2,74 +2,208 @@ import React, { lazy, Suspense } from "react";
 import Dialog from "../components/Dialog";
 
 // Import your icons
-import logoIcon from "../assets/icons/Tree.ico";
-import cardIcon from "../assets/icons/Microsoft Windows 3 Cardfile.ico";
-import folderIcon from "../assets/icons/Microsoft Windows 3 Folder.ico";
-import notebookIcon from "../assets/icons/Microsoft Windows 3 Binder.ico";
-import calculatorIcon from "../assets/icons/Microsoft Windows 3 Calculator.ico";
-import calendarIcon from "../assets/icons/Microsoft Windows 3 Calendar.ico";
-import clockIcon from "../assets/icons/Microsoft Windows 3 Clock.ico";
-import monaLisaIcon from "../assets/icons/Microsoft Windows 3 Mona Lisa.ico";
-import mediaIcon from "../assets/icons/Microsoft Windows 3 Media Player.ico";
-import newsIcon from "../assets/icons/Microsoft Windows 3 Newspaper.ico";
-import internetIcon from "../assets/icons/Microsoft Windows 3 International.ico";
-import cameraIcon from "../assets/icons/Microsoft Windows 3 Camera.ico";
-import paintIcon from "../assets/icons/Microsoft Windows 3 Paint Tools.ico";
-import briefcaseIcon from "../assets/icons/Microsoft Windows 3 Briefcase.ico";
-import computerIcon from "../assets/icons/Microsoft Windows 3 Computer.ico";
-import faxIcon from "../assets/icons/Microsoft Windows 3 Fax Machine.ico";
-import docIcon from "../assets/icons/Microsoft Windows 3 Documents.ico";
-import noteIcon from "../assets/icons/Microsoft Windows 3 Post-It.ico";
-import cassetteIcon from "../assets/icons/Microsoft Windows 3 Cassette.ico";
-import plannerIcon from "../assets/icons/Microsoft Windows 3 ClipBook Viewer.ico";
-import compressorIcon from "../assets/icons/Microsoft Windows 3 Compression.ico";
-import safeIcon from "../assets/icons/Microsoft Windows 3 Safe.ico";
-import schedulerIcon from "../assets/icons/Microsoft Windows 3 Schedule.ico";
-import recorderIcon from "../assets/icons/Microsoft Windows 3 Sound Recorder.ico";
-import fileManagerIcon from "../assets/icons/Microsoft Windows 3 File Manager.ico";
-import openDocIcon from "../assets/icons/Microsoft Windows 3 Folder Open Document.ico";
-import dllIcon from "../assets/icons/Microsoft Windows 3 DLL.ico";
-import setupIcon from "../assets/icons/Microsoft Windows 3 Setup.ico";
-import folderLinksysIcon from "../assets/icons/Microsoft Windows 3 Folder Linksys.ico";
-import folderIEIcon from "../assets/icons/Microsoft Windows 3 Folder Internet Explorer.ico";
-import foxIcon from "../assets/icons/Microsoft Windows 3 Fox.ico";
-import reversiIcon from "../assets/icons/Microsoft Windows 3 Reversi.ico";
-import cdDriveIcon from "../assets/icons/Microsoft Windows 3 Compact Disc.ico";
+import gashIcon from "../assets/icons/GASH.ico";
+import winApplicationsIcon from "../assets/icons/Microsoft Windows 3 Applications.ico";
+import winArrowDownIcon from "../assets/icons/Microsoft Windows 3 Arrow Down.ico";
+import winArrowLeftIcon from "../assets/icons/Microsoft Windows 3 Arrow Left.ico";
+import winArrowRightIcon from "../assets/icons/Microsoft Windows 3 Arrow Right.ico";
+import winArrowUpIcon from "../assets/icons/Microsoft Windows 3 Arrow Up.ico";
+import winBarGraphIcon from "../assets/icons/Microsoft Windows 3 Bar Graph.ico";
+import winBinderIcon from "../assets/icons/Microsoft Windows 3 Binder.ico";
+import winBriefcaseIcon from "../assets/icons/Microsoft Windows 3 Briefcase.ico";
+import winCalculatorIcon from "../assets/icons/Microsoft Windows 3 Calculator.ico";
+import winCalendarIcon from "../assets/icons/Microsoft Windows 3 Calendar.ico";
+import winCameraIcon from "../assets/icons/Microsoft Windows 3 Camera.ico";
+import winCardfileIcon from "../assets/icons/Microsoft Windows 3 Cardfile.ico";
+import winCassetteIcon from "../assets/icons/Microsoft Windows 3 Cassette.ico";
+import winCharacterMapIcon from "../assets/icons/Microsoft Windows 3 Character Map.ico";
+import winChatIcon from "../assets/icons/Microsoft Windows 3 Chat.ico";
+import winClipbookViewerIcon from "../assets/icons/Microsoft Windows 3 ClipBook Viewer.ico";
+import winClipboardViewerIcon from "../assets/icons/Microsoft Windows 3 Clipboard Viewer.ico";
+import winClockIcon from "../assets/icons/Microsoft Windows 3 Clock.ico";
+import winColorIcon from "../assets/icons/Microsoft Windows 3 Color.ico";
+import winCompactDiscIcon from "../assets/icons/Microsoft Windows 3 Compact Disc.ico";
+import winComposeIcon from "../assets/icons/Microsoft Windows 3 Compose.ico";
+import winCompressionIcon from "../assets/icons/Microsoft Windows 3 Compression.ico";
+import winComputerIcon from "../assets/icons/Microsoft Windows 3 Computer.ico";
+import winControlPanelIcon from "../assets/icons/Microsoft Windows 3 Control Panel.ico";
+import winDllSetupIcon from "../assets/icons/Microsoft Windows 3 DLL Setup.ico";
+import winDllIcon from "../assets/icons/Microsoft Windows 3 DLL.ico";
+import winDataTransferIcon from "../assets/icons/Microsoft Windows 3 Data Transfer.ico";
+import winDesktopIcon from "../assets/icons/Microsoft Windows 3 Desktop.ico";
+import winDirectorIcon from "../assets/icons/Microsoft Windows 3 Director.ico";
+import winDocumentsIcon from "../assets/icons/Microsoft Windows 3 Documents.ico";
+import winDriversIcon from "../assets/icons/Microsoft Windows 3 Drivers.ico";
+import winEmailReplyIcon from "../assets/icons/Microsoft Windows 3 E-mail Reply.ico";
+import winEducationIcon from "../assets/icons/Microsoft Windows 3 Education.ico";
+import winFaxMachineIcon from "../assets/icons/Microsoft Windows 3 Fax Machine.ico";
+import winFileManagerIcon from "../assets/icons/Microsoft Windows 3 File Manager.ico";
+import winFloppyDisksIcon from "../assets/icons/Microsoft Windows 3 Floppy Disks.ico";
+import winFloppyDriveIcon from "../assets/icons/Microsoft Windows 3 Floppy Drive.ico";
+import winFolderCookiesIcon from "../assets/icons/Microsoft Windows 3 Folder Cookies.ico";
+import winFolderInternetExplorerIcon from "../assets/icons/Microsoft Windows 3 Folder Internet Explorer.ico";
+import winFolderLinksysIcon from "../assets/icons/Microsoft Windows 3 Folder Linksys.ico";
+import winFolderLinsysIcon from "../assets/icons/Microsoft Windows 3 Folder Linsys.ico";
+import winFolderOpenDocumentIcon from "../assets/icons/Microsoft Windows 3 Folder Open Document.ico";
+import winFolderOpenIcon from "../assets/icons/Microsoft Windows 3 Folder Open.ico";
+import winFolderRefreshIcon from "../assets/icons/Microsoft Windows 3 Folder Refresh.ico";
+import winFolderIcon from "../assets/icons/Microsoft Windows 3 Folder.ico";
+import winFoxIcon from "../assets/icons/Microsoft Windows 3 Fox.ico";
+import winHandPointingLeftIcon from "../assets/icons/Microsoft Windows 3 Hand Pointing Left.ico";
+import winHandPointingRightIcon from "../assets/icons/Microsoft Windows 3 Hand Pointing Right.ico";
+import winHandIcon from "../assets/icons/Microsoft Windows 3 Hand.ico";
+import winInternationalIcon from "../assets/icons/Microsoft Windows 3 International.ico";
+import winKeyboardIcon from "../assets/icons/Microsoft Windows 3 Keyboard.ico";
+import winKeysIcon from "../assets/icons/Microsoft Windows 3 Keys.ico";
+import winLineChartDataIcon from "../assets/icons/Microsoft Windows 3 Line Chart Data.ico";
+import winLineGraphIcon from "../assets/icons/Microsoft Windows 3 Line Graph.ico";
+import winLocalAreaNetworkIcon from "../assets/icons/Microsoft Windows 3 Local Area Network.ico";
+import winLogoIcon from "../assets/icons/Microsoft Windows 3 Logo.ico";
+import winMsdosPromptIcon from "../assets/icons/Microsoft Windows 3 MS-DOS Prompt.ico";
+import winMailIcon from "../assets/icons/Microsoft Windows 3 Mail.ico";
+import winMailboxIcon from "../assets/icons/Microsoft Windows 3 Mailbox.ico";
+import winManillaEnvelopeIcon from "../assets/icons/Microsoft Windows 3 Manilla Envelope.ico";
+import winMediaPlayerIcon from "../assets/icons/Microsoft Windows 3 Media Player.ico";
+import winMinesweeperIcon from "../assets/icons/Microsoft Windows 3 Minesweeper.ico";
+import winMonaLisaIcon from "../assets/icons/Microsoft Windows 3 Mona Lisa.ico";
+import winMouseIcon from "../assets/icons/Microsoft Windows 3 Mouse.ico";
+import winNewspaperIcon from "../assets/icons/Microsoft Windows 3 Newspaper.ico";
+import winNotepadIcon from "../assets/icons/Microsoft Windows 3 Notepad.ico";
+import winObjectPackagerIcon from "../assets/icons/Microsoft Windows 3 Object Packager.ico";
+import winPaintToolsIcon from "../assets/icons/Microsoft Windows 3 Paint Tools.ico";
+import winPhoneDialIcon from "../assets/icons/Microsoft Windows 3 Phone Dial.ico";
+import winPlannerIcon from "../assets/icons/Microsoft Windows 3 Planner.ico";
+import winPortsIcon from "../assets/icons/Microsoft Windows 3 Ports.ico";
+import winPostitIcon from "../assets/icons/Microsoft Windows 3 Post-It.ico";
+import winPrintManagerIcon from "../assets/icons/Microsoft Windows 3 Print Manager.ico";
+import winReadMeIcon from "../assets/icons/Microsoft Windows 3 Read Me.ico";
+import winRecorderIcon from "../assets/icons/Microsoft Windows 3 Recorder.ico";
+import winRegistryEditIcon from "../assets/icons/Microsoft Windows 3 Registry Edit.ico";
+import winRemoteAccessIcon from "../assets/icons/Microsoft Windows 3 Remote Access.ico";
+import winReversiIcon from "../assets/icons/Microsoft Windows 3 Reversi.ico";
+import winSafeIcon from "../assets/icons/Microsoft Windows 3 Safe.ico";
+import winScheduleIcon from "../assets/icons/Microsoft Windows 3 Schedule.ico";
+import winServerIcon from "../assets/icons/Microsoft Windows 3 Server.ico";
+import winSetupIcon from "../assets/icons/Microsoft Windows 3 Setup.ico";
+import winShortcutIcon from "../assets/icons/Microsoft Windows 3 Shortcut.ico";
+import winSolitaireIcon from "../assets/icons/Microsoft Windows 3 Solitaire.ico";
+import winSoundRecorderIcon from "../assets/icons/Microsoft Windows 3 Sound Recorder.ico";
+import winSoundIcon from "../assets/icons/Microsoft Windows 3 Sound.ico";
+import winSwissArmyKnifeIcon from "../assets/icons/Microsoft Windows 3 Swiss Army Knife.ico";
+import winTerminalIcon from "../assets/icons/Microsoft Windows 3 Terminal.ico";
+import winToolsIcon from "../assets/icons/Microsoft Windows 3 Tools.ico";
+import winTypewriterIcon from "../assets/icons/Microsoft Windows 3 Typewriter.ico";
+import winWasteBasketEmptyIcon from "../assets/icons/Microsoft Windows 3 Waste Basket Empty.ico";
+import winWasteBasketFullIcon from "../assets/icons/Microsoft Windows 3 Waste Basket Full.ico";
+import winWindowBlankIcon from "../assets/icons/Microsoft Windows 3 Window Blank.ico";
+import winWindowExcelIcon from "../assets/icons/Microsoft Windows 3 Window Excel.ico";
+import winWindowMsdosIcon from "../assets/icons/Microsoft Windows 3 Window MS-DOS.ico";
+import winWindowModemIcon from "../assets/icons/Microsoft Windows 3 Window Modem.ico";
+import winWindowWordIcon from "../assets/icons/Microsoft Windows 3 Window Word.ico";
+import winWordpadIcon from "../assets/icons/Microsoft Windows 3 Wordpad.ico";
+import treeIcon from "../assets/icons/Tree.ico";
 
 export const ICON_MAP = {
-  logoIcon,
-  cardIcon,
-  folderIcon,
-  notebookIcon,
-  calculatorIcon,
-  calendarIcon,
-  clockIcon,
-  monaLisaIcon,
-  mediaIcon,
-  newsIcon,
-  internetIcon,
-  cameraIcon,
-  paintIcon,
-  briefcaseIcon,
-  computerIcon,
-  faxIcon,
-  docIcon,
-  noteIcon,
-  cassetteIcon,
-  plannerIcon,
-  compressorIcon,
-  safeIcon,
-  schedulerIcon,
-  recorderIcon,
-  fileManagerIcon,
-  openDocIcon,
-  dllIcon,
-  setupIcon,
-  folderLinksysIcon,
-  folderIEIcon,
-  foxIcon,
-  reversiIcon,
-  cdDriveIcon,
+  winBriefcaseIcon,
+  winCalculatorIcon,
+  winCalendarIcon,
+  winCameraIcon,
+  winCardfileIcon,
+  winCassetteIcon,
+  winCompactDiscIcon,
+  winClockIcon,
+  winCompressionIcon,
+  winComputerIcon,
+  winDllIcon,
+  winDocumentsIcon,
+  winFaxMachineIcon,
+  winFileManagerIcon,
+  winFolderInternetExplorerIcon,
+  winFolderIcon,
+  winFolderLinksysIcon,
+  winFoxIcon,
+  gashIcon,
+  winInternationalIcon,
+  treeIcon,
+  winMediaPlayerIcon,
+  winMonaLisaIcon,
+  winNewspaperIcon,
+  winPostitIcon,
+  winBinderIcon,
+  winFolderOpenDocumentIcon,
+  winPaintToolsIcon,
+  winClipbookViewerIcon,
+  winSoundRecorderIcon,
+  winReversiIcon,
+  winSafeIcon,
+  winScheduleIcon,
+  winSetupIcon,
+  winApplicationsIcon,
+  winArrowDownIcon,
+  winArrowLeftIcon,
+  winArrowRightIcon,
+  winArrowUpIcon,
+  winBarGraphIcon,
+  winCharacterMapIcon,
+  winChatIcon,
+  winClipboardViewerIcon,
+  winColorIcon,
+  winComposeIcon,
+  winControlPanelIcon,
+  winDataTransferIcon,
+  winDesktopIcon,
+  winDirectorIcon,
+  winDllSetupIcon,
+  winDriversIcon,
+  winEducationIcon,
+  winEmailReplyIcon,
+  winFloppyDisksIcon,
+  winFloppyDriveIcon,
+  winFolderCookiesIcon,
+  winFolderLinsysIcon,
+  winFolderOpenIcon,
+  winFolderRefreshIcon,
+  winHandIcon,
+  winHandPointingLeftIcon,
+  winHandPointingRightIcon,
+  winKeyboardIcon,
+  winKeysIcon,
+  winLineChartDataIcon,
+  winLineGraphIcon,
+  winLocalAreaNetworkIcon,
+  winLogoIcon,
+  winMailIcon,
+  winMailboxIcon,
+  winManillaEnvelopeIcon,
+  winMinesweeperIcon,
+  winMouseIcon,
+  winMsdosPromptIcon,
+  winNotepadIcon,
+  winObjectPackagerIcon,
+  winPhoneDialIcon,
+  winPlannerIcon,
+  winPortsIcon,
+  winPrintManagerIcon,
+  winReadMeIcon,
+  winRecorderIcon,
+  winRegistryEditIcon,
+  winRemoteAccessIcon,
+  winServerIcon,
+  winShortcutIcon,
+  winSolitaireIcon,
+  winSoundIcon,
+  winSwissArmyKnifeIcon,
+  winTerminalIcon,
+  winToolsIcon,
+  winTypewriterIcon,
+  winWasteBasketEmptyIcon,
+  winWasteBasketFullIcon,
+  winWindowBlankIcon,
+  winWindowExcelIcon,
+  winWindowModemIcon,
+  winWindowMsdosIcon,
+  winWindowWordIcon,
+  winWordpadIcon,
 };
 
 // Unified desktop items configuration
@@ -77,7 +211,7 @@ export const desktopItems = [
   {
     id: "about",
     label: "My Information",
-    iconSrc: computerIcon,
+    iconSrc: winComputerIcon,
     type: "icon",
     isMaximizable: false,
     position: "left",
@@ -85,27 +219,27 @@ export const desktopItems = [
   {
     id: "certificates",
     label: "My Certificates",
-    iconSrc: openDocIcon,
+    iconSrc: winFolderOpenDocumentIcon,
     type: "folder",
     position: "left",
     contents: [
-      { id: "loading_certs", label: "Loading CMS data", iconSrc: docIcon, type: "icon" }
+      { id: "loading_certs", label: "Loading CMS data", iconSrc: winDocumentsIcon, type: "icon" }
     ],
   },
   {
     id: "projects",
     label: "My Projects",
-    iconSrc: briefcaseIcon,
+    iconSrc: winBriefcaseIcon,
     type: "folder",
     position: "left",
     contents: [
-      { id: "loading_projects", label: "Loading CMS data", iconSrc: logoIcon, type: "icon" }
+      { id: "loading_projects", label: "Loading CMS data", iconSrc: treeIcon, type: "icon" }
     ],
   },
   {
     id: "message",
     label: "Message Me",
-    iconSrc: faxIcon,
+    iconSrc: winFaxMachineIcon,
     type: "icon",
     isMaximizable: false,
     position: "left",
@@ -113,7 +247,7 @@ export const desktopItems = [
   {
     id: "internet",
     label: "News",
-    iconSrc: newsIcon,
+    iconSrc: winNewspaperIcon,
     type: "icon",
     isMaximizable: true,
     position: "left",
@@ -121,7 +255,7 @@ export const desktopItems = [
   {
     id: "welcome",
     label: "Welcome to Pane",
-    iconSrc: noteIcon,
+    iconSrc: winPostitIcon,
     type: "icon",
     isMaximizable: false,
     startup: true,
@@ -130,38 +264,38 @@ export const desktopItems = [
   {
     id: "onlineAccounts",
     label: "Online Accounts",
-    iconSrc: folderIEIcon,
+    iconSrc: winFolderInternetExplorerIcon,
     type: "folder",
     position: "right",
     contents: [
-      { id: "loading_accounts", label: "Loading CMS data", iconSrc: briefcaseIcon, type: "icon" }
+      { id: "loading_accounts", label: "Loading CMS data", iconSrc: winBriefcaseIcon, type: "icon" }
     ],
   },
   {
     id: "programs",
     label: "Programs",
-    iconSrc: folderLinksysIcon,
+    iconSrc: winFolderLinksysIcon,
     type: "folder",
     position: "right",
     contents: [
       {
         id: "calculator",
         label: "Calculator",
-        iconSrc: calculatorIcon,
+        iconSrc: winCalculatorIcon,
         type: "icon",
         isMaximizable: false,
       },
       {
         id: "calendar",
         label: "Calendar",
-        iconSrc: calendarIcon,
+        iconSrc: winCalendarIcon,
         type: "icon",
         isMaximizable: false,
       },
       {
         id: "camera",
         label: "Camera",
-        iconSrc: cameraIcon,
+        iconSrc: winCameraIcon,
         type: "icon",
         isMaximizable: false,
         isMaximized: true,
@@ -169,49 +303,49 @@ export const desktopItems = [
       {
         id: "clock",
         label: "Clock",
-        iconSrc: clockIcon,
+        iconSrc: winClockIcon,
         type: "icon",
         isMaximizable: false,
       },
       {
         id: "compressor",
         label: "Compressor",
-        iconSrc: compressorIcon,
+        iconSrc: winCompressionIcon,
         type: "icon",
         isMaximizable: false,
       },
       {
         id: "fileManager",
         label: "File Manager",
-        iconSrc: fileManagerIcon,
+        iconSrc: winFileManagerIcon,
         type: "icon",
         isMaximizable: true,
       },
       {
         id: "internet",
         label: "Internet",
-        iconSrc: internetIcon,
+        iconSrc: winInternationalIcon,
         type: "icon",
         isMaximizable: true,
       },
       {
         id: "notebook",
         label: "Notebook",
-        iconSrc: notebookIcon,
+        iconSrc: winBinderIcon,
         type: "icon",
         isMaximizable: true,
       },
       {
         id: "photoviewer",
         label: "Photo",
-        iconSrc: monaLisaIcon,
+        iconSrc: winMonaLisaIcon,
         type: "icon",
         isMaximizable: true,
       },
       {
         id: "paint",
         label: "Paint",
-        iconSrc: paintIcon,
+        iconSrc: winPaintToolsIcon,
         type: "icon",
         isMaximizable: true,
         isFullScreen: true,
@@ -219,21 +353,21 @@ export const desktopItems = [
       {
         id: "planner",
         label: "Planner",
-        iconSrc: plannerIcon,
+        iconSrc: winClipbookViewerIcon,
         type: "icon",
         isMaximizable: false,
       },
       {
         id: "recorder",
         label: "Recorder",
-        iconSrc: recorderIcon,
+        iconSrc: winSoundRecorderIcon,
         type: "icon",
         isMaximizable: false,
       },
       {
         id: "safe",
         label: "Safe",
-        iconSrc: safeIcon,
+        iconSrc: winSafeIcon,
         type: "icon",
         isMaximizable: false,
         isDialog: true,
@@ -241,14 +375,14 @@ export const desktopItems = [
       {
         id: "scheduler",
         label: "Scheduler",
-        iconSrc: schedulerIcon,
+        iconSrc: winScheduleIcon,
         type: "icon",
         isMaximizable: false,
       },
       {
         id: "media",
         label: "Media Player",
-        iconSrc: mediaIcon,
+        iconSrc: winMediaPlayerIcon,
         type: "icon",
         isMaximizable: true,
       },
@@ -257,7 +391,7 @@ export const desktopItems = [
   {
     id: "games",
     label: "Games",
-    iconSrc: folderIcon,
+    iconSrc: winFolderIcon,
     type: "folder",
     position: "right",
     contents: [
@@ -265,7 +399,7 @@ export const desktopItems = [
         id: "line98",
         label: "Line 98",
         type: "icon",
-        iconSrc: reversiIcon,
+        iconSrc: winReversiIcon,
         isMaximizable: false,
       },
     ],
@@ -273,17 +407,17 @@ export const desktopItems = [
   {
     id: "stuff",
     label: "Random Stuff",
-    iconSrc: folderIcon,
+    iconSrc: winFolderIcon,
     type: "folder",
     position: "right",
     contents: [
-      { id: "loading_stuff", label: "Loading CMS data", iconSrc: folderIcon, type: "icon" }
+      { id: "loading_stuff", label: "Loading CMS data", iconSrc: winFolderIcon, type: "icon" }
     ],
   },
   {
     id: "cddrive",
     label: "CD Drive",
-    iconSrc: cdDriveIcon,
+    iconSrc: winCompactDiscIcon,
     type: "icon",
     filetype: "vid",
     fileContent: "https://www.youtube.com/watch?v=JlFFdhXYwxo&list=PLAGMKTzSFy3v-qvn9juYtbU08SagyosLp",
@@ -383,7 +517,7 @@ export const renderWindowContent = (windowId, windowTitle, onClose, icon, onTrig
       isVisible={true}
       title={windowTitle}
       message="This program is currently being updated."
-      icon={icon || noteIcon}
+      icon={icon || winPostitIcon}
       buttons={[{ label: "OK", onClick: onClose }]}
       onClose={onClose}
     />

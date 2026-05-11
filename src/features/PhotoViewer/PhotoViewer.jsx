@@ -1,6 +1,6 @@
 import React, { useState, memo, useEffect, useRef } from "react";
 import LayeredBox from "../../components/LayeredBox";
-import monaLisaIcon from "../../assets/icons/Microsoft Windows 3 Mona Lisa.ico";
+import winMonaLisaIcon from "../../assets/icons/Microsoft Windows 3 Mona Lisa.ico";
 
 const PhotoViewer = memo(({ id, fileContent }) => {
   const [imgSrc, setImgSrc] = useState(null);
@@ -68,7 +68,7 @@ const PhotoViewer = memo(({ id, fileContent }) => {
             />
           ) : (
             <div className="flex flex-col items-center justify-center p-20 text-windows-grey-dark select-none min-w-[300px]">
-              <img src={monaLisaIcon} alt="" className="w-16 h-16 opacity-30 mb-4 grayscale" />
+              <img src={winMonaLisaIcon} alt="" className="w-16 h-16 opacity-30 mb-4 grayscale" />
               <p className="font-bold">Select an image to view</p>
             </div>
           )}
