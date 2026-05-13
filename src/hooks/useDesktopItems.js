@@ -18,13 +18,13 @@ export const useCMSContent = () => {
         const map = {};
 
         const processItems = (items) => {
-          return items.map(item => {
+          return items.map((item) => {
             let iconSrc = item.iconSrc;
             let type = item.type || 'icon';
 
             // Automatic icon assignment based on filetype IF iconSrc is not manually provided
             if (!iconSrc && !item.customIconUrl) {
-              if (item.filetype === 'txt') iconSrc = 'winDocumentsIcon';
+              if (item.filetype === 'txt') iconSrc = 'winDllIcon';
               else if (item.filetype === 'img') iconSrc = 'winMonaLisaIcon';
               else if (item.filetype === 'vid') iconSrc = 'winMediaPlayerIcon';
             }
@@ -34,13 +34,13 @@ export const useCMSContent = () => {
               type,
               iconSrc: item.customIconUrl || ICON_MAP[iconSrc] || iconSrc,
               // Recursive processing for sub-folders
-              contents: item.contents ? processItems(item.contents) : undefined
+              contents: item.contents ? processItems(item.contents) : undefined,
             };
             return transformedItem;
           });
         };
 
-        data.forEach(doc => {
+        data.forEach((doc) => {
           let folderId;
           if (doc._type === 'certificateList') folderId = 'certificates';
           if (doc._type === 'projectList') folderId = 'projects';

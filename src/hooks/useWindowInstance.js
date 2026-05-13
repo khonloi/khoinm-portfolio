@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { useDragDrop } from './useDragDrop';
 
 const DEFAULT_POSITION = { x: 100, y: 100 };
-const MENU_BAR_HEIGHT_CONST = 30;
+const MENU_BAR_HEIGHT_CONST = 36;
 
 // Utility to calculate initial position
 const getInitialPos = (pos) => {
@@ -192,17 +192,20 @@ export const useWindowInstance = ({
       const viewportWidth = window.innerWidth;
       const viewportHeight = window.innerHeight;
 
+      // Get safe area buffer from CSS variable
+      const safeBottomBuffer = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--safe-bottom-buffer')) || 0;
+
       const centerX = (viewportWidth - windowWidth) / 2;
-      const availableHeight = viewportHeight - MENU_BAR_HEIGHT;
-      const centerY = MENU_BAR_HEIGHT + (availableHeight - windowHeight) / 2;
+      const availableHeight = viewportHeight - MENU_BAR_HEIGHT - safeBottomBuffer;
+      const centerY = (availableHeight - windowHeight) / 2;
 
       const finalX = Math.max(
         0,
         Math.min(centerX, viewportWidth - windowWidth)
       );
       const finalY = Math.max(
-        MENU_BAR_HEIGHT,
-        Math.min(centerY, viewportHeight - windowHeight)
+        0,
+        Math.min(centerY, availableHeight - windowHeight)
       );
 
       setPosition({ x: finalX, y: finalY });

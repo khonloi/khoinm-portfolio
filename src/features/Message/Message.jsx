@@ -118,7 +118,7 @@ const Message = memo(({ onClose }) => {
   }, []);
 
   return (
-    <div className="h-full w-full bg-windows-grey-shade-1 p-4 md:h-auto md:w-[38rem] flex flex-col overflow-hidden">
+    <div className="h-full w-full bg-windows-grey-shade-1 p-4 md:h-auto md:w-[34rem] flex flex-col overflow-hidden">
       <form ref={formRef} onSubmit={sendEmail} className="flex flex-col flex-grow min-h-0 md:h-auto md:flex-none">
         {/* Name Input Group */}
         <div className="flex items-baseline gap-2">

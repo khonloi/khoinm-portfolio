@@ -85,7 +85,7 @@ const Dialog = memo(({
                                 <div className="p-4 text-windows-black text-left max-w-[26rem]">
                                     <div className="flex items-center justify-center gap-4 mb-4">
                                         {showIcon && icon && <img src={icon} alt="" className="w-10 h-10 object-contain align-middle" />}
-                                        <span className="text-lg">{message}</span>
+                                        <span className="text-lg whitespace-pre-line">{message}</span>
                                     </div>
                                     {buttons.length > 0 && (
                                         <div className="flex justify-center gap-3">

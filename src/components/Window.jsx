@@ -73,7 +73,7 @@ const Window = memo(
       top: isFullScreenActive
         ? 0
         : isMaximized || isMobile
-          ? MENU_BAR_HEIGHT
+          ? 0
           : `${position.y}px`,
       width: isFullScreenActive
         ? "100vw"
@@ -114,7 +114,7 @@ const Window = memo(
               onTouchStart={handleTouchStart}
             >
               <div className="h-full flex flex-col border-t-2 border-l-2 border-windows-white p-1 pr-1.5 pb-1.5 bg-windows-grey overflow-hidden">
-                <div className={`window-title-bar border-2 border-windows-black flex justify-between items-center mb-1 ${isFocused ? "bg-windows-purple text-windows-white" : "bg-windows-grey text-windows-black"}`}>
+                <div className={`window-title-bar border-2 border-windows-black flex justify-between items-center mb-1.5 ${isFocused ? "bg-windows-purple text-windows-white" : "bg-windows-grey text-windows-black"}`}>
                   <span className="font-bold absolute left-1/2 -translate-x-1/2 select-none">{title}</span>
                   <div className="flex gap-0.5">
                     <Button
