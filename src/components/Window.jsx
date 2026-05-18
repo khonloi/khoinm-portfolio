@@ -83,7 +83,7 @@ const Window = memo(
       height: isFullScreenActive
         ? "100dvh"
         : isMaximized || isMobile
-          ? `calc(100dvh - ${MENU_BAR_HEIGHT}px - var(--safe-bottom-buffer, 0px) - 4px)`
+          ? "calc(100% + 2px)"
           : "auto",
       zIndex: isFullScreenActive ? 40000 : zIndex,
       visibility: needsCentering ? "hidden" : undefined,
