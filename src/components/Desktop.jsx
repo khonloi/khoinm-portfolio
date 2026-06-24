@@ -18,9 +18,9 @@ import { desktopItems, renderWindowContent } from "../config/programConfig";
 
 const Desktop = memo(({ onFullScreenChange, onTriggerBSOD }) => {
   const { openWindows, openWindow, closeWindow, focusWindow, focusedWindow } = useWindow();
-  const { folderMap } = useCMSContent();
+  const { folderMap, cdDrive } = useCMSContent();
   const { allDesktopItems, itemPositions, handleItemPositionChange } =
-    useDesktop();
+    useDesktop(cdDrive);
 
   const { isLoading, isDelaying, progress, menuBarVisible, skipLoading } =
     useLoadingScreen();

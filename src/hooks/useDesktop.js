@@ -10,9 +10,20 @@ const POSITIONING_CONSTANTS = {
   TOP_PADDING: 20,
 };
 
-export const useDesktop = () => {
+export const useDesktop = (cdDrive) => {
   // Create memoized desktop items
-  const allDesktopItems = useMemo(() => desktopItems.filter(item => !item.hidden), []);
+  const allDesktopItems = useMemo(() => {
+    return desktopItems.map(item => {
+      if (item.id === 'cddrive' && cdDrive) {
+        return {
+          ...item,
+          label: cdDrive.label || item.label,
+          fileContent: cdDrive.fileContent || item.fileContent,
+        };
+      }
+      return item;
+    }).filter(item => !item.hidden);
+  }, [cdDrive]);
   
   // Use ref to track if positions are initialized
   const positionsInitialized = useRef(false);

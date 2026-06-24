@@ -6,6 +6,7 @@ import certificateList from './sanity/schemas/certificateList';
 import projectList from './sanity/schemas/projectList';
 import stuffList from './sanity/schemas/stuffList';
 import onlineAccountList from './sanity/schemas/onlineAccountList';
+import cdDrive from './sanity/schemas/cdDrive';
 
 export default defineConfig({
   name: 'default',
@@ -26,6 +27,7 @@ export default defineConfig({
       projectList,
       stuffList,
       onlineAccountList,
+      cdDrive,
     ],
   },
 });

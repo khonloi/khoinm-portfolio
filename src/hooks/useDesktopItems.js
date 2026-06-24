@@ -2,13 +2,16 @@ import { useState, useEffect } from 'react';
 import { client } from '../lib/sanityClient';
 import { ICON_MAP } from '../config/programConfig';
 
-const CMS_JSON_QUERY = `*[_type in ["certificateList", "projectList", "stuffList", "onlineAccountList"]] {
+const CMS_JSON_QUERY = `*[_type in ["certificateList", "projectList", "stuffList", "onlineAccountList", "cdDrive"]] {
   _type,
-  jsonContent
+  jsonContent,
+  label,
+  fileContent
 }`;
 
 export const useCMSContent = () => {
   const [folderMap, setFolderMap] = useState({});
+  const [cdDrive, setCdDrive] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -16,6 +19,7 @@ export const useCMSContent = () => {
       try {
         const data = await client.fetch(CMS_JSON_QUERY);
         const map = {};
+        let cdDriveConfig = null;
 
         const processItems = (items) => {
           return items.map((item) => {
@@ -41,6 +45,14 @@ export const useCMSContent = () => {
         };
 
         data.forEach((doc) => {
+          if (doc._type === 'cdDrive') {
+            cdDriveConfig = {
+              label: doc.label,
+              fileContent: doc.fileContent,
+            };
+            return;
+          }
+
           let folderId;
           if (doc._type === 'certificateList') folderId = 'certificates';
           if (doc._type === 'projectList') folderId = 'projects';
@@ -60,6 +72,9 @@ export const useCMSContent = () => {
         });
 
         setFolderMap(map);
+        if (cdDriveConfig) {
+          setCdDrive(cdDriveConfig);
+        }
       } catch (error) {
         console.error('Error fetching CMS content:', error);
       } finally {
@@ -70,5 +85,5 @@ export const useCMSContent = () => {
     fetchContent();
   }, []);
 
-  return { folderMap, loading };
+  return { folderMap, cdDrive, loading };
 };
