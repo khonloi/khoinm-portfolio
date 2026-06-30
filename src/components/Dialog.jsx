@@ -58,8 +58,8 @@ const Dialog = memo(({
     };
 
     const windowElement = (
-        <div ref={elementRef} className="bg-windows-grey border-2 border-windows-black min-w-[320px] origin-center focused" style={windowStyle}>
-            <div className="h-full relative" onMouseDown={handleTitleBarAction} onTouchStart={handleTitleBarAction}>
+        <div ref={elementRef} className="bg-windows-black p-[2px] min-w-[320px] origin-center focused trim-window-corners" style={windowStyle}>
+            <div className="h-full relative bg-windows-grey trim-corners" onMouseDown={handleTitleBarAction} onTouchStart={handleTitleBarAction}>
                 <div className="h-full flex flex-col border-t-2 border-l-2 border-windows-white p-1 pr-1.5 pb-1.5 bg-windows-grey z-10">
                     {/* Window Frame: Title and Controls */}
                     <div className="window-title-bar bg-windows-purple text-windows-white border-2 border-windows-black flex justify-between items-center relative mb-1">
@@ -79,7 +79,7 @@ const Dialog = memo(({
                     </div>
 
                     {/* Window Content: Message, Icon, and Buttons */}
-                    <div className="flex-1 flex min-h-0 relative">
+                    <div className="flex-1 flex min-h-0 relative trim-corners">
                         <div className="border-l-2 border-t-2 border-windows-grey-dark flex-1 flex min-h-0 z-10 pr-0.5 pb-0.5">
                             <div className="border-2 border-windows-black bg-windows-white overflow-auto flex-1 select-text flex flex-col">
                                 <div className="p-4 text-windows-black text-left max-w-[26rem]">

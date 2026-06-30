@@ -11,3 +11,65 @@ body {
   margin: 0;
   overflow: hidden;
 }
+
+/* Trims exactly 2px off each corner (stepped) to match the 2px border perfectly */
+.trim-corners {
+  clip-path: polygon(
+    0 2px,
+    2px 2px,
+    2px 0,
+    calc(100% - 2px) 0,
+    calc(100% - 2px) 2px,
+    100% 2px,
+    100% calc(100% - 2px),
+    calc(100% - 2px) calc(100% - 2px),
+    calc(100% - 2px) 100%,
+    2px 100%,
+    2px calc(100% - 2px),
+    0 calc(100% - 2px)
+  );
+}
+
+/* Trims the corners of an outer 2px box-shadow (ring) while keeping the element intact */
+.trim-corners-ring {
+  clip-path: polygon(
+    -2px 0,
+    0 0,
+    0 -2px,
+    100% -2px,
+    100% 0,
+    calc(100% + 2px) 0,
+    calc(100% + 2px) 100%,
+    100% 100%,
+    100% calc(100% + 2px),
+    0 calc(100% + 2px),
+    0 100%,
+    -2px 100%
+  );
+}
+
+/* Trims 4px stepped off each corner for the main window */
+.trim-window-corners {
+  clip-path: polygon(
+    0 4px,
+    2px 4px,
+    2px 2px,
+    4px 2px,
+    4px 0,
+    calc(100% - 4px) 0,
+    calc(100% - 4px) 2px,
+    calc(100% - 2px) 2px,
+    calc(100% - 2px) 4px,
+    100% 4px,
+    100% calc(100% - 4px),
+    calc(100% - 2px) calc(100% - 4px),
+    calc(100% - 2px) calc(100% - 2px),
+    calc(100% - 4px) calc(100% - 2px),
+    calc(100% - 4px) 100%,
+    4px 100%,
+    4px calc(100% - 2px),
+    2px calc(100% - 2px),
+    2px calc(100% - 4px),
+    0 calc(100% - 4px)
+  );
+}

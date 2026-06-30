@@ -94,9 +94,9 @@ const Window = memo(
         <div
           ref={elementRef}
           className={[
-            "window-outer bg-windows-grey border-2 border-windows-black min-w-[320px] origin-center",
+            "window-outer bg-windows-black p-[2px] min-w-[320px] origin-center trim-window-corners",
             isMinimized ? "invisible absolute" : "",
-            isFullScreenActive ? "!w-screen !h-[100dvh] !top-0 !left-0 !z-[40000] !border-none bg-windows-white" : "",
+            isFullScreenActive ? "!w-screen !h-[100dvh] !top-0 !left-0 !z-[40000] !p-0 !bg-windows-white ![clip-path:none]" : "",
             isMaximized || isMobile ? "maximized !-top-0.5" : "",
             isDragging ? "select-none" : "",
           ].filter(Boolean).join(" ")}
@@ -109,7 +109,7 @@ const Window = memo(
             children
           ) : (
             <div
-              className="h-full relative"
+              className="h-full relative bg-windows-grey trim-corners"
               onMouseDown={handleTitleBarMouseDown}
               onTouchStart={handleTouchStart}
             >
@@ -150,7 +150,7 @@ const Window = memo(
                     </Button>
                   </div>
                 </div>
-                <div className="window-content-outer flex-1 flex relative min-h-0">
+                <div className="window-content-outer flex-1 flex relative min-h-0 trim-corners">
                   <div className="border-l-2 border-t-2 border-windows-grey-dark flex-1 flex min-h-0 pr-0.5 pb-0.5">
                     <div className="border-2 border-windows-black bg-windows-white overflow-auto flex-1 select-text min-h-0 min-w-0 z-10">
                       {children}

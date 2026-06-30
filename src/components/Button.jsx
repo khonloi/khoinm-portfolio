@@ -31,7 +31,7 @@ const Button = memo(({
 
   // Base button styles
   const baseButtonClasses = [
-    "group relative select-none text-windows-black ring-2 ring-black",
+    "group relative select-none text-windows-black ring-2 ring-black trim-corners-ring",
     !className.includes('bg-') ? "bg-windows-grey" : "",
     variant === "program" ? "m-0.5 h-8 w-24 font-normal" : "",
     variant === "control" ? "h-8 w-8 text-3xl" : "",
