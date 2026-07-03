@@ -114,8 +114,9 @@ const Window = memo(
               onTouchStart={handleTouchStart}
             >
               <div className="h-full flex flex-col border-t-2 border-l-2 border-windows-white p-1 pr-1.5 pb-1.5 bg-windows-grey overflow-hidden">
-                <div className={`window-title-bar border-2 border-windows-black flex justify-between items-center mb-1.5 ${isFocused ? "bg-windows-purple text-windows-white" : "bg-windows-grey text-windows-black"}`}>
-                  <span className="font-bold absolute left-1/2 -translate-x-1/2 select-none">{title}</span>
+                <div className="bg-windows-black p-[2px] mb-1.5 trim-corners relative shrink-0">
+                  <div className={`window-title-bar flex justify-between items-center w-full h-full ${isFocused ? "bg-windows-purple text-windows-white" : "bg-windows-grey text-windows-black"}`}>
+                    <span className="font-bold absolute left-1/2 -translate-x-1/2 select-none">{title}</span>
                   <div className="flex gap-0.5">
                     <Button
                       variant="control"
@@ -149,6 +150,7 @@ const Window = memo(
                       -
                     </Button>
                   </div>
+                </div>
                 </div>
                 <div className="window-content-outer flex-1 flex relative min-h-0 trim-corners">
                   <div className="border-l-2 border-t-2 border-windows-grey-dark flex-1 flex min-h-0 pr-0.5 pb-0.5">

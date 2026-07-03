@@ -388,10 +388,10 @@ const MediaPlayer = memo(({ id, fileContent, crop43 }) => {
                                     [&::-moz-range-thumb]:h-[28px] [&::-moz-range-thumb]:w-[12px] [&::-moz-range-thumb]:bg-windows-grey [&::-moz-range-thumb]:border-r-[2px] [&::-moz-range-thumb]:border-b-[2px] [&::-moz-range-thumb]:border-windows-grey-dark [&::-moz-range-thumb]:border-l-[2px] [&::-moz-range-thumb]:border-t-[2px] [&::-moz-range-thumb]:border-l-windows-white [&::-moz-range-thumb]:border-t-windows-white [&::-moz-range-thumb]:shadow-[0_0_0_1px_black] [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:rounded-none"
             />
 
-            <div className="flex items-center gap-2 font-bold text-windows-black whitespace-nowrap font-number shrink-0 justify-end text-md">
-              <span className="text-right">{formatTime(currentTime)}</span>
+            <div className="flex items-center gap-2 font-bold text-windows-black whitespace-nowrap font-number shrink-0 justify-end text-md tabular-nums">
+              <span className="text-right w-[4.5ch] inline-block">{formatTime(currentTime)}</span>
               <span className="shrink-0">/</span>
-              <span className="text-left">{formatTime(duration)}</span>
+              <span className="text-left w-[4.5ch] inline-block">{formatTime(duration)}</span>
             </div>
           </div>
         </div>

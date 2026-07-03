@@ -62,7 +62,8 @@ const Dialog = memo(({
             <div className="h-full relative bg-windows-grey trim-corners" onMouseDown={handleTitleBarAction} onTouchStart={handleTitleBarAction}>
                 <div className="h-full flex flex-col border-t-2 border-l-2 border-windows-white p-1 pr-1.5 pb-1.5 bg-windows-grey z-10">
                     {/* Window Frame: Title and Controls */}
-                    <div className="window-title-bar bg-windows-purple text-windows-white border-2 border-windows-black flex justify-between items-center relative mb-1">
+                    <div className="bg-windows-black p-[2px] mb-1 trim-corners relative shrink-0">
+                      <div className="window-title-bar bg-windows-purple text-windows-white flex justify-between items-center w-full h-full">
                         <span className="font-bold absolute left-1/2 -translate-x-1/2 select-none">{title}</span>
                         <div className="flex gap-0.5">
                             <Button
@@ -76,6 +77,7 @@ const Dialog = memo(({
                                 ×
                             </Button>
                         </div>
+                      </div>
                     </div>
 
                     {/* Window Content: Message, Icon, and Buttons */}

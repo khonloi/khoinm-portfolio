@@ -132,7 +132,7 @@ const LayeredBox = memo(({
 
   return (
     <div
-      className={`relative block bg-[var(--layered-box-bg,var(--windows-grey))] shadow-[0_0_0_2px_var(--layered-box-outline,#000000)] ${variant === 'outward' ? 'm-0.5' : ''} ${className}`}
+      className={`relative block bg-[var(--layered-box-bg,var(--windows-grey))] shadow-[0_0_0_2px_var(--layered-box-outline,#000000)] ${variant === 'outward' ? 'm-0.5 trim-corners-ring' : 'trim-corners'} ${className}`}
       style={inlineVars}
       {...props}
     >
