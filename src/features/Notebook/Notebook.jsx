@@ -62,9 +62,9 @@ const FORMATTING_ICONS = {
       <rect x="1" y="8" width="8" height="1" />
     </svg>
   ),
-  fontSizeS: <span className="text-[10px] leading-none font-bold">A</span>,
   fontSizeM: <span className="text-[14px] leading-none font-bold">A</span>,
   fontSizeL: <span className="text-[18px] leading-none font-bold">A</span>,
+  plain: <span className="text-[14px] leading-none font-bold font-sans">¶</span>,
 };
 
 const FORMATTING_TOOLS = [
@@ -77,7 +77,7 @@ const FORMATTING_TOOLS = [
   { command: 'justifyRight', icon: FORMATTING_ICONS.justifyRight, title: 'Align Right' },
   { command: 'justifyFull', icon: FORMATTING_ICONS.justifyFull, title: 'Justify' },
   { type: 'separator' },
-  { command: 'fontSize', icon: FORMATTING_ICONS.fontSizeS, value: '2', title: 'Small' },
+  { command: 'plainParagraph', icon: FORMATTING_ICONS.plain, title: 'Plain Paragraph' },
   { command: 'fontSize', icon: FORMATTING_ICONS.fontSizeM, value: '3', title: 'Medium' },
   { command: 'fontSize', icon: FORMATTING_ICONS.fontSizeL, value: '5', title: 'Large' },
 ];
@@ -89,13 +89,13 @@ const Notebook = memo(({ id, fileContent }) => {
   useEffect(() => {
     if (fileContent !== undefined) {
       setText(fileContent);
-      if (editorRef.current && editorRef.current.innerHTML !== fileContent) {
-        editorRef.current.innerHTML = fileContent;
+      if (editorRef.current) {
+        editorRef.current.innerText = fileContent || "";
       }
     } else {
       setText("");
       if (editorRef.current) {
-        editorRef.current.innerHTML = "";
+        editorRef.current.innerText = "";
       }
     }
   }, [id, fileContent]);
@@ -107,7 +107,12 @@ const Notebook = memo(({ id, fileContent }) => {
   }, []);
 
   const handleFormat = useCallback((command, value = null) => {
-    document.execCommand(command, false, value);
+    if (command === 'plainParagraph') {
+      document.execCommand('removeFormat', false, null);
+      document.execCommand('formatBlock', false, 'p');
+    } else {
+      document.execCommand(command, false, value);
+    }
     if (editorRef.current) {
       setText(editorRef.current.innerHTML);
     }
@@ -119,12 +124,12 @@ const Notebook = memo(({ id, fileContent }) => {
   const lines = plainText.split("\n");
 
   return (
-    <div className="flex flex-col w-full h-full md:min-w-[36rem] md:min-h-[27rem] bg-windows-grey font-main text-sm">
+    <div className="flex flex-col w-full h-full md:w-[36rem] md:h-[27rem] [.maximized_&]:md:w-full [.maximized_&]:md:h-full bg-windows-grey font-main text-sm">
 
 
       {/* Editor Area with Formatting Bar */}
       <div className="flex-1 p-2 pb-0 overflow-hidden flex flex-col relative gap-2">
-        <div className="flex flex-wrap p-0.5">
+        <div className="flex flex-wrap p-0.5 gap-0.5">
           {FORMATTING_TOOLS.map((tool, index) => (
             tool.type === 'separator' ? (
               <div key={index} className="mx-2" />
@@ -148,14 +153,14 @@ const Notebook = memo(({ id, fileContent }) => {
         <LayeredBox
           variant="inward"
           bgColor="#ffffff"
-          className="flex-1 flex flex-col h-full"
+          className="flex-1 min-h-0 flex flex-col"
         >
           <div
             ref={editorRef}
             contentEditable
             onInput={handleInput}
             onBlur={handleInput}
-            className="flex-1 w-full h-full overflow-auto p-2 outline-none break-all selection:bg-windows-blue-bright selection:text-white"
+            className="flex-1 w-full h-full overflow-auto p-2 outline-none break-all whitespace-pre-wrap selection:bg-windows-blue-bright selection:text-white"
             style={{ minHeight: '100%' }}
           />
         </LayeredBox>
