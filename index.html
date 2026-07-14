@@ -4,7 +4,39 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/x-icon" href="./favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Pane 3.1</title>
+    <title>Khoi NM - Creative Developer Portfolio</title>
+    <meta name="description" content="Khoi NM's creative developer portfolio, stylized as a retro Windows 3.1 desktop experience. Explore projects, skills, and resume in a nostalgic interface." />
+    <meta name="keywords" content="Khoi NM, Creative Developer, Portfolio, Windows 3.1, Frontend Developer, Web Development, React, UI/UX" />
+    <meta name="author" content="Khoi NM" />
+    <link rel="canonical" href="https://khoinm.vercel.app/" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://khoinm.vercel.app/" />
+    <meta property="og:title" content="Khoi NM - Creative Developer Portfolio" />
+    <meta property="og:description" content="Khoi NM's creative developer portfolio, stylized as a retro Windows 3.1 desktop experience. Explore projects, skills, and resume in a nostalgic interface." />
+    <meta property="og:image" content="https://khoinm.vercel.app/og-image.png" />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://khoinm.vercel.app/" />
+    <meta property="twitter:title" content="Khoi NM - Creative Developer Portfolio" />
+    <meta property="twitter:description" content="Khoi NM's creative developer portfolio, stylized as a retro Windows 3.1 desktop experience. Explore projects, skills, and resume in a nostalgic interface." />
+    <meta property="twitter:image" content="https://khoinm.vercel.app/og-image.png" />
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Khoi NM",
+      "url": "https://khoinm.vercel.app/",
+      "jobTitle": "Creative Developer",
+      "sameAs": [
+        "https://github.com/khonloi"
+      ]
+    }
+    </script>
     <!-- Fonts are handled via CSS for better bundling -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -25,6 +57,17 @@
     </style>
   </head>
   <body>
+    <noscript>
+      <div style="padding: 2rem; font-family: sans-serif; background: #fff; color: #000; height: 100vh; width: 100vw; position: absolute; top: 0; left: 0; z-index: 999999;">
+        <h1>Khoi NM - Creative Developer Portfolio</h1>
+        <p>Welcome to my portfolio! I am a creative developer specializing in frontend web development and unique UI/UX experiences.</p>
+        <p>This website is built as an interactive Windows 3.1 desktop experience that requires JavaScript to run. Please enable JavaScript to explore my projects, resume, and skills in their full retro glory!</p>
+        <h2>Links</h2>
+        <ul>
+          <li><a href="https://github.com/khonloi">GitHub</a></li>
+        </ul>
+      </div>
+    </noscript>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
     <!-- Auto-unregister Service Workers to prevent cache issues with Sanity/Vite -->
