@@ -114,7 +114,7 @@ const Window = memo(
               onTouchStart={handleTouchStart}
             >
               <div className="h-full flex flex-col border-t-2 border-l-2 border-windows-white p-1 pr-1.5 pb-1.5 bg-windows-grey overflow-hidden">
-                <div className="bg-windows-black p-[2px] mb-1.5 trim-corners relative shrink-0">
+                <div className="bg-windows-black p-[2px] mb-1.5 relative shrink-0">
                   <div className={`window-title-bar flex justify-between items-center w-full h-full ${isFocused ? "bg-windows-purple text-windows-white" : "bg-windows-grey text-windows-black"}`}>
                     <span className="font-bold absolute left-1/2 -translate-x-1/2 select-none">{title}</span>
                   <div className="flex gap-0.5">

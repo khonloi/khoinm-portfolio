@@ -5,6 +5,7 @@
     <link rel="icon" type="image/x-icon" href="./favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Khoi NM - Creative Developer Portfolio</title>
+    <meta name="theme-color" content="#008080" />
     <meta
       name="description"
       content="Khoi NM's creative developer portfolio, stylized as a retro Windows 3.1 desktop experience. Explore projects, skills, and resume in a nostalgic interface."
@@ -69,9 +70,12 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
+      rel="preload"
       href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@500&display=swap"
-      rel="stylesheet"
+      as="style"
+      onload="this.onload=null;this.rel='stylesheet'"
     />
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@500&display=swap"></noscript>
     <style>
       html,
       body,
@@ -118,17 +122,6 @@
     </noscript>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
-    <!-- Auto-unregister Service Workers to prevent cache issues with Sanity/Vite -->
-    <script>
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.getRegistrations().then((registrations) => {
-          for (let registration of registrations) {
-            registration.unregister().then(() => {
-              console.log('[App] SW unregistered successfully');
-            });
-          }
-        });
-      }
-    </script>
+
   </body>
 </html>

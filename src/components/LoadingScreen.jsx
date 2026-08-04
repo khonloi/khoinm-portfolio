@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useMemo } from "react";
 import LayeredBox from "./LayeredBox";
 import { getCursorStyle } from "../data/cursors";
-import startupCard from "../assets/images/startup-card-1.png";
+import startupCard from "../assets/images/startup-card-1.webp";
 import kaisonLogo from "../assets/images/KAISON.svg";
 
 // Static configuration and utility functions
@@ -286,9 +286,9 @@ const LoadingScreen = ({
           )}
         </div>
       ) : (
-        <div className="bg-windows-grey border-2 border-windows-black w-[350px] h-[250px] overflow-hidden">
-          <div className="h-full relative">
-            <div className="h-full flex flex-col border-t-2 border-l-2 border-windows-white p-1 pr-1.5 pb-1.5 bg-windows-grey z-10">
+        <div className="bg-windows-black p-[2px] w-[350px] h-[250px] trim-window-corners">
+          <div className="h-full relative bg-windows-grey trim-corners">
+            <div className="h-full flex flex-col border-t-2 border-l-2 border-windows-white p-1 pr-1.5 pb-1.5 z-10">
               <div className="h-full flex flex-col border-2 border-windows-black bg-white overflow-hidden">
                 <div className="flex-1 overflow-hidden">
                   <img src={startupCard} alt="" className="w-full h-full object-cover object-top" />

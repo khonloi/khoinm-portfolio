@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { playSound } from '../data/sounds';
 import { desktopItems } from '../config/programConfig';
-import startupCard from "../assets/images/startup-card-1.png";
+import startupCard from "../assets/images/startup-card-1.webp";
 import monitorMoonIcon from "../assets/icons/Microsoft Windows 3 Post-It.ico";
 import keyGrayIcon from "../assets/icons/Microsoft Windows 3 Keys.ico";
 
