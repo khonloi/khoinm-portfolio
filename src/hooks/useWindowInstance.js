@@ -116,6 +116,7 @@ export const useWindowInstance = ({
       if (
         !e.target.closest('.window-title-bar') ||
         e.target.closest('.control-button') ||
+        e.target.closest('button') ||
         isMaximized ||
         isMobile ||
         isFullScreenActive
@@ -131,6 +132,7 @@ export const useWindowInstance = ({
       if (
         !e.target.closest('.window-title-bar') ||
         e.target.closest('.control-button') ||
+        e.target.closest('button') ||
         isMaximized ||
         isMobile ||
         isFullScreenActive

@@ -10,6 +10,7 @@ const Button = memo(({
   disabled = false,
   isPressed: controlledIsPressed,
   isToggleable = false,
+  type = "button",
   // Allow overriding layer colors for specific buttons (like the red close button)
   layer1ClassName = "",
   layer2ClassName = "",
@@ -31,11 +32,11 @@ const Button = memo(({
 
   // Base button styles
   const baseButtonClasses = [
-    "group relative select-none text-windows-black ring-2 ring-black trim-corners-ring",
+    "group relative select-none text-windows-black ring-2 ring-black trim-corners-ring touch-manipulation cursor-pointer active:outline-none",
     !className.includes('bg-') ? "bg-windows-grey" : "",
     variant === "program" ? "m-0.5 h-8 w-24 font-normal" : "",
     variant === "control" ? "h-8 w-8 text-3xl" : "",
-    disabled === "",
+    disabled ? "opacity-60 cursor-not-allowed pointer-events-none" : "",
     className
   ].filter(Boolean).join(" ");
 
@@ -48,7 +49,7 @@ const Button = memo(({
       : "border-windows-white group-active:border-windows-grey-dark";
 
   const l1Final = [
-    "h-full border-l-2 border-t-2 pb-0.5 pr-0.5",
+    "h-full border-l-2 border-t-2 pb-0.5 pr-0.5 pointer-events-none",
     !layer1ClassName.includes('border-') ? currentL1Border : "",
     layer1ClassName
   ].filter(Boolean).join(" ");
@@ -60,7 +61,7 @@ const Button = memo(({
     : "border-windows-grey-dark";
 
   const l2Final = [
-    "absolute inset-0 border-b-2 border-r-2",
+    "absolute inset-0 border-b-2 border-r-2 pointer-events-none",
     !layer2ClassName.includes('border-') ? currentL2Border : "",
     disabled ? "" : isPressed ? "hidden" : "group-active:hidden",
     layer2ClassName
@@ -70,7 +71,7 @@ const Button = memo(({
   const l3Variant = variant === "control" ? "font-button" : (variant === "program" ? "px-2.5 py-0.5" : "");
 
   const l3Final = [
-    "flex h-full items-center justify-center",
+    "flex h-full items-center justify-center pointer-events-none",
     l3Variant,
     !disabled && (isPressed
       ? "translate-x-px translate-y-px"
@@ -80,6 +81,7 @@ const Button = memo(({
 
   return (
     <button
+      type={type}
       className={baseButtonClasses}
       onClick={handleClick}
       title={title}

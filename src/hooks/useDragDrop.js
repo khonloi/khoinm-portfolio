@@ -17,6 +17,9 @@ export const useDragDrop = (id, position, onPositionChange, onSelect, options = 
 
   const handleMouseDown = useCallback(
     (e) => {
+      if (e.target.closest("button") || e.target.closest(".control-button") || e.target.closest("[role='button']")) {
+        return;
+      }
       onSelect?.(id);
       if (e.detail === 2 || !isAbsolutePositioned) return;
 
@@ -34,6 +37,9 @@ export const useDragDrop = (id, position, onPositionChange, onSelect, options = 
 
   const handleTouchStart = useCallback(
     (e) => {
+      if (e.target.closest("button") || e.target.closest(".control-button") || e.target.closest("[role='button']")) {
+        return;
+      }
       onSelect?.(id);
       if (!isAbsolutePositioned) return;
 
@@ -41,6 +47,7 @@ export const useDragDrop = (id, position, onPositionChange, onSelect, options = 
       const isTitleBar = target.closest(".window-title-bar");
 
       if (
+        elementRef.current &&
         elementRef.current.classList.contains("window-outer") &&
         !isTitleBar
       ) {
