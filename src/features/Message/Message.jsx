@@ -6,7 +6,7 @@ import { useMessageForm } from "../../hooks/useMessageForm";
 
 
 
-const Message = memo(({ onClose }) => {
+const Message = memo(() => {
   const { formRef, status, errors, isSending, sendEmail, clearMessages } =
     useMessageForm();
 

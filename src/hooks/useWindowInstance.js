@@ -1,15 +1,10 @@
-import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
-import { useDragDrop } from './useDragDrop';
+import { useState, useCallback, useRef, useMemo } from 'react';
+import { useWindowPosition } from './useWindowPosition';
+import { useWindowMobile } from './useWindowMobile';
+import { useWindowLifecycle } from './useWindowLifecycle';
+import { useWindowAnimations } from './useWindowAnimations';
 
-const DEFAULT_POSITION = { x: 100, y: 100 };
 const MENU_BAR_HEIGHT_CONST = 36;
-
-// Utility to calculate initial position
-const getInitialPos = (pos) => {
-  if (!pos) return DEFAULT_POSITION;
-  if (pos.shouldCenter) return { x: 0, y: 0 };
-  return { x: pos.x || 100, y: pos.y || 100 };
-};
 
 export const useWindowInstance = ({
   id,
@@ -27,369 +22,95 @@ export const useWindowInstance = ({
   isMaximized: initialMaximized,
   isFullScreen,
 }) => {
-  // Use a ref for the constant value
   const MENU_BAR_HEIGHT = useRef(MENU_BAR_HEIGHT_CONST).current;
-
-  // Position state
   const initialMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
   const initialMaximizedState = initialMobile || initialMaximized || false;
 
-  const [position, setPosition] = useState(() => {
-    if (initialMaximizedState) return { x: 0, y: MENU_BAR_HEIGHT_CONST };
-    return getInitialPos(initialPosition);
-  });
-  const [windowDimensions, setWindowDimensions] = useState({
-    width: 0,
-    height: 0,
-  });
-  const [isLoading, setIsLoading] = useState(!isFullScreen);
-  const [isOpening, setIsOpening] = useState(!isFullScreen);
-  const [isClosing, setIsClosing] = useState(false);
-  const [isMinimizing, setIsMinimizing] = useState(false);
-  const [isMaximized, setIsMaximized] = useState(initialMaximizedState);
-  const [preMaximizePosition, setPreMaximizePosition] = useState(() =>
-    getInitialPos(initialPosition)
-  );
-  const [preMobileState, setPreMobileState] = useState(null);
   const [isFullScreenActive, setIsFullScreenActive] = useState(isFullScreen);
-  const [touchStartTime, setTouchStartTime] = useState(null);
-  const [hasCentered, setHasCentered] = useState(
-    initialMaximizedState || isFullScreen || !initialPosition?.shouldCenter
-  );
-  const [isMobile, setIsMobile] = useState(initialMobile);
 
-  // Synchronously update isOpening during render when transitioning from minimized -> restored
-  // to prevent any 1-frame flash of the window before useEffect runs.
-  const [prevMinimized, setPrevMinimized] = useState(isMinimized);
-  if (prevMinimized !== isMinimized) {
-    setPrevMinimized(isMinimized);
-    if (prevMinimized && !isMinimized && !isFullScreen && !isFullScreenActive) {
-      setIsOpening(true);
-    }
-  }
-
-  const hasAnimatedOpenRef = useRef(isFullScreen || false);
-  const prevMinimizedRef = useRef(isMinimized);
-
-  // Drag logic - calling this early to get elementRef
-  const handlePositionChange = useCallback(
-    (_, newPos) => {
-      if (!isMaximized && !isMobile && !isFullScreenActive) setPosition(newPos);
-    },
-    [isMaximized, isMobile, isFullScreenActive]
-  );
-
+  // Position & Dimensions hook
   const {
+    position,
+    setPosition,
+    windowDimensions,
+    isMaximized,
+    setIsMaximized,
+    preMaximizePosition,
+    setPreMaximizePosition,
+    hasCentered,
+    setHasCentered,
     elementRef,
     isDragging,
     previewPosition,
     handleMouseDown,
     handleTouchStart: dragTouchStart,
-  } = useDragDrop(id, position, handlePositionChange, onFocus, {
-    useOutline: true,
+  } = useWindowPosition({
+    id,
+    initialPosition,
+    initialMaximizedState,
+    isFullScreenActive,
+    isMobile: initialMobile, // updated below
+    onFocus,
+    MENU_BAR_HEIGHT,
   });
 
-  // Track dimensions when dragging starts
-  useEffect(() => {
-    if (isDragging && elementRef.current) {
-      const rect = elementRef.current.getBoundingClientRect();
-      setWindowDimensions({ width: rect.width, height: rect.height });
-    }
-  }, [isDragging, elementRef]);
-
-  // Notify parent of loading state changes
-  useEffect(() => {
-    onLoadingChange?.(id, isLoading);
-  }, [isLoading, id, onLoadingChange]);
-
-  // Notify parent of full-screen state changes
-  useEffect(() => {
-    onFullScreenChange?.(isFullScreenActive && !isMinimized);
-  }, [isFullScreenActive, isMinimized, onFullScreenChange]);
-
-  // Handle mobile detection and state transitions
-  useEffect(() => {
-    let resizeTimer;
-
-    const handleResize = () => {
-      clearTimeout(resizeTimer);
-      resizeTimer = setTimeout(() => {
-        const mobile = window.innerWidth <= 768;
-
-        if (mobile && !isMobile && !isMinimized && !isFullScreenActive) {
-          setPreMobileState({
-            position,
-            isMaximized,
-          });
-          setPreMaximizePosition(position);
-          setPosition({ x: 0, y: MENU_BAR_HEIGHT });
-          setIsMaximized(true);
-        } else if (
-          !mobile &&
-          isMobile &&
-          preMobileState &&
-          !isMinimized &&
-          !isFullScreenActive
-        ) {
-          setPosition(preMobileState.position);
-          setIsMaximized(preMobileState.isMaximized);
-          setPreMobileState(null);
-        }
-
-        setIsMobile(mobile);
-      }, 150);
-    };
-
-    window.addEventListener('resize', handleResize);
-    handleResize();
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-      clearTimeout(resizeTimer);
-    };
-  }, [
-    isMobile,
+  // Mobile hook
+  const { isMobile, touchStartTime, setTouchStartTime } = useWindowMobile({
+    initialMobile,
     isMinimized,
+    isFullScreenActive,
     position,
+    setPosition,
     isMaximized,
-    preMobileState,
+    setIsMaximized,
+    setPreMaximizePosition,
     MENU_BAR_HEIGHT,
-    isFullScreenActive,
-  ]);
+  });
 
-  // Handle ESC key to close full-screen window
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === 'Escape' && isFullScreenActive) {
-        onFullScreenChange?.(false);
-        onClose(id);
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isFullScreenActive, id, onClose, onFullScreenChange]);
-
-  // Initial application loading delay for regular applications
-  useEffect(() => {
-    if (isFullScreen || isFullScreenActive) {
-      setIsLoading(false);
-      return;
-    }
-
-    const loadingTimer = setTimeout(() => {
-      setIsLoading(false);
-    }, 700);
-
-    return () => clearTimeout(loadingTimer);
-  }, [isFullScreen, isFullScreenActive]);
-
-  // Center window and trigger opening ZoomRect animation once initial loading delay completes
-  useEffect(() => {
-    if (isFullScreen || isFullScreenActive) {
-      hasAnimatedOpenRef.current = true;
-      setIsOpening(false);
-      setIsLoading(false);
-      return;
-    }
-
-    if (isLoading || isMinimized) return;
-    if (hasAnimatedOpenRef.current) return;
-
-    let cancelRef = false;
-
-    const runSetupAndAnimate = () => {
-      if (cancelRef || !elementRef.current) return;
-
-      const windowElement = elementRef.current;
-      const windowRect = windowElement.getBoundingClientRect();
-      const windowWidth = windowRect.width;
-      const windowHeight = windowRect.height;
-
-      // If dimensions are not ready in DOM yet, request next frame
-      if (windowWidth === 0 || windowHeight === 0) {
-        requestAnimationFrame(runSetupAndAnimate);
-        return;
-      }
-
-      // Handle centering calculation if required
-      if (
-        !isMobile &&
-        !isFullScreenActive &&
-        !isMaximized &&
-        initialPosition?.shouldCenter &&
-        !hasCentered
-      ) {
-        const viewportWidth = window.innerWidth;
-        const viewportHeight = window.innerHeight;
-        const safeBottomBuffer =
-          parseInt(
-            getComputedStyle(document.documentElement).getPropertyValue(
-              '--safe-bottom-buffer'
-            )
-          ) || 0;
-
-        const centerX = (viewportWidth - windowWidth) / 2;
-        const availableHeight =
-          viewportHeight - MENU_BAR_HEIGHT - safeBottomBuffer;
-        const centerY = (availableHeight - windowHeight) / 2;
-
-        const finalX = Math.max(0, Math.min(centerX, viewportWidth - windowWidth));
-        const finalY = Math.max(0, Math.min(centerY, availableHeight - windowHeight));
-
-        setPosition({ x: finalX, y: finalY });
-        setPreMaximizePosition({ x: finalX, y: finalY });
-        setHasCentered(true);
-
-        // After position state updates, measure the exact DOM bounding box in next frame
-        requestAnimationFrame(() => {
-          if (cancelRef || !elementRef.current) return;
-          const updatedRect = elementRef.current.getBoundingClientRect();
-          hasAnimatedOpenRef.current = true;
-
-          const targetRect = {
-            x: updatedRect.left,
-            y: updatedRect.top,
-            width: updatedRect.width,
-            height: updatedRect.height,
-          };
-
-          if (triggerZoomAnimation) {
-            triggerZoomAnimation({
-              id: `open-${id}`,
-              fromRect: originRect,
-              toRect: targetRect,
-              type: 'open',
-              duration: 220,
-              steps: 7,
-              onComplete: () => {
-                setIsOpening(false);
-              },
-            });
-          } else {
-            setIsOpening(false);
-          }
-        });
-        return;
-      }
-
-      hasAnimatedOpenRef.current = true;
-
-      // Exact pixel-perfect viewport coordinates
-      const targetRect = {
-        x: windowRect.left,
-        y: windowRect.top,
-        width: windowRect.width,
-        height: windowRect.height,
-      };
-
-      if (triggerZoomAnimation) {
-        triggerZoomAnimation({
-          id: `open-${id}`,
-          fromRect: originRect,
-          toRect: targetRect,
-          type: 'open',
-          duration: 220,
-          steps: 7,
-          onComplete: () => {
-            setIsOpening(false);
-          },
-        });
-      } else {
-        setIsOpening(false);
-      }
-    };
-
-    const animFrameId = requestAnimationFrame(runSetupAndAnimate);
-
-    return () => {
-      cancelRef = true;
-      cancelAnimationFrame(animFrameId);
-    };
-  }, [
-    id,
+  // Lifecycle hook
+  const {
     isLoading,
-    originRect,
-    triggerZoomAnimation,
-    isMinimized,
-    hasCentered,
-    initialPosition,
-    isMobile,
-    isFullScreenActive,
-    isFullScreen,
-    isMaximized,
-    MENU_BAR_HEIGHT,
-    elementRef,
-  ]);
-
-  // Handle un-minimizing / restore animation
-  useEffect(() => {
-    if (isFullScreen || isFullScreenActive) {
-      setIsOpening(false);
-      prevMinimizedRef.current = isMinimized;
-      return;
-    }
-
-    if (prevMinimizedRef.current && !isMinimized) {
-      // Just restored
-      let cancelRef = false;
-
-      const runRestoreAnimation = () => {
-        if (cancelRef || !elementRef.current) return;
-
-        const rect = elementRef.current.getBoundingClientRect();
-        if (rect.width === 0 || rect.height === 0) {
-          requestAnimationFrame(runRestoreAnimation);
-          return;
-        }
-
-        const targetRect = {
-          x: rect.left,
-          y: rect.top,
-          width: rect.width,
-          height: rect.height,
-        };
-
-        if (triggerZoomAnimation) {
-          triggerZoomAnimation({
-            id: `restore-${id}`,
-            fromRect: originRect || {
-              x: 20,
-              y: window.innerHeight - 56,
-              width: 44,
-              height: 44,
-            },
-            toRect: targetRect,
-            type: 'restore',
-            duration: 220,
-            steps: 7,
-            onComplete: () => {
-              setIsOpening(false);
-            },
-          });
-        } else {
-          setIsOpening(false);
-        }
-      };
-
-      const animFrame = requestAnimationFrame(runRestoreAnimation);
-
-      return () => {
-        cancelRef = true;
-        cancelAnimationFrame(animFrame);
-      };
-    }
-    prevMinimizedRef.current = isMinimized;
-  }, [
-    isMinimized,
+    isOpening,
+    setIsOpening,
+    isClosing,
+    setIsClosing,
+    isMinimizing,
+    setIsMinimizing,
+    hasAnimatedOpenRef,
+    prevMinimizedRef,
+  } = useWindowLifecycle({
     id,
-    originRect,
-    triggerZoomAnimation,
     isFullScreen,
     isFullScreenActive,
-    elementRef,
-  ]);
+    isMinimized,
+    onLoadingChange,
+    onFullScreenChange,
+    onClose,
+  });
 
+  // Animations hook
+  useWindowAnimations({
+    id,
+    isFullScreen,
+    isFullScreenActive,
+    isMinimized,
+    isLoading,
+    setIsOpening,
+    hasAnimatedOpenRef,
+    prevMinimizedRef,
+    triggerZoomAnimation,
+    originRect,
+    elementRef,
+    setPosition,
+    setPreMaximizePosition,
+    hasCentered,
+    setHasCentered,
+    isMaximized,
+    isMobile,
+    MENU_BAR_HEIGHT,
+  });
+
+  // Event Handlers
   const handleTitleBarMouseDown = useCallback(
     (e) => {
       if (
@@ -427,7 +148,7 @@ export const useWindowInstance = ({
       }
       handleTitleBarTouchStart(e);
     },
-    [isFullScreenActive, isMobile, handleTitleBarTouchStart]
+    [isFullScreenActive, isMobile, handleTitleBarTouchStart, setTouchStartTime]
   );
 
   const handleTouchEnd = useCallback(() => {
@@ -446,6 +167,7 @@ export const useWindowInstance = ({
     id,
     onClose,
     onFullScreenChange,
+    setTouchStartTime,
   ]);
 
   const handleMinimizeClick = useCallback(() => {
@@ -509,6 +231,8 @@ export const useWindowInstance = ({
     isFullScreenActive,
     onMinimize,
     elementRef,
+    setIsMinimizing,
+    setIsFullScreenActive,
   ]);
 
   const handleMaximizeClick = useCallback(() => {
@@ -605,6 +329,10 @@ export const useWindowInstance = ({
     MENU_BAR_HEIGHT,
     triggerZoomAnimation,
     elementRef,
+    setIsMaximized,
+    setPosition,
+    setPreMaximizePosition,
+    setIsOpening,
   ]);
 
   const handleCloseClick = useCallback(() => {
@@ -657,6 +385,8 @@ export const useWindowInstance = ({
     isFullScreenActive,
     onClose,
     elementRef,
+    setIsClosing,
+    setIsFullScreenActive,
   ]);
 
   return useMemo(

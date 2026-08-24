@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { playSound } from '../data/sounds';
 import { desktopItems } from '../config/programConfig';
 import startupCard from "../assets/images/startup-card-1.webp";

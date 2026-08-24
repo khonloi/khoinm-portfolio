@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef, memo } from "react";
+import React, { useState, useEffect, useCallback, useRef, memo } from "react";
 import Button from "../../components/Button";
 import winInternationalIcon from "../../assets/icons/Microsoft Windows 3 International.ico";
 import treeIcon from "../../assets/icons/Tree.ico";
@@ -183,7 +183,7 @@ const HomePage = memo(({ articles, onNavigate }) => {
 
               {/* Sub Sections */}
               <div className="flex flex-col gap-10">
-                {articles.slice(1).map((article, i) => (
+                {articles.slice(1).map((article) => (
                   <article key={article._id ?? article.id} className="flex flex-col group">
                     <h3 className="text-[#800000] font-bold text-sm uppercase mb-3 border-b border-[#dddddd] w-fit pb-3 pr-6 font-main">{article.category}:</h3>
                     <div className="flex flex-col sm:flex-row gap-8">
@@ -255,20 +255,20 @@ const ArticlePage = memo(({ article, onNavigate }) => (
         <ReactMarkdown
           remarkPlugins={[remarkGfm]}
           components={{
-            h1: ({ node, ...props }) => <h1 className="text-xl font-bold mt-6 mb-3 border-b border-windows-grey-dark pb-1" {...props} />,
-            h2: ({ node, ...props }) => <h2 className="text-lg font-bold mt-5 mb-2" {...props} />,
-            h3: ({ node, ...props }) => <h3 className="text-base font-bold mt-4 mb-2" {...props} />,
-            p: ({ node, ...props }) => <p className="mb-4 last:mb-0" {...props} />,
-            ul: ({ node, ...props }) => <ul className="list-disc ml-6 mb-4 space-y-1" {...props} />,
-            ol: ({ node, ...props }) => <ol className="list-decimal ml-6 mb-4 space-y-1" {...props} />,
-            li: ({ node, ...props }) => <li className="pl-1" {...props} />,
-            a: ({ node, ...props }) => <a className="text-[#000080] underline hover:text-[#800000]" target="_blank" rel="noopener noreferrer" {...props} />,
-            blockquote: ({ node, ...props }) => <blockquote className="border-l-4 border-windows-grey-dark pl-4 italic my-4" {...props} />,
-            code: ({ node, inline, ...props }) =>
+            h1: ({ ...props }) => <h1 className="text-xl font-bold mt-6 mb-3 border-b border-windows-grey-dark pb-1" {...props} />,
+            h2: ({ ...props }) => <h2 className="text-lg font-bold mt-5 mb-2" {...props} />,
+            h3: ({ ...props }) => <h3 className="text-base font-bold mt-4 mb-2" {...props} />,
+            p: ({ ...props }) => <p className="mb-4 last:mb-0" {...props} />,
+            ul: ({ ...props }) => <ul className="list-disc ml-6 mb-4 space-y-1" {...props} />,
+            ol: ({ ...props }) => <ol className="list-decimal ml-6 mb-4 space-y-1" {...props} />,
+            li: ({ ...props }) => <li className="pl-1" {...props} />,
+            a: ({ ...props }) => <a className="text-[#000080] underline hover:text-[#800000]" target="_blank" rel="noopener noreferrer" {...props} />,
+            blockquote: ({ ...props }) => <blockquote className="border-l-4 border-windows-grey-dark pl-4 italic my-4" {...props} />,
+            code: ({ inline, ...props }) =>
               inline ?
                 <code className="bg-windows-grey px-1 rounded-sm" {...props} /> :
                 <code className="block bg-windows-grey p-3 rounded-sm border border-windows-grey-dark overflow-x-auto my-4" {...props} />,
-            hr: ({ node, ...props }) => <hr className="border-windows-grey-dark my-6" {...props} />,
+            hr: ({ ...props }) => <hr className="border-windows-grey-dark my-6" {...props} />,
           }}
         >
           {article.body}
@@ -360,9 +360,18 @@ const News = memo(() => {
   const canGoBack = historyIndex > 0;
   const canGoForward = historyIndex < history.length - 1;
 
+  const loadingTimeoutRef = useRef(null);
+  
+  useEffect(() => {
+    return () => {
+      if (loadingTimeoutRef.current) clearTimeout(loadingTimeoutRef.current);
+    };
+  }, []);
+
   const simulateLoad = useCallback((callback) => {
     setIsNavLoading(true);
-    setTimeout(() => { callback(); setIsNavLoading(false); }, 300);
+    if (loadingTimeoutRef.current) clearTimeout(loadingTimeoutRef.current);
+    loadingTimeoutRef.current = setTimeout(() => { callback(); setIsNavLoading(false); }, 300);
   }, []);
 
   const navigate = useCallback((pageId) => {

@@ -149,7 +149,7 @@ const Line98 = () => {
 
     setPreviews(nextPreviews);
     return nextGrid;
-  }, [checkLines]);
+  }, [checkLines, playEffect]);
 
   const initGame = useCallback(() => {
     const newGrid = Array(GRID_SIZE).fill(0).map(() => Array(GRID_SIZE).fill(0));

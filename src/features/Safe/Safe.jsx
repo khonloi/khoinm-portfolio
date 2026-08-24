@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Dialog from '../../components/Dialog';
-import winSafeIcon from '../../assets/icons/Microsoft Windows 3 Safe.ico';
+
 import Input from '../../components/Input';
 
 const Safe = ({ onClose }) => {

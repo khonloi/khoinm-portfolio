@@ -39,7 +39,7 @@ export const useShutdown = () => {
           await playPromise;
           return; // Exit if successful
         }
-      } catch (error) {
+      } catch {
         // Continue to next source
       }
     }

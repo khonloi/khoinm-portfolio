@@ -36,7 +36,7 @@ const MediaPlayer = memo(({ id, fileContent, crop43 }) => {
         videoId: videoMatch ? videoMatch[1] : null,
         playlistId: listMatch ? listMatch[1] : null
       };
-    } catch (e) {
+    } catch {
       return { videoId: null, playlistId: null };
     }
   };

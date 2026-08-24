@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 const generateErrorCode = () => {
   const hex = (size) => Math.floor(Math.random() * Math.pow(16, size)).toString(16).toUpperCase().padStart(size, '0');

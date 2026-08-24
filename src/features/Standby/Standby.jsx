@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const Standby = ({ onClose }) => {
+const Standby = () => {
   const [time, setTime] = useState(new Date());
 
   useEffect(() => {

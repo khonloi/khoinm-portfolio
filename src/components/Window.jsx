@@ -26,7 +26,7 @@ const Window = memo(
     const {
       elementRef,
       position,
-      isLoading,
+
       isOpening,
       isClosing,
       isMinimizing,

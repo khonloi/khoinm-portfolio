@@ -26,9 +26,7 @@ const Explorer = memo(({
     }
   }, [onMoveIcon, folderId]);
 
-  const handleDragStart = useCallback((e, itemId) => {
-    e.dataTransfer.setData('text/plain', itemId);
-  }, []);
+
 
   const isLoading = folderData?.contents?.length === 1 && folderData.contents[0].label === "Loading CMS data";
   const isNotFound = !folderData;

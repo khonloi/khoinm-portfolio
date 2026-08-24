@@ -149,7 +149,7 @@ export const useLoadingScreen = () => {
       // Ensure loading class is removed
       document.body.classList.remove('loading');
     };
-  }, []);
+  }, [isDelaying]);
 
   return {
     isLoading,

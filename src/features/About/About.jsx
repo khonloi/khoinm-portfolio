@@ -40,7 +40,7 @@ const INITIAL_FOLDER_STATES = SKILLS_DATA.reduce((acc, folder) => {
 
 const About = memo(() => {
   const [openFolders, setOpenFolders] = useState(INITIAL_FOLDER_STATES);
-  const { data: aboutData, isLoading } = useAbout(DEFAULT_ABOUT_DATA);
+  const { data: aboutData } = useAbout(DEFAULT_ABOUT_DATA);
 
   const toggleFolder = useCallback((folderId) => {
     setOpenFolders((prev) => ({

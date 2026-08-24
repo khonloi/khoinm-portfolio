@@ -5,12 +5,8 @@ import Dialog from './components/Dialog';
 import { useNetworkStatus } from './hooks/useNetworkStatus';
 import networkIcon from './assets/icons/Microsoft Windows 3 Local Area Network.ico';
 import { setCursorVariables } from './data/cursors';
-import sanityConfig from '../sanity.config';
 import './App.css';
-
-const Studio = React.lazy(() =>
-  import('sanity').then((module) => ({ default: module.Studio }))
-);
+const Editor = React.lazy(() => import('./components/Editor'));
 
 function App() {
   const [isFullScreen, setIsFullScreen] = useState(false);
@@ -25,14 +21,6 @@ function App() {
     }
   }, [isOnline]);
 
-  if (window.location.pathname.startsWith('/editor')) {
-    return (
-      <React.Suspense fallback={<div style={{ padding: '2rem', color: '#fff', background: '#000', height: '100vh' }}>Loading Editor...</div>}>
-        <Studio config={sanityConfig} />
-      </React.Suspense>
-    );
-  }
-
   // Initialize cursor variables on mount
   useEffect(() => {
     setCursorVariables();
@@ -45,6 +33,14 @@ function App() {
   const triggerBSOD = useCallback(() => {
     setIsBSODActive(true);
   }, []);
+
+  if (window.location.pathname.startsWith('/editor')) {
+    return (
+      <React.Suspense fallback={<div style={{ padding: '2rem', color: '#fff', background: '#000', height: '100vh' }}>Loading Editor...</div>}>
+        <Editor />
+      </React.Suspense>
+    );
+  }
 
   return (
     <div className={`App ${isFullScreen ? 'fullscreen' : ''}`}>

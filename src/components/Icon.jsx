@@ -30,9 +30,10 @@ const Icon = memo(({
     // Stage-based state
     const [isFlashing, setIsFlashing] = useState(false);
     const [isImageLoaded, setIsImageLoaded] = useState(false);
-    const [isDropTarget, setIsDropTarget] = useState(false);
+
     const lastClickTimeRef = useRef(0);
     const clickTimeoutRef = useRef(null);
+    const flashTimeoutRef = useRef(null);
 
     const imageRef = useRef(null);
     const effectiveIcon = iconSrc || (type === 'folder' ? winFolderIcon : winWindowBlankIcon);
@@ -57,12 +58,16 @@ const Icon = memo(({
         return () => {
             clearTimeout(timeout);
             if (clickTimeoutRef.current) clearTimeout(clickTimeoutRef.current);
+            if (flashTimeoutRef.current) clearTimeout(flashTimeoutRef.current);
         };
     }, [effectiveIcon]);
 
     const handleAction = useCallback((e) => {
         setIsFlashing(true);
-        setTimeout(() => setIsFlashing(false), 400);
+        if (flashTimeoutRef.current) clearTimeout(flashTimeoutRef.current);
+        flashTimeoutRef.current = setTimeout(() => {
+            if (elementRef.current) setIsFlashing(false);
+        }, 400);
         let originRect = null;
         if (elementRef.current) {
             const rect = elementRef.current.getBoundingClientRect();
@@ -95,13 +100,11 @@ const Icon = memo(({
     const handleInternalDragOver = useCallback((e) => {
         if (!onDrop) return;
         e.preventDefault();
-        setIsDropTarget(true);
         onDragOver?.(e, id);
     }, [onDrop, onDragOver, id]);
 
     const handleInternalDrop = useCallback((e) => {
         e.preventDefault();
-        setIsDropTarget(false);
         const data = e.dataTransfer.getData('text/plain');
         if (data && onDrop) {
             try {
@@ -141,7 +144,6 @@ const Icon = memo(({
             onTouchStart={handleTouchStart}
             onClick={handleClick}
             onDragOver={handleInternalDragOver}
-            onDragLeave={() => setIsDropTarget(false)}
             onDrop={handleInternalDrop}
             draggable={isDraggable}
             onDragStart={(e) => {

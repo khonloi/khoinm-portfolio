@@ -6,8 +6,12 @@ const audioCache = new Map();
  * @param {Object} options - Optional configuration
  */
 export const playSound = async (soundType, options = {}) => {
-  const { volume = 0.7 } = options;
+  const { volume = 0.7, preventDuplicate = false, audioRef = null } = options;
   const baseUrl = import.meta.env.BASE_URL || '/';
+
+  if (preventDuplicate && audioRef && audioRef.current && !audioRef.current.ended && !audioRef.current.paused) {
+    return;
+  }
 
   let audio = audioCache.get(soundType);
 
@@ -21,6 +25,19 @@ export const playSound = async (soundType, options = {}) => {
   try {
     const playAudio = audio.cloneNode();
     playAudio.volume = volume;
+
+    if (audioRef) {
+      audioRef.current = playAudio;
+    }
+
+    // Cleanup memory when finished
+    playAudio.addEventListener('ended', () => {
+      if (audioRef && audioRef.current === playAudio) {
+        audioRef.current = null;
+      }
+      playAudio.remove();
+    }, { once: true });
+
     const playPromise = playAudio.play();
 
     if (playPromise !== undefined) {
@@ -34,7 +51,7 @@ export const playSound = async (soundType, options = {}) => {
       const fallbackAudio = new Audio(`/sounds/${soundType}.mp3`);
       fallbackAudio.volume = volume;
       await fallbackAudio.play();
-    } catch (fallbackError) {
+    } catch {
       console.error(`Sound ${soundType} failed all playback attempts`);
     }
   }

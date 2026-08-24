@@ -4,17 +4,17 @@ export default {
   theme: {
     extend: {
       colors: {
-        'windows-grey': '#c0c0c0',
-        'windows-white': '#ffffff',
-        'windows-black': '#000000',
-        'windows-grey-dark': '#808080',
-        'windows-grey-light': '#dfdfdf',
-        'windows-grey-shade-1': '#e0e0e0',
-        'windows-blue': '#0575d8',
-        'windows-blue-bright': '#316ac5',
-        'windows-yellow': '#f9f1a5',
-        'windows-teal': '#3a9cc6',
-        'windows-purple': '#b26b93',
+        'windows-grey': 'var(--windows-grey)',
+        'windows-white': 'var(--windows-white)',
+        'windows-black': 'var(--windows-black)',
+        'windows-grey-dark': 'var(--windows-grey-dark)',
+        'windows-grey-light': 'var(--windows-grey-light)',
+        'windows-grey-shade-1': 'var(--windows-grey-shade-1)',
+        'windows-blue': 'var(--windows-blue)',
+        'windows-blue-bright': 'var(--windows-blue-bright)',
+        'windows-yellow': 'var(--windows-yellow)',
+        'windows-teal': 'var(--windows-teal)',
+        'windows-purple': 'var(--windows-purple)',
       },
       fontFamily: {
         main: ['W95FA', 'MS Sans Serif', 'Tahoma', 'sans-serif'],

@@ -1,7 +1,7 @@
 // src/hooks/useDragDrop.js
 import { useState, useRef, useEffect, useCallback } from "react";
 // Import the cursor file from assets
-import defaultCursor from "../assets/cursors/default_link.cur";
+
 
 export const useDragDrop = (id, position, onPositionChange, onSelect, options = {}) => {
   const { useOutline = false } = options;

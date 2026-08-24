@@ -13,7 +13,6 @@ import winBinderIcon from "../assets/icons/Microsoft Windows 3 Binder.ico";
 import winBriefcaseIcon from "../assets/icons/Microsoft Windows 3 Briefcase.ico";
 import winCalculatorIcon from "../assets/icons/Microsoft Windows 3 Calculator.ico";
 import winCalendarIcon from "../assets/icons/Microsoft Windows 3 Calendar.ico";
-import winCameraIcon from "../assets/icons/Microsoft Windows 3 Camera.ico";
 import winCardfileIcon from "../assets/icons/Microsoft Windows 3 Cardfile.ico";
 import winCassetteIcon from "../assets/icons/Microsoft Windows 3 Cassette.ico";
 import winCharacterMapIcon from "../assets/icons/Microsoft Windows 3 Character Map.ico";
@@ -107,7 +106,6 @@ export const ICON_MAP = {
   winBriefcaseIcon,
   winCalculatorIcon,
   winCalendarIcon,
-  winCameraIcon,
   winCardfileIcon,
   winCassetteIcon,
   winCompactDiscIcon,
@@ -293,14 +291,6 @@ export const desktopItems = [
         isMaximizable: false,
       },
       {
-        id: "camera",
-        label: "Camera",
-        iconSrc: winCameraIcon,
-        type: "icon",
-        isMaximizable: false,
-        isMaximized: true,
-      },
-      {
         id: "clock",
         label: "Clock",
         iconSrc: winClockIcon,
@@ -433,9 +423,6 @@ const Welcome = lazy(() => import("../features/Welcome/Welcome"));
 const Message = lazy(() => import("../features/Message/Message"));
 const MediaPlayer = lazy(() => import("../features/MediaPlayer/MediaPlayer"));
 const Line98 = lazy(() => import("../features/Games/Line98/Line98"));
-const Pikachu = lazy(() => import("../features/Games/Pikachu/Pikachu"));
-const MazeTest = lazy(() => import("../features/Games/MazeTest/MazeTest"));
-const Camera = lazy(() => import("../features/Camera/Camera"));
 const Safe = lazy(() => import("../features/Safe/Safe"));
 const News = lazy(() => import("../features/News/News"));
 const MatrixRain = lazy(() => import("../features/MatrixRain/MatrixRain"));
@@ -453,9 +440,6 @@ const windowContentRegistry = {
   message: Message,
   media: MediaPlayer,
   line98: Line98,
-  pikachu: Pikachu,
-  mazetest: MazeTest,
-  camera: Camera,
   safe: Safe,
   internet: News,
   matrix: MatrixRain,

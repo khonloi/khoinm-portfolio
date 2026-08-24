@@ -6,41 +6,31 @@ import Taskbar from "./Taskbar";
 import MenuBar from "./MenuBar";
 import LoadingScreen from "./LoadingScreen";
 import ZoomRectOverlay from "./ZoomRectOverlay";
-import { useWindow } from "../hooks/useWindow";
+import { useWindowSystem } from "../hooks/useWindowSystem";
 import { useDesktop } from "../hooks/useDesktop";
 import { useLoadingScreen } from "../hooks/useLoadingScreen";
-import { useWindowManager } from "../hooks/useWindowManager";
 import { useWindowAnimation } from "../hooks/useWindowAnimation";
 import { useShutdown } from "../hooks/useShutdown";
 import { useStartup } from "../hooks/useStartup";
 import { useCMSContent } from "../hooks/useDesktopItems";
 import { playSound } from "../data/sounds";
 import { getCursorStyle } from "../data/cursors";
-import { desktopItems, renderWindowContent } from "../config/programConfig";
+import { renderWindowContent } from "../config/programConfig";
 
 const Desktop = memo(({ onFullScreenChange, onTriggerBSOD }) => {
   const {
     openWindows,
-    openWindow,
-    closeWindow,
-    focusWindow,
     focusedWindow,
-    updateWindowOriginRect,
-  } = useWindow();
-  const { folderMap, cdDrive } = useCMSContent();
-  const { allDesktopItems, itemPositions, handleItemPositionChange } =
-    useDesktop(cdDrive);
-
-  const { isLoading, isDelaying, progress, menuBarVisible, skipLoading } =
-    useLoadingScreen();
-  const {
     minimizedWindows,
+    minimizedWindowIds,
     loadingWindows,
-    handleItemDoubleClick: handleItemDoubleClickBase,
+    handleItemDoubleClick,
     handleMinimizeWindow,
     handleRestoreWindow: handleRestoreWindowBase,
     handleCloseWindow: handleCloseWindowBase,
-  } = useWindowManager();
+    focusWindow,
+    updateWindowOriginRect,
+  } = useWindowSystem();
   const { zoomAnimations, triggerZoomAnimation, handleAnimationComplete } =
     useWindowAnimation();
   const { isShuttingDown, shutdownStage, startShutdown } = useShutdown();
@@ -49,21 +39,14 @@ const Desktop = memo(({ onFullScreenChange, onTriggerBSOD }) => {
   const [isTaskbarCollapsed, setIsTaskbarCollapsed] = useState(false);
   const [windowLoadingStates, setWindowLoadingStates] = useState({});
 
-  const handleItemDoubleClick = useCallback(
-    (idOrItem, label, options = {}) => {
-      handleItemDoubleClickBase(
-        idOrItem,
-        label,
-        openWindows,
-        openWindow,
-        focusWindow,
-        options
-      );
-    },
-    [handleItemDoubleClickBase, openWindows, openWindow, focusWindow]
-  );
+  const { folderMap, cdDrive } = useCMSContent();
+  const { allDesktopItems, itemPositions, handleItemPositionChange } =
+    useDesktop(cdDrive);
 
-  const { hasStarted } = useStartup({
+  const { isLoading, isDelaying, progress, menuBarVisible, skipLoading } =
+    useLoadingScreen();
+
+  useStartup({
     isLoading,
     isDelaying,
     isShuttingDown,
@@ -75,21 +58,21 @@ const Desktop = memo(({ onFullScreenChange, onTriggerBSOD }) => {
       if (extra?.originRect) {
         updateWindowOriginRect(windowId, extra.originRect);
       }
-      handleRestoreWindowBase(windowId, focusWindow);
+      handleRestoreWindowBase(windowId);
     },
-    [handleRestoreWindowBase, focusWindow, updateWindowOriginRect]
+    [handleRestoreWindowBase, updateWindowOriginRect]
   );
 
   const handleCloseWindow = useCallback(
     (windowId) => {
-      handleCloseWindowBase(windowId, closeWindow);
+      handleCloseWindowBase(windowId);
       setWindowLoadingStates((prev) => {
         const newStates = { ...prev };
         delete newStates[windowId];
         return newStates;
       });
     },
-    [handleCloseWindowBase, closeWindow]
+    [handleCloseWindowBase]
   );
 
   const handleDesktopClick = useCallback((e) => {
@@ -190,11 +173,40 @@ const Desktop = memo(({ onFullScreenChange, onTriggerBSOD }) => {
     }
   }, [isShuttingDown, shutdownStage]);
 
-  // Memoize minimized window IDs for faster lookup
-  const minimizedWindowIds = useMemo(
-    () => new Set(minimizedWindows.map((mw) => mw.id)),
-    [minimizedWindows]
-  );
+  // Keyboard navigation for desktop icons
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') return;
+      
+      if (!selectedIcon && allDesktopItems.length > 0 && (e.key === 'ArrowDown' || e.key === 'ArrowRight')) {
+        setSelectedIcon(allDesktopItems[0].id);
+        return;
+      }
+      
+      if (!selectedIcon) return;
+
+      if (e.key === 'Enter') {
+        const item = allDesktopItems.find(i => i.id === selectedIcon);
+        if (item) handleItemDoubleClick(item);
+      } else if (e.key === 'ArrowUp' || e.key === 'ArrowDown' || e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+        e.preventDefault();
+        const currentIndex = allDesktopItems.findIndex(i => i.id === selectedIcon);
+        if (currentIndex === -1) return;
+
+        let nextIndex = currentIndex;
+        if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+          nextIndex = (currentIndex - 1 + allDesktopItems.length) % allDesktopItems.length;
+        } else {
+          nextIndex = (currentIndex + 1) % allDesktopItems.length;
+        }
+        
+        setSelectedIcon(allDesktopItems[nextIndex].id);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [selectedIcon, allDesktopItems, handleItemDoubleClick]);
 
   // Memoize full-screen window calculation to avoid duplicate computation
   const hasFullScreenWindow = useMemo(() => {
