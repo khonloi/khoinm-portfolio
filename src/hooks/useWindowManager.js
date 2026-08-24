@@ -126,6 +126,7 @@ export const useWindowManager = () => {
         iconSrc: item.iconSrc,
         filetype: item.filetype,
         fileContent: item.content || item.fileContent,
+        originRect: options.originRect,
       });
     },
     [minimizedWindowIds, playWindowSound]

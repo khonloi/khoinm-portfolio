@@ -12,11 +12,11 @@ const Explorer = memo(({
   selectedItem,
   onMoveIcon,
 }) => {
-  const handleItemDoubleClick = useCallback((item) => {
+  const handleItemDoubleClick = useCallback((item, extra) => {
     if (item.type === 'folder') {
-      onFolderDoubleClick(item);
+      onFolderDoubleClick(item, extra);
     } else {
-      onIconDoubleClick(item);
+      onIconDoubleClick(item, extra);
     }
   }, [onFolderDoubleClick, onIconDoubleClick]);
 
@@ -60,7 +60,7 @@ const Explorer = memo(({
               iconSrc={item.iconSrc}
               type={item.type}
               link={item.link}
-              onDoubleClick={() => handleItemDoubleClick(item)}
+              onDoubleClick={(e, extra) => handleItemDoubleClick(item, extra)}
               isSelected={selectedItem === item.id}
               onSelect={item.type === 'folder' ? onFolderSelect : onIconSelect}
               onDrop={item.type === 'folder' ? handleDrop : undefined}

@@ -49,6 +49,7 @@ export const useWindow = () => {
         iconSrc: windowData.iconSrc || null,
         filetype: windowData.filetype || null,
         fileContent: windowData.fileContent || null,
+        originRect: windowData.originRect || null,
         initialPosition: { x: 0, y: 0, shouldCenter: true },
         zIndex: newZIndex,
       };
@@ -56,6 +57,12 @@ export const useWindow = () => {
       setFocusedWindow(windowData.id);
       return [...prev, newWindow];
     });
+  }, []);
+
+  const updateWindowOriginRect = useCallback((id, originRect) => {
+    setOpenWindows((prev) =>
+      prev.map((win) => (win.id === id ? { ...win, originRect } : win))
+    );
   }, []);
 
   const closeWindow = useCallback((id) => {
@@ -84,5 +91,6 @@ export const useWindow = () => {
     openWindow,
     closeWindow,
     focusWindow,
-  }), [openWindows, focusedWindow, openWindow, closeWindow, focusWindow]);
+    updateWindowOriginRect,
+  }), [openWindows, focusedWindow, openWindow, closeWindow, focusWindow, updateWindowOriginRect]);
 };

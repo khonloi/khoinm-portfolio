@@ -12,6 +12,8 @@ const Window = memo(
     onFocus,
     onFullScreenChange,
     onLoadingChange,
+    originRect,
+    triggerZoomAnimation,
     children,
     initialPosition = { x: 100, y: 100 },
     zIndex = 1000,
@@ -25,6 +27,9 @@ const Window = memo(
       elementRef,
       position,
       isLoading,
+      isOpening,
+      isClosing,
+      isMinimizing,
       isMaximized,
       isMobile,
       isFullScreenActive,
@@ -38,7 +43,6 @@ const Window = memo(
       handleMinimizeClick,
       handleMaximizeClick,
       handleCloseClick,
-      MENU_BAR_HEIGHT,
     } = useWindowInstance({
       id,
       title,
@@ -49,19 +53,17 @@ const Window = memo(
       onFullScreenChange,
       onLoadingChange,
       initialPosition,
+      originRect,
+      triggerZoomAnimation,
       isMinimized,
       isMaximized: initialMaximized,
       isFullScreen,
     });
 
-    if (isLoading) {
-      return null;
-    }
-
-    // Hide window until it's centered (if it needs centering and not on mobile)
-    // On mobile, windows are automatically maximized so don't hide them
+    // Hide window until it's measured, centered, and opening zoom animation finishes
     const needsCentering =
       !isMobile && !isFullScreenActive && initialPosition?.shouldCenter && !hasCentered;
+    const isHidden = !isFullScreenActive && (isOpening || isClosing || isMinimizing || needsCentering || isMinimized);
 
     const windowStyle = {
       position: "absolute",
@@ -86,7 +88,7 @@ const Window = memo(
           ? "calc(100% + 2px)"
           : "auto",
       zIndex: isFullScreenActive ? 40000 : zIndex,
-      visibility: needsCentering ? "hidden" : undefined,
+      visibility: isHidden ? "hidden" : undefined,
     };
 
     return (

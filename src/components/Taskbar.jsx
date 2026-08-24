@@ -19,7 +19,17 @@ const Taskbar = memo(({ minimizedWindows, onRestore, isCollapsed, onToggleCollap
               key={window.id}
               variant="control"
               className="h-10 w-10"
-              onClick={() => onRestore(window.id)}
+              onClick={(e) => {
+                const rect = e.currentTarget.getBoundingClientRect();
+                onRestore(window.id, {
+                  originRect: {
+                    x: rect.left,
+                    y: rect.top,
+                    width: rect.width,
+                    height: rect.height,
+                  },
+                });
+              }}
               title={`Restore ${window.title}`}
             >
               {window.icon && (

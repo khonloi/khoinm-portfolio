@@ -5,10 +5,12 @@ import Explorer from "./Explorer";
 import Taskbar from "./Taskbar";
 import MenuBar from "./MenuBar";
 import LoadingScreen from "./LoadingScreen";
+import ZoomRectOverlay from "./ZoomRectOverlay";
 import { useWindow } from "../hooks/useWindow";
 import { useDesktop } from "../hooks/useDesktop";
 import { useLoadingScreen } from "../hooks/useLoadingScreen";
 import { useWindowManager } from "../hooks/useWindowManager";
+import { useWindowAnimation } from "../hooks/useWindowAnimation";
 import { useShutdown } from "../hooks/useShutdown";
 import { useStartup } from "../hooks/useStartup";
 import { useCMSContent } from "../hooks/useDesktopItems";
@@ -17,7 +19,14 @@ import { getCursorStyle } from "../data/cursors";
 import { desktopItems, renderWindowContent } from "../config/programConfig";
 
 const Desktop = memo(({ onFullScreenChange, onTriggerBSOD }) => {
-  const { openWindows, openWindow, closeWindow, focusWindow, focusedWindow } = useWindow();
+  const {
+    openWindows,
+    openWindow,
+    closeWindow,
+    focusWindow,
+    focusedWindow,
+    updateWindowOriginRect,
+  } = useWindow();
   const { folderMap, cdDrive } = useCMSContent();
   const { allDesktopItems, itemPositions, handleItemPositionChange } =
     useDesktop(cdDrive);
@@ -32,6 +41,8 @@ const Desktop = memo(({ onFullScreenChange, onTriggerBSOD }) => {
     handleRestoreWindow: handleRestoreWindowBase,
     handleCloseWindow: handleCloseWindowBase,
   } = useWindowManager();
+  const { zoomAnimations, triggerZoomAnimation, handleAnimationComplete } =
+    useWindowAnimation();
   const { isShuttingDown, shutdownStage, startShutdown } = useShutdown();
 
   const [selectedIcon, setSelectedIcon] = useState(null);
@@ -52,8 +63,6 @@ const Desktop = memo(({ onFullScreenChange, onTriggerBSOD }) => {
     [handleItemDoubleClickBase, openWindows, openWindow, focusWindow]
   );
 
-
-
   const { hasStarted } = useStartup({
     isLoading,
     isDelaying,
@@ -62,10 +71,13 @@ const Desktop = memo(({ onFullScreenChange, onTriggerBSOD }) => {
   });
 
   const handleRestoreWindow = useCallback(
-    (windowId) => {
+    (windowId, extra = {}) => {
+      if (extra?.originRect) {
+        updateWindowOriginRect(windowId, extra.originRect);
+      }
       handleRestoreWindowBase(windowId, focusWindow);
     },
-    [handleRestoreWindowBase, focusWindow]
+    [handleRestoreWindowBase, focusWindow, updateWindowOriginRect]
   );
 
   const handleCloseWindow = useCallback(
@@ -119,7 +131,7 @@ const Desktop = memo(({ onFullScreenChange, onTriggerBSOD }) => {
         folder.contents = dynamicItems;
         // Also index sub-folders inside dynamic content
         const processDynamic = (items) => {
-          items.forEach(item => {
+          items.forEach((item) => {
             if (item.type === "folder") {
               map.set(item.id, item);
               if (item.contents) processDynamic(item.contents);
@@ -141,8 +153,12 @@ const Desktop = memo(({ onFullScreenChange, onTriggerBSOD }) => {
         <Explorer
           folderId={folderId}
           folderData={folderData}
-          onIconDoubleClick={handleItemDoubleClick}
-          onFolderDoubleClick={handleItemDoubleClick}
+          onIconDoubleClick={(item, extra) =>
+            handleItemDoubleClick(item, undefined, extra)
+          }
+          onFolderDoubleClick={(item, extra) =>
+            handleItemDoubleClick(item, undefined, extra)
+          }
           onIconPositionChange={handleItemPositionChange}
           onFolderPositionChange={handleItemPositionChange}
           onIconSelect={setSelectedIcon}
@@ -197,11 +213,9 @@ const Desktop = memo(({ onFullScreenChange, onTriggerBSOD }) => {
 
   // Determine if there are any windows currently visible or minimized (requiring the safe area)
   const hasActiveWindows = useMemo(() => {
-    // Check if any open window is finished loading or is a dialog
-    const hasVisibleContent = openWindows.some(win =>
-      win.isDialog || windowLoadingStates[win.id] === false
+    const hasVisibleContent = openWindows.some(
+      (win) => win.isDialog || windowLoadingStates[win.id] === false
     );
-    // Check if there are any minimized windows in the taskbar
     const hasMinimizedWindows = minimizedWindows.length > 0;
 
     return hasVisibleContent || hasMinimizedWindows;
@@ -260,8 +274,15 @@ const Desktop = memo(({ onFullScreenChange, onTriggerBSOD }) => {
 
   return (
     <>
+      <ZoomRectOverlay
+        animations={zoomAnimations}
+        onAnimationComplete={handleAnimationComplete}
+      />
       {isShuttingDown && shutdownStage < 2 && (
-        <div className="overlay" style={{ zIndex: 100000, cursor: getCursorStyle("busy") }} />
+        <div
+          className="overlay"
+          style={{ zIndex: 100000, cursor: getCursorStyle("busy") }}
+        />
       )}
       {!hasFullScreenWindow && (
         <MenuBar
@@ -270,9 +291,13 @@ const Desktop = memo(({ onFullScreenChange, onTriggerBSOD }) => {
         />
       )}
       <div
-        className={`desktop fixed w-screen p-0 m-0 ${hasFullScreenWindow ? "top-0 h-[100dvh]" : "top-[36px] h-[calc(100dvh-36px-var(--safe-bottom-buffer,0px))]"
-          } ${loadingWindows.size > 0 ? "cursor-[var(--cursor-wait)]" : ""
-          } ${shutdownStage === 1 ? "opacity-0 pointer-events-none" : ""}`}
+        className={`desktop fixed w-screen p-0 m-0 ${
+          hasFullScreenWindow
+            ? "top-0 h-[100dvh]"
+            : "top-[36px] h-[calc(100dvh-36px-var(--safe-bottom-buffer,0px))]"
+        } ${loadingWindows.size > 0 ? "cursor-[var(--cursor-wait)]" : ""} ${
+          shutdownStage === 1 ? "opacity-0 pointer-events-none" : ""
+        }`}
         onClick={handleDesktopClick}
         onDragOver={(e) => e.preventDefault()}
         role="main"
@@ -288,12 +313,15 @@ const Desktop = memo(({ onFullScreenChange, onTriggerBSOD }) => {
               type={item.type}
               position={itemPositions[item.id]}
               onPositionChange={handleItemPositionChange}
-              onDoubleClick={() => handleItemDoubleClick(item)}
+              onDoubleClick={(e, extra) =>
+                handleItemDoubleClick(item, undefined, extra)
+              }
               link={item.link}
               isSelected={selectedIcon === item.id}
               onSelect={setSelectedIcon}
-              aria-label={`${item.label} ${item.type === "folder" ? "folder" : "application"
-                }`}
+              aria-label={`${item.label} ${
+                item.type === "folder" ? "folder" : "application"
+              }`}
               draggable={false}
               onDragStart={(e) => {
                 e.dataTransfer.setData(
@@ -307,14 +335,23 @@ const Desktop = memo(({ onFullScreenChange, onTriggerBSOD }) => {
 
         {openWindows.map((win) => {
           const isMinimized = minimizedWindowIds.has(win.id);
-          const content = win.type === "folder"
-            ? renderFolderContent(win.folderId)
-            : renderWindowContent(win.id, win.title, () => handleCloseWindow(win.id), win.iconSrc, onTriggerBSOD, win);
-
+          const content =
+            win.type === "folder"
+              ? renderFolderContent(win.folderId)
+              : renderWindowContent(
+                  win.id,
+                  win.title,
+                  () => handleCloseWindow(win.id),
+                  win.iconSrc,
+                  onTriggerBSOD,
+                  win
+                );
 
           // If the program opted to open as a dialog or if the content is already a Dialog
-          // We render it directly to avoid double-windowing.
-          if (win.isDialog || (content && content.type && content.type.displayName === "Dialog")) {
+          if (
+            win.isDialog ||
+            (content && content.type && content.type.displayName === "Dialog")
+          ) {
             return <React.Fragment key={win.id}>{content}</React.Fragment>;
           }
 
@@ -324,6 +361,8 @@ const Desktop = memo(({ onFullScreenChange, onTriggerBSOD }) => {
               id={win.id}
               title={win.title}
               icon={win.iconSrc}
+              originRect={win.originRect}
+              triggerZoomAnimation={triggerZoomAnimation}
               initialPosition={win.initialPosition}
               zIndex={win.zIndex}
               isMinimized={isMinimized}

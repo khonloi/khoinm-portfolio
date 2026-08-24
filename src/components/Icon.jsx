@@ -63,8 +63,18 @@ const Icon = memo(({
     const handleAction = useCallback((e) => {
         setIsFlashing(true);
         setTimeout(() => setIsFlashing(false), 400);
-        onDoubleClick?.(e);
-    }, [onDoubleClick]);
+        let originRect = null;
+        if (elementRef.current) {
+            const rect = elementRef.current.getBoundingClientRect();
+            originRect = {
+                x: rect.left,
+                y: rect.top,
+                width: rect.width,
+                height: rect.height,
+            };
+        }
+        onDoubleClick?.(e, { originRect });
+    }, [onDoubleClick, elementRef]);
 
     const handleClick = useCallback((e) => {
         const now = Date.now();
