@@ -5,7 +5,6 @@ import Dialog from './components/Dialog';
 import { useNetworkStatus } from './hooks/useNetworkStatus';
 import networkIcon from './assets/icons/Microsoft Windows 3 Local Area Network.ico';
 import { setCursorVariables } from './data/cursors';
-import './App.css';
 const Editor = React.lazy(() => import('./components/Editor'));
 
 function App() {

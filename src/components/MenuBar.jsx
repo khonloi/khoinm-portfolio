@@ -2,6 +2,9 @@ import React, { useState, useEffect } from "react";
 import Dialog from "./Dialog";
 import monitorMoonIcon from "../assets/icons/Microsoft Windows 3 Post-It.ico";
 import keyGrayIcon from "../assets/icons/Microsoft Windows 3 Keys.ico";
+import availableIcon from "../assets/icons/available.png";
+import unavailableIcon from "../assets/icons/un-available.png";
+import { useServiceStatus } from "../hooks/useServiceStatus";
 
 const shutdownMessage = "Do you want to exit your session?";
 
@@ -25,6 +28,7 @@ const formatDate = (date) => {
 const MenuBar = ({ visible = true, onShutdown }) => {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [showShutdownDialog, setShowShutdownDialog] = useState(false);
+  const { isAvailable, statusText } = useServiceStatus(true);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -41,6 +45,8 @@ const MenuBar = ({ visible = true, onShutdown }) => {
     setShowShutdownDialog(false);
   };
 
+  const currentStatusTitle = statusText || (isAvailable ? "Available for service" : "Unavailable for service");
+
   return (
     <>
       <div className={`fixed top-0 left-0 flex h-9 w-full bg-windows-grey border-b-2 border-windows-white ${!visible ? "hidden" : ""}`}>
@@ -53,6 +59,17 @@ const MenuBar = ({ visible = true, onShutdown }) => {
           </div>
         </div>
         <div className="flex flex-1 items-center justify-end">
+          <div
+            className="flex h-[26px] items-center justify-center m-0 mr-2 p-0 select-none cursor-default"
+            title={currentStatusTitle}
+            aria-label={currentStatusTitle}
+          >
+            <img
+              src={isAvailable ? availableIcon : unavailableIcon}
+              alt={currentStatusTitle}
+              className="h-5 w-auto object-contain"
+            />
+          </div>
           <button
             className="flex h-[26px] w-[26px] cursor-pointer items-center justify-center border-none bg-transparent m-0 mr-2 p-0 font-bold text-windows-black select-none"
             title="Power"

@@ -59,18 +59,19 @@ const Dialog = memo(({
     };
 
     const windowElement = (
-        <div ref={elementRef} className="bg-windows-black p-[2px] min-w-[320px] origin-center focused trim-window-corners" style={windowStyle}>
+        <div ref={elementRef} className="window-outer bg-windows-black p-[2px] min-w-[320px] origin-center trim-window-corners" style={windowStyle}>
             <div className="h-full relative bg-windows-grey trim-corners" onMouseDown={handleTitleBarAction} onTouchStart={handleTitleBarAction}>
-                <div className="h-full flex flex-col border-t-2 border-l-2 border-windows-white p-1 pr-1.5 pb-1.5 bg-windows-grey z-10">
+                <div className="h-full flex flex-col border-t-2 border-l-2 border-windows-white p-1 pr-1.5 pb-1.5 bg-windows-grey overflow-hidden">
                     {/* Window Frame: Title and Controls */}
-                    <div className="bg-windows-black p-[2px] mb-1 trim-corners relative shrink-0">
-                      <div className="window-title-bar bg-windows-purple text-windows-white flex justify-between items-center w-full h-full">
+                    <div className="bg-windows-black p-[2px] mb-1.5 relative shrink-0">
+                      <div className="window-title-bar flex justify-between items-center w-full h-full bg-windows-purple text-windows-white">
                         <span className="font-bold absolute left-1/2 -translate-x-1/2 select-none">{title}</span>
                         <div className="flex gap-0.5">
                             <Button
                                 variant="control"
                                 onClick={() => onClose?.(id)}
-                                ariaLabel="Close dialog"
+                                ariaLabel="Close Window"
+                                title="Close Window"
                                 className="control-button bg-[#ff746d]"
                                 layer1ClassName="border-[#ffb3a7] text-white group-active:border-[#c94a3a]"
                                 layer2ClassName="border-[#c94a3a]"
@@ -82,12 +83,12 @@ const Dialog = memo(({
                     </div>
 
                     {/* Window Content: Message, Icon, and Buttons */}
-                    <div className="flex-1 flex min-h-0 relative trim-corners">
-                        <div className="border-l-2 border-t-2 border-windows-grey-dark flex-1 flex min-h-0 z-10 pr-0.5 pb-0.5">
-                            <div className="border-2 border-windows-black bg-windows-white overflow-auto flex-1 select-text flex flex-col">
-                                <div className="p-4 text-windows-black text-left max-w-[26rem]">
+                    <div className="window-content-outer flex-1 flex relative min-h-0 trim-corners">
+                        <div className="border-l-2 border-t-2 border-windows-grey-dark flex-1 flex min-h-0 pr-0.5 pb-0.5">
+                            <div className="border-2 border-windows-black bg-windows-white overflow-auto flex-1 select-text min-h-0 min-w-0 z-10 flex flex-col">
+                                <div className="p-4 text-windows-black text-left max-w-[26rem] flex flex-col justify-center flex-1">
                                     <div className="flex items-center justify-center gap-4 mb-4">
-                                        {showIcon && icon && <img src={icon} alt="" className="w-10 h-10 object-contain align-middle" />}
+                                        {showIcon && icon && <img src={icon} alt="" className="w-10 h-10 object-contain align-middle select-none" />}
                                         <span className="text-lg whitespace-pre-line">{message}</span>
                                     </div>
                                     {buttons.length > 0 && (
@@ -105,10 +106,10 @@ const Dialog = memo(({
                                 </div>
                             </div>
                         </div>
-                        <div className="absolute inset-0 pointer-events-none border-r-2 border-b-2 border-windows-white z-20"></div>
+                        <div className="absolute inset-0 border-r-2 border-b-2 border-windows-white"></div>
                     </div>
                 </div>
-                <div className="absolute inset-0 pointer-events-none border-r-2 border-b-2 border-windows-grey-dark z-20"></div>
+                <div className="absolute inset-0 pointer-events-none border-r-2 border-b-2 border-windows-grey-dark"></div>
             </div>
         </div>
     );

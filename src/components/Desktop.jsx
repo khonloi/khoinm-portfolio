@@ -1,21 +1,20 @@
 import React, { useState, useCallback, memo, useEffect, useMemo } from "react";
-import Icon from "./Icon";
-import Window from "./Window";
+import DesktopIcons from "./desktop/DesktopIcons";
+import DesktopWindows from "./desktop/DesktopWindows";
 import Explorer from "./Explorer";
 import Taskbar from "./Taskbar";
 import MenuBar from "./MenuBar";
 import LoadingScreen from "./LoadingScreen";
 import ZoomRectOverlay from "./ZoomRectOverlay";
-import { useWindowSystem } from "../hooks/useWindowSystem";
+import { useWindowSystem } from "../hooks/window";
 import { useDesktop } from "../hooks/useDesktop";
 import { useLoadingScreen } from "../hooks/useLoadingScreen";
-import { useWindowAnimation } from "../hooks/useWindowAnimation";
+import { useWindowAnimation } from "../hooks/window";
 import { useShutdown } from "../hooks/useShutdown";
 import { useStartup } from "../hooks/useStartup";
 import { useCMSContent } from "../hooks/useDesktopItems";
 import { playSound } from "../data/sounds";
 import { getCursorStyle } from "../data/cursors";
-import { renderWindowContent } from "../config/programConfig";
 
 const Desktop = memo(({ onFullScreenChange, onTriggerBSOD }) => {
   const {
@@ -173,40 +172,7 @@ const Desktop = memo(({ onFullScreenChange, onTriggerBSOD }) => {
     }
   }, [isShuttingDown, shutdownStage]);
 
-  // Keyboard navigation for desktop icons
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') return;
-      
-      if (!selectedIcon && allDesktopItems.length > 0 && (e.key === 'ArrowDown' || e.key === 'ArrowRight')) {
-        setSelectedIcon(allDesktopItems[0].id);
-        return;
-      }
-      
-      if (!selectedIcon) return;
 
-      if (e.key === 'Enter') {
-        const item = allDesktopItems.find(i => i.id === selectedIcon);
-        if (item) handleItemDoubleClick(item);
-      } else if (e.key === 'ArrowUp' || e.key === 'ArrowDown' || e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
-        e.preventDefault();
-        const currentIndex = allDesktopItems.findIndex(i => i.id === selectedIcon);
-        if (currentIndex === -1) return;
-
-        let nextIndex = currentIndex;
-        if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
-          nextIndex = (currentIndex - 1 + allDesktopItems.length) % allDesktopItems.length;
-        } else {
-          nextIndex = (currentIndex + 1) % allDesktopItems.length;
-        }
-        
-        setSelectedIcon(allDesktopItems[nextIndex].id);
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [selectedIcon, allDesktopItems, handleItemDoubleClick]);
 
   // Memoize full-screen window calculation to avoid duplicate computation
   const hasFullScreenWindow = useMemo(() => {
@@ -315,84 +281,28 @@ const Desktop = memo(({ onFullScreenChange, onTriggerBSOD }) => {
         role="main"
         aria-label="Desktop environment"
       >
-        {allDesktopItems.map((item) => {
-          return (
-            <Icon
-              key={item.id}
-              id={item.id}
-              label={item.label}
-              iconSrc={item.iconSrc}
-              type={item.type}
-              position={itemPositions[item.id]}
-              onPositionChange={handleItemPositionChange}
-              onDoubleClick={(e, extra) =>
-                handleItemDoubleClick(item, undefined, extra)
-              }
-              link={item.link}
-              isSelected={selectedIcon === item.id}
-              onSelect={setSelectedIcon}
-              aria-label={`${item.label} ${
-                item.type === "folder" ? "folder" : "application"
-              }`}
-              draggable={false}
-              onDragStart={(e) => {
-                e.dataTransfer.setData(
-                  "text/plain",
-                  JSON.stringify({ id: item.id })
-                );
-              }}
-            />
-          );
-        })}
-
-        {openWindows.map((win) => {
-          const isMinimized = minimizedWindowIds.has(win.id);
-          const content =
-            win.type === "folder"
-              ? renderFolderContent(win.folderId)
-              : renderWindowContent(
-                  win.id,
-                  win.title,
-                  () => handleCloseWindow(win.id),
-                  win.iconSrc,
-                  onTriggerBSOD,
-                  win
-                );
-
-          // If the program opted to open as a dialog or if the content is already a Dialog
-          if (
-            win.isDialog ||
-            (content && content.type && content.type.displayName === "Dialog")
-          ) {
-            return <React.Fragment key={win.id}>{content}</React.Fragment>;
-          }
-
-          return (
-            <Window
-              key={win.id}
-              id={win.id}
-              title={win.title}
-              icon={win.iconSrc}
-              originRect={win.originRect}
-              triggerZoomAnimation={triggerZoomAnimation}
-              initialPosition={win.initialPosition}
-              zIndex={win.zIndex}
-              isMinimized={isMinimized}
-              isMaximizable={win.isMaximizable}
-              isMaximized={win.isMaximized}
-              isFullScreen={win.isFullScreen}
-              isFocused={win.id === focusedWindow}
-              onClose={handleCloseWindow}
-              onMinimize={handleMinimizeWindow}
-              onFocus={focusWindow}
-              onFullScreenChange={onFullScreenChange}
-              onLoadingChange={handleWindowLoadingChange}
-              aria-label={`${win.title} window`}
-            >
-              {content}
-            </Window>
-          );
-        })}
+        <DesktopIcons
+          allDesktopItems={allDesktopItems}
+          itemPositions={itemPositions}
+          handleItemPositionChange={handleItemPositionChange}
+          handleItemDoubleClick={handleItemDoubleClick}
+          selectedIcon={selectedIcon}
+          setSelectedIcon={setSelectedIcon}
+        />
+        <DesktopWindows
+          openWindows={openWindows}
+          focusedWindow={focusedWindow}
+          minimizedWindowIds={minimizedWindowIds}
+          windowLoadingStates={windowLoadingStates}
+          renderFolderContent={renderFolderContent}
+          handleCloseWindow={handleCloseWindow}
+          onTriggerBSOD={onTriggerBSOD}
+          triggerZoomAnimation={triggerZoomAnimation}
+          handleMinimizeWindow={handleMinimizeWindow}
+          focusWindow={focusWindow}
+          onFullScreenChange={onFullScreenChange}
+          handleWindowLoadingChange={handleWindowLoadingChange}
+        />
 
         {!hasFullScreenWindow && (
           <Taskbar

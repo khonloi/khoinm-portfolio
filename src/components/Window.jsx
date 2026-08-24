@@ -1,6 +1,6 @@
 import React, { memo } from "react";
 import Button from "./Button";
-import { useWindowInstance } from "../hooks/useWindowInstance";
+import { useWindowInstance } from "../hooks/window";
 
 const Window = memo(
   ({

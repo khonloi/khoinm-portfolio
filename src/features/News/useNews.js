@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import client from "../lib/sanityClient";
+import client from "../../lib/sanityClient";
 
 // ─── GROQ Query ───────────────────────────────────────────────────────────────
 // Maps the Sanity "newsArticle" schema to the shape News.jsx expects:

@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import client from "../lib/sanityClient";
+import client from "../../lib/sanityClient";
 
 /**
  * GROQ Query for About Information

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useRef, memo } from "react";
 import Button from "../../components/Button";
 import winInternationalIcon from "../../assets/icons/Microsoft Windows 3 International.ico";
 import treeIcon from "../../assets/icons/Tree.ico";
-import { useNews } from "../../hooks/useNews";
+import { useNews } from "./useNews";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { PortableText } from "@portabletext/react";

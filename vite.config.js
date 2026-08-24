@@ -64,8 +64,20 @@ export default defineConfig({
     // Optimize chunk size
     chunkSizeWarningLimit: 1000
   },
+  resolve: {
+    alias: {
+      '@': '/src',
+      '@components': '/src/components',
+      '@hooks': '/src/hooks',
+      '@features': '/src/features',
+      '@config': '/src/config',
+      '@data': '/src/data',
+      '@lib': '/src/lib',
+      '@assets': '/src/assets',
+    }
+  },
   // Optimize dependencies
   optimizeDeps: {
-    include: ['react', 'react-dom', 'styled-components']
+    include: ['react', 'react-dom']
   }
 });

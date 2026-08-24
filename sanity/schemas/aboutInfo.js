@@ -15,6 +15,13 @@ export default {
       type: 'string'
     },
     {
+      name: 'isAvailable',
+      title: 'Available for Service',
+      type: 'boolean',
+      initialValue: true,
+      description: 'Toggle whether you are currently available or unavailable for service/work.'
+    },
+    {
       name: 'portrait',
       title: 'Portrait Image',
       type: 'image',

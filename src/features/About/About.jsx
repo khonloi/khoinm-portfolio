@@ -8,7 +8,7 @@ import { SKILLS_DATA } from "../../data/skills";
 import winSwissArmyKnifeIcon from "../../assets/icons/Microsoft Windows 3 Swiss Army Knife.ico";
 import winBriefcaseIcon from "../../assets/icons/Microsoft Windows 3 Briefcase.ico";
 
-import { useAbout } from "../../hooks/useAbout";
+import { useAbout } from "./useAbout";
 import { PortableText } from "@portabletext/react";
 import { User } from "lucide-react";
 
