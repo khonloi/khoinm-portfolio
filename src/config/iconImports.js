@@ -1,6 +1,3 @@
-import React, { lazy, Suspense } from "react";
-import Dialog from "../components/Dialog";
-
 // Import your icons
 import gashIcon from "../assets/icons/GASH.ico";
 import winApplicationsIcon from "../assets/icons/Microsoft Windows 3 Applications.ico";

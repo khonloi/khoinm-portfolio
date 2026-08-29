@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useDragDrop } from '../useDragDrop';
 
 const DEFAULT_POSITION = { x: 100, y: 100 };

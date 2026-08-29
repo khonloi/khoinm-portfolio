@@ -8,13 +8,15 @@ export const useLoadingScreen = () => {
   const [isDelaying, setIsDelaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [menuBarVisible, setMenuBarVisible] = useState(false);
+  
   const audioRef = useRef(null);
   const intervalRef = useRef(null);
   const bootSequenceTimerRef = useRef(null);
+  const delayPhaseTimerRef = useRef(null);
+  const finishDelayTimerRef = useRef(null);
+  const hasCompletedRef = useRef(false);
 
-  // Skip loading function
-  const skipLoading = useCallback(() => {
-    // Clear all timers
+  const clearAllTimers = useCallback(() => {
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
       intervalRef.current = null;
@@ -23,6 +25,22 @@ export const useLoadingScreen = () => {
       clearTimeout(bootSequenceTimerRef.current);
       bootSequenceTimerRef.current = null;
     }
+    if (delayPhaseTimerRef.current) {
+      clearTimeout(delayPhaseTimerRef.current);
+      delayPhaseTimerRef.current = null;
+    }
+    if (finishDelayTimerRef.current) {
+      clearTimeout(finishDelayTimerRef.current);
+      finishDelayTimerRef.current = null;
+    }
+  }, []);
+
+  // Skip loading function
+  const skipLoading = useCallback(() => {
+    if (hasCompletedRef.current) return;
+    hasCompletedRef.current = true;
+
+    clearAllTimers();
     
     // Immediately show desktop
     setIsLoading(false);
@@ -34,24 +52,47 @@ export const useLoadingScreen = () => {
     
     // Play startup sound
     playSound('logon', { preventDuplicate: true, audioRef });
-  }, [audioRef]);
+  }, [clearAllTimers]);
 
-  // Loading screen and startup sound effect
+  // Handle loading cursor effect based on isDelaying
   useEffect(() => {
+    if (isDelaying) {
+      document.body.classList.add('loading');
+    } else {
+      document.body.classList.remove('loading');
+    }
+    return () => {
+      document.body.classList.remove('loading');
+    };
+  }, [isDelaying]);
+
+  // Loading screen and startup sound effect - RUNS ONCE ON MOUNT
+  useEffect(() => {
+    if (hasCompletedRef.current) return;
+
     // Boot sequence takes ~21.4 seconds (logo + black screen + memory test + boot lines + transition), so delay the progress bar start
     const bootSequenceDelay = 22000; 
 
-    
     // Start the progress bar after the boot sequence
     bootSequenceTimerRef.current = setTimeout(() => {
+      if (hasCompletedRef.current) return;
+
       // Define target duration for loading (5-7 seconds)
       const targetDuration = Math.floor(Math.random() * 2000) + 5000; // 5000-7000ms
       let soundPlayed = false;
       let lastProgress = 0;
-      let startTime = Date.now();
+      const startTime = Date.now();
 
       // Create inconsistent progress updates
       intervalRef.current = setInterval(() => {
+        if (hasCompletedRef.current) {
+          if (intervalRef.current) {
+            clearInterval(intervalRef.current);
+            intervalRef.current = null;
+          }
+          return;
+        }
+
         const elapsedTime = Date.now() - startTime;
         const elapsedPercentage = Math.min(100, (elapsedTime / targetDuration) * 100);
         
@@ -86,12 +127,14 @@ export const useLoadingScreen = () => {
         
         // Check if loading is complete
         if (newProgress >= 100) {
+          hasCompletedRef.current = true;
           if (intervalRef.current) {
             clearInterval(intervalRef.current);
             intervalRef.current = null;
           }
+
           // Start the delay phase after loading completes
-          setTimeout(() => {
+          delayPhaseTimerRef.current = setTimeout(() => {
             setIsLoading(false);
             setIsDelaying(true);
             
@@ -102,54 +145,31 @@ export const useLoadingScreen = () => {
             }
             
             // After 2 seconds delay, show desktop
-            setTimeout(() => {
+            finishDelayTimerRef.current = setTimeout(() => {
               setIsDelaying(false);
               
               // Restore cursor when loading sequence is completely done
               document.body.style.cursor = getCursorStyle('arrow');
-              
-              // Add a delay before showing the menu bar
-              setTimeout(() => {
-                setMenuBarVisible(true);
-              }); 
+              setMenuBarVisible(true);
             }, 2000);
           }, 500);
         }
-      }, 100); // Update every 100ms for smoother animation
+      }, 100);
     }, bootSequenceDelay);
 
-    // Effect for loading cursor
-    if (isDelaying) {
-      document.body.classList.add('loading');
-    } else {
-      document.body.classList.remove('loading');
-    }
-
     return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
-      }
-      if (bootSequenceTimerRef.current) {
-        clearTimeout(bootSequenceTimerRef.current);
-        bootSequenceTimerRef.current = null;
-      }
+      clearAllTimers();
       if (audioRef.current) {
-        // Remove any event listeners
         audioRef.current.onended = null;
         audioRef.current.oncanplaythrough = null;
         audioRef.current.onerror = null;
-        
-        // Pause and release the audio
         audioRef.current.pause();
         audioRef.current.src = '';
         audioRef.current = null;
       }
-      
-      // Ensure loading class is removed
       document.body.classList.remove('loading');
     };
-  }, [isDelaying]);
+  }, [clearAllTimers]);
 
   return {
     isLoading,
@@ -158,4 +178,4 @@ export const useLoadingScreen = () => {
     menuBarVisible,
     skipLoading
   };
-}; 
+};

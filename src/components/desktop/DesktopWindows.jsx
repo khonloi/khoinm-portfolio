@@ -6,7 +6,6 @@ const DesktopWindows = memo(({
   openWindows,
   focusedWindow,
   minimizedWindowIds,
-  windowLoadingStates,
   renderFolderContent,
   handleCloseWindow,
   onTriggerBSOD,

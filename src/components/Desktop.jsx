@@ -13,6 +13,8 @@ import { useWindowAnimation } from "../hooks/window";
 import { useShutdown } from "../hooks/useShutdown";
 import { useStartup } from "../hooks/useStartup";
 import { useCMSContent } from "../hooks/useDesktopItems";
+import { useDeepLinking } from "../hooks/useDeepLinking";
+import SEO from "./SEO";
 import { playSound } from "../data/sounds";
 import { getCursorStyle } from "../data/cursors";
 
@@ -45,11 +47,20 @@ const Desktop = memo(({ onFullScreenChange, onTriggerBSOD }) => {
   const { isLoading, isDelaying, progress, menuBarVisible, skipLoading } =
     useLoadingScreen();
 
-  useStartup({
+  const { hasStarted } = useStartup({
     isLoading,
     isDelaying,
     isShuttingDown,
     handleItemDoubleClick: handleItemDoubleClick,
+  });
+
+  // Deep linking and URL synchronization for SEO and shareable links
+  useDeepLinking({
+    handleItemDoubleClick,
+    openWindows,
+    focusedWindow,
+    focusWindow,
+    hasBooted: hasStarted,
   });
 
   const handleRestoreWindow = useCallback(
@@ -252,6 +263,7 @@ const Desktop = memo(({ onFullScreenChange, onTriggerBSOD }) => {
 
   return (
     <>
+      <SEO focusedWindow={focusedWindow} openWindows={openWindows} />
       <ZoomRectOverlay
         animations={zoomAnimations}
         onAnimationComplete={handleAnimationComplete}
@@ -293,7 +305,6 @@ const Desktop = memo(({ onFullScreenChange, onTriggerBSOD }) => {
           openWindows={openWindows}
           focusedWindow={focusedWindow}
           minimizedWindowIds={minimizedWindowIds}
-          windowLoadingStates={windowLoadingStates}
           renderFolderContent={renderFolderContent}
           handleCloseWindow={handleCloseWindow}
           onTriggerBSOD={onTriggerBSOD}

@@ -1,9 +1,21 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { playSound } from '../data/sounds';
 import { desktopItems } from '../config/programConfig';
 import startupCard from "../assets/images/startup-card-1.webp";
 import monitorMoonIcon from "../assets/icons/Microsoft Windows 3 Post-It.ico";
 import keyGrayIcon from "../assets/icons/Microsoft Windows 3 Keys.ico";
+
+// Helper to find all programs with startup defined
+const getAllStartups = (items) => {
+  let results = [];
+  items.forEach((item) => {
+    if (item.startup !== undefined) results.push(item);
+    if (item.contents) {
+      results = [...results, ...getAllStartups(item.contents)];
+    }
+  });
+  return results;
+};
 
 export const useStartup = ({
   isLoading,
@@ -13,20 +25,9 @@ export const useStartup = ({
 }) => {
   const [hasBooted, setHasBooted] = useState(false);
   const [idleSeconds, setIdleSeconds] = useState(0);
+  const hasRunStartupRef = useRef(false);
 
-  // Helper to find all programs with startup defined
-  const getAllStartups = (items) => {
-    let results = [];
-    items.forEach((item) => {
-      if (item.startup !== undefined) results.push(item);
-      if (item.contents) {
-        results = [...results, ...getAllStartups(item.contents)];
-      }
-    });
-    return results;
-  };
-
-  const startupPrograms = getAllStartups(desktopItems);
+  const startupPrograms = useMemo(() => getAllStartups(desktopItems), []);
 
   // Preload assets immediately on hook initialization
   useEffect(() => {
@@ -37,9 +38,10 @@ export const useStartup = ({
     });
   }, []);
 
-  // Handle immediate startup (startup: true)
+  // Handle immediate startup (startup: true) - GUARANTEED TO RUN AT MOST ONCE
   useEffect(() => {
-    if (!isLoading && !isDelaying && !hasBooted && !isShuttingDown) {
+    if (!isLoading && !isDelaying && !hasBooted && !isShuttingDown && !hasRunStartupRef.current) {
+      hasRunStartupRef.current = true;
       const runImmediateStartups = async () => {
         try {
           await playSound('startup');

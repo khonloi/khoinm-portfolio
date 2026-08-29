@@ -6,7 +6,7 @@ export const WELCOME_CONTENT = {
       <h2 className="mt-0 mb-2 text-xl font-bold">Welcome to Pane 3.1</h2>
       <p>
         Welcome to my retro-styled
-        portfolio. This is a nostalgic tribute to the golden era of computing,
+        portfolio. This is a retro tribute to the golden era of computing,
         reimagining a classic Windows 95/98 desktop environment using modern
         React technology.
       </p>

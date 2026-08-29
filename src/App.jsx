@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
+import { Analytics } from '@vercel/analytics/react';
 import Desktop from './components/Desktop';
 import BSOD from './components/BSOD';
 import Dialog from './components/Dialog';
@@ -75,6 +76,8 @@ function App() {
         <div style={{ cursor: 'var(--cursor-wait)' }}></div>
         <div style={{ cursor: 'var(--cursor-busy)' }}></div>
       </div>
+
+      <Analytics />
     </div>
   );
 }

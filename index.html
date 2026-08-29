@@ -4,20 +4,24 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/x-icon" href="./favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>KhoiNM</title>
+    <title>Khoi NM | Creative Developer - Retro Windows Experience</title>
     <meta name="theme-color" content="#008080" />
     <meta
       name="description"
-      content="Khoi NM's creative developer portfolio, stylized as a retro Windows 3.1 desktop experience. Explore projects, skills, and resume in a nostalgic interface."
+      content="Khoi NM's creative developer portfolio, stylized as an interactive retro Windows desktop experience. Explore innovative frontend projects, web applications, skills, and resume in a retro interface."
     />
     <meta
       name="keywords"
-      content="Khoi NM, Creative Developer, Portfolio, Windows 3.1, Frontend Developer, Web Development, React, UI/UX"
+      content="Khoi NM, Nguyen Minh Khoi, Creative Developer, Frontend Developer, Web Developer, Portfolio, Windows 3.1, Retro OS, React, TypeScript, JavaScript, Tailwind CSS, UI/UX Design, Web Applications"
     />
     <meta name="author" content="Khoi NM" />
+    <meta
+      name="robots"
+      content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+    />
     <link rel="canonical" href="https://khoinm.vercel.app/" />
 
-    <!-- Google -->
+    <!-- Google Site Verification -->
     <meta
       name="google-site-verification"
       content="8S97SfiPic9NVmJ47ldZeZsDjGPUZ_GlD21vFnyqark"
@@ -25,41 +29,101 @@
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Khoi NM - Creative Developer" />
+    <meta property="og:locale" content="en_US" />
     <meta property="og:url" content="https://khoinm.vercel.app/" />
-    <meta property="og:title" content="KhoiNM" />
+    <meta
+      property="og:title"
+      content="Khoi NM | Creative Developer - Retro Windows Experience"
+    />
     <meta
       property="og:description"
-      content="Khoi NM's creative developer portfolio, stylized as a retro Windows 3.1 desktop experience. Explore projects, skills, and resume in a nostalgic interface."
+      content="Khoi NM's creative developer portfolio, stylized as an interactive retro Windows desktop experience. Explore frontend projects, skills, and resume."
     />
     <meta
       property="og:image"
       content="https://khoinm.vercel.app/og-image.png"
     />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="Khoi NM Retro Windows Desktop Portfolio Preview"
+    />
 
     <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" content="https://khoinm.vercel.app/" />
-    <meta property="twitter:title" content="KhoiNM" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="https://khoinm.vercel.app/" />
     <meta
-      property="twitter:description"
-      content="Khoi NM's creative developer portfolio, stylized as a retro Windows 3.1 desktop experience. Explore projects, skills, and resume in a nostalgic interface."
+      name="twitter:title"
+      content="Khoi NM | Creative Developer - Retro Windows Experience"
     />
     <meta
-      property="twitter:image"
+      name="twitter:description"
+      content="Khoi NM's creative developer portfolio, stylized as an interactive retro Windows desktop experience. Explore frontend projects, skills, and resume."
+    />
+    <meta
+      name="twitter:image"
       content="https://khoinm.vercel.app/og-image.png"
     />
 
-    <!-- JSON-LD Structured Data -->
+    <!-- JSON-LD Structured Data Graph -->
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
-        "@type": "Person",
-        "name": "Khoi NM",
-        "url": "https://khoinm.vercel.app/",
-        "jobTitle": "Creative Developer",
-        "sameAs": ["https://github.com/khonloi"]
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "@id": "https://khoinm.vercel.app/#website",
+            "url": "https://khoinm.vercel.app/",
+            "name": "Khoi NM - Creative Developer Portfolio",
+            "description": "Khoi NM's creative developer portfolio stylized as a retro Windows desktop environment.",
+            "publisher": {
+              "@id": "https://khoinm.vercel.app/#person"
+            },
+            "inLanguage": "en-US"
+          },
+          {
+            "@type": "Person",
+            "@id": "https://khoinm.vercel.app/#person",
+            "name": "Khoi NM",
+            "alternateName": "Nguyen Minh Khoi",
+            "url": "https://khoinm.vercel.app/",
+            "jobTitle": "Creative Developer & Frontend Engineer",
+            "description": "Creative developer passionate about building interactive, accessible, and retro web experiences with modern web technologies.",
+            "sameAs": ["https://github.com/khonloi"],
+            "knowsAbout": [
+              "Frontend Web Development",
+              "Creative Development",
+              "React.js",
+              "JavaScript",
+              "TypeScript",
+              "Tailwind CSS",
+              "UI/UX Design",
+              "Web Performance & SEO",
+              "Progressive Web Apps (PWA)"
+            ]
+          },
+          {
+            "@type": "ProfilePage",
+            "@id": "https://khoinm.vercel.app/#profilepage",
+            "url": "https://khoinm.vercel.app/",
+            "name": "Khoi NM Profile & Portfolio",
+            "isPartOf": {
+              "@id": "https://khoinm.vercel.app/#website"
+            },
+            "about": {
+              "@id": "https://khoinm.vercel.app/#person"
+            },
+            "primaryImageOfPage": {
+              "@type": "ImageObject",
+              "url": "https://khoinm.vercel.app/og-image.png"
+            }
+          }
+        ]
       }
     </script>
+
     <!-- Fonts are handled via CSS for better bundling -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -90,36 +154,104 @@
     </style>
   </head>
   <body>
+    <!-- Fallback Content for Crawlers, Text Browsers, and Users with JavaScript Disabled -->
     <noscript>
-      <div
+      <main
         style="
-          padding: 2rem;
-          font-family: sans-serif;
-          background: #fff;
-          color: #000;
-          height: 100vh;
-          width: 100vw;
-          position: absolute;
-          top: 0;
-          left: 0;
-          z-index: 999999;
+          padding: 2.5rem;
+          font-family:
+            -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+          background: #ffffff;
+          color: #111827;
+          max-width: 900px;
+          margin: 0 auto;
+          line-height: 1.6;
         "
       >
-        <h1>KhoiNM</h1>
-        <p>
-          Welcome to my portfolio! I am a creative developer specializing in
-          frontend web development and unique UI/UX experiences.
-        </p>
-        <p>
-          This website is built as an interactive Windows 3.1 desktop experience
-          that requires JavaScript to run. Please enable JavaScript to explore
-          my projects, resume, and skills in their full retro glory!
-        </p>
-        <h2>Links</h2>
-        <ul>
-          <li><a href="https://github.com/khonloi">GitHub</a></li>
-        </ul>
-      </div>
+        <header>
+          <h1>Khoi NM - Creative Developer &amp; Frontend Engineer</h1>
+          <p>
+            Welcome to my creative developer portfolio, stylized as an
+            interactive retro Windows desktop experience.
+          </p>
+        </header>
+
+        <section aria-labelledby="about-heading">
+          <h2 id="about-heading">About Me</h2>
+          <p>
+            I am a passionate creative developer specializing in frontend web
+            engineering, interactive UI/UX design, and retro digital
+            experiences. I create modern web applications that blend
+            state-of-the-art web performance with engaging design concepts.
+          </p>
+        </section>
+
+        <section aria-labelledby="skills-heading">
+          <h2 id="skills-heading">Technical Skills &amp; Stack</h2>
+          <ul>
+            <li>
+              <strong>Frontend Core:</strong> React, JavaScript (ESNext),
+              TypeScript, HTML5, Semantic CSS, Tailwind CSS
+            </li>
+            <li>
+              <strong>Build &amp; Tools:</strong> Vite, PWA / Service Workers,
+              Workbox, PostCSS, ESLint, Git
+            </li>
+            <li>
+              <strong>Design &amp; Animation:</strong> Retro UI Systems,
+              Responsive Layouts, Canvas, Interactive Components
+            </li>
+            <li>
+              <strong>Content &amp; APIs:</strong> Sanity CMS, Headless
+              Architecture, REST APIs
+            </li>
+          </ul>
+        </section>
+
+        <section aria-labelledby="sections-heading">
+          <h2 id="sections-heading">Portfolio Sections &amp; Direct Links</h2>
+          <nav aria-label="Portfolio sections">
+            <ul>
+              <li><a href="/?open=about">My Information &amp; Bio</a></li>
+              <li><a href="/?open=projects">Featured Projects</a></li>
+              <li>
+                <a href="/?open=certificates"
+                  >Certificates &amp; Achievements</a
+                >
+              </li>
+              <li>
+                <a href="/?open=onlineAccounts"
+                  >Online Accounts &amp; Social Links</a
+                >
+              </li>
+              <li><a href="/?open=message">Contact &amp; Message Me</a></li>
+              <li><a href="/?open=internet">News &amp; Articles</a></li>
+              <li>
+                <a href="/?open=programs"
+                  >Interactive Programs (Paint, Calculator, Notebook, Audio)</a
+                >
+              </li>
+              <li><a href="/?open=games">Games (Classic Line 98)</a></li>
+            </ul>
+          </nav>
+        </section>
+
+        <section aria-labelledby="contact-heading">
+          <h2 id="contact-heading">Connect With Me</h2>
+          <ul>
+            <li>
+              GitHub:
+              <a href="https://github.com/khonloi" rel="noopener noreferrer"
+                >@khonloi</a
+              >
+            </li>
+            <li>
+              Website:
+              <a href="https://khoinm.vercel.app/">khoinm.vercel.app</a>
+            </li>
+          </ul>
+        </section>
+      </main>
     </noscript>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>

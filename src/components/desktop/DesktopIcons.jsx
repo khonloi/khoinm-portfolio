@@ -42,7 +42,7 @@ const DesktopIcons = memo(({
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [selectedIcon, allDesktopItems, handleItemDoubleClick]);
+  }, [selectedIcon, allDesktopItems, handleItemDoubleClick, setSelectedIcon]);
 
   return (
     <>
