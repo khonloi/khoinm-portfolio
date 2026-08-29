@@ -39,7 +39,8 @@ export default defineConfig({
         display: 'standalone'
       },
       workbox: {
-        maximumFileSizeToCacheInBytes: 6000000 // 6MB to accommodate Sanity studio chunk
+        maximumFileSizeToCacheInBytes: 6000000, // 6MB to accommodate Sanity studio chunk
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,webp,ttf,cur}']
       }
     })
   ],

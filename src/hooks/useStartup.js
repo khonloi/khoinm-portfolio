@@ -2,8 +2,8 @@ import { useState, useEffect, useRef, useMemo } from 'react';
 import { playSound } from '../data/sounds';
 import { desktopItems } from '../config/programConfig';
 import startupCard from "../assets/images/startup-card-1.webp";
-import monitorMoonIcon from "../assets/icons/Microsoft Windows 3 Post-It.ico";
-import keyGrayIcon from "../assets/icons/Microsoft Windows 3 Keys.ico";
+import monitorMoonIcon from "../assets/icons/win-post-it.ico";
+import keyGrayIcon from "../assets/icons/win-keys.ico";
 
 // Helper to find all programs with startup defined
 const getAllStartups = (items) => {

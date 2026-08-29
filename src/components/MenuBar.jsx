@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Dialog from "./Dialog";
-import monitorMoonIcon from "../assets/icons/Microsoft Windows 3 Post-It.ico";
-import keyGrayIcon from "../assets/icons/Microsoft Windows 3 Keys.ico";
+import monitorMoonIcon from "../assets/icons/win-post-it.ico";
+import keyGrayIcon from "../assets/icons/win-keys.ico";
 import availableIcon from "../assets/icons/available.png";
 import unavailableIcon from "../assets/icons/un-available.png";
 import { useServiceStatus } from "../hooks/useServiceStatus";

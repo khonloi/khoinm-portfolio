@@ -6,10 +6,9 @@ import Taskbar from "./Taskbar";
 import MenuBar from "./MenuBar";
 import LoadingScreen from "./LoadingScreen";
 import ZoomRectOverlay from "./ZoomRectOverlay";
-import { useWindowSystem } from "../hooks/window";
+import { useWindowSystem, useZoomAnimationManager } from "../hooks/window";
 import { useDesktop } from "../hooks/useDesktop";
 import { useLoadingScreen } from "../hooks/useLoadingScreen";
-import { useWindowAnimation } from "../hooks/window";
 import { useShutdown } from "../hooks/useShutdown";
 import { useStartup } from "../hooks/useStartup";
 import { useCMSContent } from "../hooks/useDesktopItems";
@@ -33,7 +32,7 @@ const Desktop = memo(({ onFullScreenChange, onTriggerBSOD }) => {
     updateWindowOriginRect,
   } = useWindowSystem();
   const { zoomAnimations, triggerZoomAnimation, handleAnimationComplete } =
-    useWindowAnimation();
+    useZoomAnimationManager();
   const { isShuttingDown, shutdownStage, startShutdown } = useShutdown();
 
   const [selectedIcon, setSelectedIcon] = useState(null);

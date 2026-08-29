@@ -6,18 +6,18 @@ import { ICON_MAP } from './iconImports';
 const { winPostitIcon } = ICON_MAP;
 
 // Lazy load components for better performance
-const About = lazy(() => import("../features/About/About"));
-const Welcome = lazy(() => import("../features/Welcome/Welcome"));
-const Message = lazy(() => import("../features/Message/Message"));
-const MediaPlayer = lazy(() => import("../features/MediaPlayer/MediaPlayer"));
-const Line98 = lazy(() => import("../features/Games/Line98/Line98"));
-const Safe = lazy(() => import("../features/Safe/Safe"));
-const News = lazy(() => import("../features/News/News"));
-const MatrixRain = lazy(() => import("../features/MatrixRain/MatrixRain"));
-const FragileWorld = lazy(() => import("../features/FragileWorld/FragileWorld"));
-const Notebook = lazy(() => import("../features/Notebook/Notebook"));
-const PhotoViewer = lazy(() => import("../features/PhotoViewer/PhotoViewer"));
-const Standby = lazy(() => import("../features/Standby/Standby"));
+const About = lazy(() => import("../features/about/About"));
+const Welcome = lazy(() => import("../features/welcome/Welcome"));
+const Message = lazy(() => import("../features/message/Message"));
+const MediaPlayer = lazy(() => import("../features/media-player/MediaPlayer"));
+const Line98 = lazy(() => import("../features/games/line98/Line98"));
+const Safe = lazy(() => import("../features/safe/Safe"));
+const News = lazy(() => import("../features/news/News"));
+const MatrixRain = lazy(() => import("../features/matrix-rain/MatrixRain"));
+const FragileWorld = lazy(() => import("../features/fragile-world/FragileWorld"));
+const Notebook = lazy(() => import("../features/notebook/Notebook"));
+const PhotoViewer = lazy(() => import("../features/photo-viewer/PhotoViewer"));
+const Standby = lazy(() => import("../features/standby/Standby"));
 
 
 

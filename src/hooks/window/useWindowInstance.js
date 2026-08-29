@@ -2,7 +2,7 @@ import { useState, useCallback, useRef, useMemo } from 'react';
 import { useWindowPosition } from './useWindowPosition';
 import { useWindowMobile } from './useWindowMobile';
 import { useWindowLifecycle } from './useWindowLifecycle';
-import { useWindowAnimations } from './useWindowAnimations';
+import { useWindowTransitions } from './useWindowTransitions';
 
 const MENU_BAR_HEIGHT_CONST = 36;
 
@@ -89,7 +89,7 @@ export const useWindowInstance = ({
   });
 
   // Animations hook
-  useWindowAnimations({
+  useWindowTransitions({
     id,
     isFullScreen,
     isFullScreenActive,

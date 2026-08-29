@@ -4,7 +4,7 @@ import Desktop from './components/Desktop';
 import BSOD from './components/BSOD';
 import Dialog from './components/Dialog';
 import { useNetworkStatus } from './hooks/useNetworkStatus';
-import networkIcon from './assets/icons/Microsoft Windows 3 Local Area Network.ico';
+import networkIcon from './assets/icons/win-local-area-network.ico';
 import { setCursorVariables } from './data/cursors';
 const Editor = React.lazy(() => import('./components/Editor'));
 
@@ -21,9 +21,11 @@ function App() {
     }
   }, [isOnline]);
 
-  // Initialize cursor variables on mount
+  // Initialize cursor variables and preload critical offline assets on mount
   useEffect(() => {
     setCursorVariables();
+    const img = new Image();
+    img.src = networkIcon;
   }, []);
 
   const handleFullScreenChange = useCallback((isFullScreenActive) => {
@@ -69,8 +71,9 @@ function App() {
         ]}
       />
 
-      {/* Hidden preloader for custom cursors to prevent flickers */}
+      {/* Hidden preloader for offline assets and custom cursors to prevent flickers */}
       <div style={{ position: 'fixed', opacity: 0, pointerEvents: 'none', zIndex: -1 }}>
+        <img src={networkIcon} alt="" width="1" height="1" loading="eager" decoding="async" />
         <div style={{ cursor: 'var(--cursor-arrow)' }}></div>
         <div style={{ cursor: 'var(--cursor-link)' }}></div>
         <div style={{ cursor: 'var(--cursor-wait)' }}></div>

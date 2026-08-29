@@ -1,9 +1,9 @@
 import React, { useState, useCallback, memo, useEffect, useRef } from 'react';
 import { useDragDrop } from '../hooks/useDragDrop';
 import { useContrastColor } from '../hooks/useContrastColor';
-import winWindowBlankIcon from '../assets/icons/Microsoft Windows 3 Window Blank.ico';
-import winFolderIcon from '../assets/icons/Microsoft Windows 3 Folder.ico';
-import shortcutIcon from '../assets/icons/Microsoft Windows 3 Shortcut.ico';
+import winWindowBlankIcon from '../assets/icons/win-window-blank.ico';
+import winFolderIcon from '../assets/icons/win-folder.ico';
+import shortcutIcon from '../assets/icons/win-shortcut.ico';
 
 /**
  * Unified Icon Component

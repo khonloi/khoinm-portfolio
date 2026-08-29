@@ -88,7 +88,18 @@ const Dialog = memo(({
                             <div className="border-2 border-windows-black bg-windows-white overflow-auto flex-1 select-text min-h-0 min-w-0 z-10 flex flex-col">
                                 <div className="p-4 text-windows-black text-left max-w-[26rem] flex flex-col justify-center flex-1">
                                     <div className="flex items-center justify-center gap-4 mb-4">
-                                        {showIcon && icon && <img src={icon} alt="" className="w-10 h-10 object-contain align-middle select-none" />}
+                                        {showIcon && icon && (
+                                            <img
+                                                src={icon}
+                                                alt=""
+                                                className="w-10 h-10 object-contain align-middle select-none shrink-0"
+                                                loading="eager"
+                                                decoding="async"
+                                                onError={(e) => {
+                                                    e.target.style.display = 'none';
+                                                }}
+                                            />
+                                        )}
                                         <span className="text-lg whitespace-pre-line">{message}</span>
                                     </div>
                                     {buttons.length > 0 && (
