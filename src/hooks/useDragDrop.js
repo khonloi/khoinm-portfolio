@@ -17,11 +17,12 @@ export const useDragDrop = (id, position, onPositionChange, onSelect, options = 
 
   const handleMouseDown = useCallback(
     (e) => {
-      if (e.target.closest("button") || e.target.closest(".control-button") || e.target.closest("[role='button']")) {
+      const button = e.target.closest("button, .control-button, [role='button']");
+      if (button && button !== elementRef.current) {
         return;
       }
       onSelect?.(id);
-      if (e.detail === 2 || !isAbsolutePositioned) return;
+      if (e.button !== 0 || e.detail === 2 || !isAbsolutePositioned) return;
 
       setIsDragging(true);
       const rect = elementRef.current.getBoundingClientRect();
@@ -37,7 +38,8 @@ export const useDragDrop = (id, position, onPositionChange, onSelect, options = 
 
   const handleTouchStart = useCallback(
     (e) => {
-      if (e.target.closest("button") || e.target.closest(".control-button") || e.target.closest("[role='button']")) {
+      const button = e.target.closest("button, .control-button, [role='button']");
+      if (button && button !== elementRef.current) {
         return;
       }
       onSelect?.(id);
@@ -80,9 +82,8 @@ export const useDragDrop = (id, position, onPositionChange, onSelect, options = 
       const newX = clientX - containerRect.left - dragOffset.x;
       const newY = clientY - containerRect.top - dragOffset.y;
 
-      const isWindow = elementRef.current.classList.contains("window-outer");
-      const elementWidth = isWindow ? elementRef.current.offsetWidth : 64;
-      const elementHeight = isWindow ? elementRef.current.offsetHeight : 64;
+      const elementWidth = elementRef.current.offsetWidth || 80;
+      const elementHeight = elementRef.current.offsetHeight || 96;
 
       const EDGE_PADDING = 5;
       const maxX = containerRect.width - elementWidth + EDGE_PADDING;

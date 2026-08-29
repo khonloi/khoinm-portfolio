@@ -94,8 +94,9 @@ const Icon = memo(({
             lastClickTimeRef.current = 0;
         } else {
             lastClickTimeRef.current = now;
+            onSelect?.(id);
         }
-    }, [handleAction]);
+    }, [handleAction, onSelect, id]);
 
     const handleInternalDragOver = useCallback((e) => {
         if (!onDrop) return;
@@ -143,6 +144,7 @@ const Icon = memo(({
             onMouseDown={handleMouseDown}
             onTouchStart={handleTouchStart}
             onClick={handleClick}
+            onFocus={() => onSelect?.(id)}
             onDragOver={handleInternalDragOver}
             onDrop={handleInternalDrop}
             draggable={isDraggable}
