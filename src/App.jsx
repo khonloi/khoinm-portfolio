@@ -1,60 +1,32 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Analytics } from '@vercel/analytics/react';
 import Desktop from './components/Desktop';
 import BSOD from './components/BSOD';
 import Dialog from './components/Dialog';
-import { useNetworkStatus } from './hooks/useNetworkStatus';
-import networkIcon from './assets/icons/win-local-area-network.ico';
+import { SystemProvider, useSystem } from './context/SystemContext';
+import { DesktopProvider } from './context/DesktopContext';
+import { WindowProvider } from './context/WindowContext';
 import { setCursorVariables } from './data/cursors';
+
 const Editor = React.lazy(() => import('./components/Editor'));
 
-function App() {
-  const [isFullScreen, setIsFullScreen] = useState(false);
-  const [isBSODActive, setIsBSODActive] = useState(false);
-
-  const isOnline = useNetworkStatus();
-  const [showOfflineDialog, setShowOfflineDialog] = useState(false);
-
-  useEffect(() => {
-    if (!isOnline) {
-      setShowOfflineDialog(true);
-    }
-  }, [isOnline]);
-
-  // Initialize cursor variables and preload critical offline assets on mount
-  useEffect(() => {
-    setCursorVariables();
-    const img = new Image();
-    img.src = networkIcon;
-  }, []);
-
-  const handleFullScreenChange = useCallback((isFullScreenActive) => {
-    setIsFullScreen(isFullScreenActive);
-  }, []);
-
-  const triggerBSOD = useCallback(() => {
-    setIsBSODActive(true);
-  }, []);
-
-  if (window.location.pathname.startsWith('/editor')) {
-    return (
-      <React.Suspense fallback={<div style={{ padding: '2rem', color: '#fff', background: '#000', height: '100vh' }}>Loading Editor...</div>}>
-        <Editor />
-      </React.Suspense>
-    );
-  }
+function AppShell() {
+  const {
+    isFullScreen,
+    isBSODActive,
+    closeBSOD,
+    showOfflineDialog,
+    setShowOfflineDialog,
+    networkIcon,
+  } = useSystem();
 
   return (
     <div className={`App ${isFullScreen ? 'fullscreen' : ''}`}>
-      <Desktop
-        onFullScreenChange={handleFullScreenChange}
-        onTriggerBSOD={triggerBSOD}
-      />
+      <Desktop />
 
       <div className="mobile-safe-buffer" />
 
-
-      {isBSODActive && <BSOD onClose={() => setIsBSODActive(false)} />}
+      {isBSODActive && <BSOD onClose={closeBSOD} />}
 
       <Dialog
         id="offline-dialog"
@@ -66,8 +38,8 @@ function App() {
         buttons={[
           {
             label: "OK",
-            onClick: () => setShowOfflineDialog(false)
-          }
+            onClick: () => setShowOfflineDialog(false),
+          },
         ]}
       />
 
@@ -82,6 +54,30 @@ function App() {
 
       <Analytics />
     </div>
+  );
+}
+
+function App() {
+  useEffect(() => {
+    setCursorVariables();
+  }, []);
+
+  if (window.location.pathname.startsWith('/editor')) {
+    return (
+      <React.Suspense fallback={<div style={{ padding: '2rem', color: '#fff', background: '#000', height: '100vh' }}>Loading Editor...</div>}>
+        <Editor />
+      </React.Suspense>
+    );
+  }
+
+  return (
+    <SystemProvider>
+      <DesktopProvider>
+        <WindowProvider>
+          <AppShell />
+        </WindowProvider>
+      </DesktopProvider>
+    </SystemProvider>
   );
 }
 

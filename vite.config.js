@@ -56,7 +56,8 @@ export default defineConfig({
         // Split vendor chunks for better caching and smaller sizes
         manualChunks: {
           'vendor-react': ['react', 'react-dom'],
-          'vendor-utils': ['@emailjs/browser']
+          'vendor-utils': ['@emailjs/browser'],
+          'vendor-sanity': ['sanity', 'sanity/structure'],
         }
       }
     },
@@ -75,6 +76,7 @@ export default defineConfig({
       '@data': '/src/data',
       '@lib': '/src/lib',
       '@assets': '/src/assets',
+      '@context': '/src/context',
     }
   },
   // Optimize dependencies

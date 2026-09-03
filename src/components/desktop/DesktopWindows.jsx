@@ -1,20 +1,44 @@
-import React, { memo } from "react";
+import React, { memo, useCallback } from "react";
 import Window from "../Window";
+import Explorer from "../Explorer";
 import { renderWindowContent } from "../../config/programConfig";
+import { useWindowContext } from "../../context/WindowContext";
+import { useDesktopContext } from "../../context/DesktopContext";
 
 const DesktopWindows = memo(({
-  openWindows,
-  focusedWindow,
-  minimizedWindowIds,
-  renderFolderContent,
-  handleCloseWindow,
+  openWindows: passedOpenWindows,
+  focusedWindow: passedFocusedWindow,
+  minimizedWindowIds: passedMinimizedWindowIds,
+  renderFolderContent: passedRenderFolder,
+  handleCloseWindow: passedClose,
   onTriggerBSOD,
-  triggerZoomAnimation,
-  handleMinimizeWindow,
-  focusWindow,
+  triggerZoomAnimation: passedZoom,
+  handleMinimizeWindow: passedMinimize,
+  focusWindow: passedFocus,
   onFullScreenChange,
-  handleWindowLoadingChange,
+  handleWindowLoadingChange: passedLoadingChange,
 }) => {
+  const windowCtx = useWindowContext();
+  const { folderDataMap } = useDesktopContext();
+
+  const openWindows = passedOpenWindows || windowCtx.openWindows;
+  const focusedWindow = passedFocusedWindow !== undefined ? passedFocusedWindow : windowCtx.focusedWindow;
+  const minimizedWindowIds = passedMinimizedWindowIds || windowCtx.minimizedWindowIds;
+  const handleCloseWindow = passedClose || windowCtx.handleCloseWindow;
+  const triggerZoomAnimation = passedZoom || windowCtx.triggerZoomAnimation;
+  const handleMinimizeWindow = passedMinimize || windowCtx.handleMinimizeWindow;
+  const focusWindow = passedFocus || windowCtx.focusWindow;
+  const handleWindowLoadingChange = passedLoadingChange || windowCtx.handleWindowLoadingChange;
+
+  const defaultRenderFolderContent = useCallback(
+    (folderId) => {
+      const folderData = folderDataMap.get(folderId);
+      return <Explorer folderId={folderId} folderData={folderData} />;
+    },
+    [folderDataMap]
+  );
+
+  const renderFolderContent = passedRenderFolder || defaultRenderFolderContent;
   return (
     <>
       {openWindows.map((win) => {

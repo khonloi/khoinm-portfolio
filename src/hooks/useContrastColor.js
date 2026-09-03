@@ -1,5 +1,4 @@
-// src/hooks/useContrastColor.js
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 
 // Function to calculate relative luminance
 const getRelativeLuminance = (r, g, b) => {
@@ -68,8 +67,14 @@ const parseRGB = (colorString) => {
   return null;
 };
 
+// Cache for determined text colors based on background color
+const colorCache = new Map();
+
 // Function to determine best text color
 const determineTextColor = (backgroundColor) => {
+  if (!backgroundColor) return 'var(--windows-white)';
+  if (colorCache.has(backgroundColor)) return colorCache.get(backgroundColor);
+
   const rgb = parseRGB(backgroundColor);
   if (!rgb) return 'var(--windows-white)'; // Default fallback
   
@@ -84,55 +89,36 @@ const determineTextColor = (backgroundColor) => {
   
   // Use the color with better contrast ratio
   // WCAG AA standard requires contrast ratio of at least 4.5:1 for normal text
+  let result;
   if (whiteContrast >= blackContrast && whiteContrast >= 4.5) {
-    return 'var(--windows-white)';
+    result = 'var(--windows-white)';
   } else if (blackContrast >= 4.5) {
-    return 'var(--windows-black)';
+    result = 'var(--windows-black)';
   } else {
     // If neither meets the standard, use the one with better contrast
-    return whiteContrast >= blackContrast ? 'var(--windows-white)' : 'var(--windows-black)';
+    result = whiteContrast >= blackContrast ? 'var(--windows-white)' : 'var(--windows-black)';
   }
+
+  colorCache.set(backgroundColor, result);
+  return result;
 };
 
 export const useContrastColor = (elementRef) => {
   const [textColor, setTextColor] = useState('var(--windows-white)');
-  const observerRef = useRef(null);
 
   useEffect(() => {
     if (!elementRef?.current) return;
 
-    const updateTextColor = () => {
-      const backgroundColor = getBackgroundColor(elementRef.current);
-      const newTextColor = determineTextColor(backgroundColor);
-      setTextColor(newTextColor);
-    };
-
-    // Initial check
-    updateTextColor();
-
-    // Set up observer to watch for style changes
-    if (window.ResizeObserver) {
-      observerRef.current = new ResizeObserver(() => {
-        updateTextColor();
-      });
-      observerRef.current.observe(elementRef.current);
-    }
-
-    // Also listen for window resize and scroll events
-    const handleResize = () => {
-      setTimeout(updateTextColor, 100); // Small delay to ensure styles are updated
-    };
-
-    window.addEventListener('resize', handleResize);
-    window.addEventListener('scroll', updateTextColor);
-
-    return () => {
-      if (observerRef.current) {
-        observerRef.current.disconnect();
+    // Use requestAnimationFrame to ensure element is attached to DOM with styles
+    const frameId = requestAnimationFrame(() => {
+      if (elementRef.current) {
+        const backgroundColor = getBackgroundColor(elementRef.current);
+        const newTextColor = determineTextColor(backgroundColor);
+        setTextColor(newTextColor);
       }
-      window.removeEventListener('resize', handleResize);
-      window.removeEventListener('scroll', updateTextColor);
-    };
+    });
+
+    return () => cancelAnimationFrame(frameId);
   }, [elementRef]);
 
   return textColor;

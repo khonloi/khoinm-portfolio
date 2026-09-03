@@ -1,24 +1,37 @@
 import React, { memo, useCallback } from 'react';
 import Icon from './Icon';
 import flashlightGif from '../assets/images/flashlight.gif';
+import { useDesktopContext } from '../context/DesktopContext';
+import { useWindowContext } from '../context/WindowContext';
 
 const Explorer = memo(({
   folderId,
-  folderData,
+  folderData: passedFolderData,
   onIconDoubleClick,
   onFolderDoubleClick,
   onIconSelect,
   onFolderSelect,
-  selectedItem,
+  selectedItem: passedSelectedItem,
   onMoveIcon,
 }) => {
+  const desktopCtx = useDesktopContext();
+  const windowCtx = useWindowContext();
+
+  const folderData = passedFolderData || desktopCtx.folderDataMap.get(folderId);
+  const selectedItem = passedSelectedItem !== undefined ? passedSelectedItem : desktopCtx.selectedIcon;
+
   const handleItemDoubleClick = useCallback((item, extra) => {
-    if (item.type === 'folder') {
+    if (item.type === 'folder' && onFolderDoubleClick) {
       onFolderDoubleClick(item, extra);
-    } else {
+    } else if (onIconDoubleClick) {
       onIconDoubleClick(item, extra);
+    } else {
+      windowCtx.handleItemDoubleClick(item, undefined, extra);
     }
-  }, [onFolderDoubleClick, onIconDoubleClick]);
+  }, [onFolderDoubleClick, onIconDoubleClick, windowCtx]);
+
+  const handleIconSelect = onIconSelect || desktopCtx.setSelectedIcon;
+  const handleFolderSelect = onFolderSelect || desktopCtx.setSelectedIcon;
 
   const handleDrop = useCallback((draggedIconId, targetFolderId) => {
     if (onMoveIcon) {
@@ -60,7 +73,7 @@ const Explorer = memo(({
               link={item.link}
               onDoubleClick={(e, extra) => handleItemDoubleClick(item, extra)}
               isSelected={selectedItem === item.id}
-              onSelect={item.type === 'folder' ? onFolderSelect : onIconSelect}
+              onSelect={item.type === 'folder' ? handleFolderSelect : handleIconSelect}
               onDrop={item.type === 'folder' ? handleDrop : undefined}
               draggable={false}
             />

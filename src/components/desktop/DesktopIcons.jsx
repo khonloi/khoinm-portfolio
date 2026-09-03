@@ -1,14 +1,25 @@
 import React, { memo, useEffect } from "react";
 import Icon from "../Icon";
+import { useDesktopContext } from "../../context/DesktopContext";
+import { useWindowContext } from "../../context/WindowContext";
 
 const DesktopIcons = memo(({
-  allDesktopItems,
-  itemPositions,
-  handleItemPositionChange,
-  handleItemDoubleClick,
-  selectedIcon,
-  setSelectedIcon,
+  allDesktopItems: passedItems,
+  itemPositions: passedPositions,
+  handleItemPositionChange: passedPosChange,
+  handleItemDoubleClick: passedDoubleClick,
+  selectedIcon: passedSelected,
+  setSelectedIcon: passedSetSelected,
 }) => {
+  const desktopCtx = useDesktopContext();
+  const windowCtx = useWindowContext();
+
+  const allDesktopItems = passedItems || desktopCtx.allDesktopItems;
+  const itemPositions = passedPositions || desktopCtx.itemPositions;
+  const handleItemPositionChange = passedPosChange || desktopCtx.handleItemPositionChange;
+  const handleItemDoubleClick = passedDoubleClick || windowCtx.handleItemDoubleClick;
+  const selectedIcon = passedSelected !== undefined ? passedSelected : desktopCtx.selectedIcon;
+  const setSelectedIcon = passedSetSelected || desktopCtx.setSelectedIcon;
   // Keyboard navigation for desktop icons
   useEffect(() => {
     const handleKeyDown = (e) => {

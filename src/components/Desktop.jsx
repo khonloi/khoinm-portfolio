@@ -1,59 +1,66 @@
-import React, { useState, useCallback, memo, useEffect, useMemo } from "react";
+import React, { useState, useCallback, memo, useEffect } from "react";
 import DesktopIcons from "./desktop/DesktopIcons";
 import DesktopWindows from "./desktop/DesktopWindows";
-import Explorer from "./Explorer";
 import Taskbar from "./Taskbar";
 import MenuBar from "./MenuBar";
 import LoadingScreen from "./LoadingScreen";
 import ZoomRectOverlay from "./ZoomRectOverlay";
-import { useWindowSystem, useZoomAnimationManager } from "../hooks/window";
-import { useDesktop } from "../hooks/useDesktop";
-import { useLoadingScreen } from "../hooks/useLoadingScreen";
-import { useShutdown } from "../hooks/useShutdown";
+import { useSystem } from "../context/SystemContext";
+import { useDesktopContext } from "../context/DesktopContext";
+import { useWindowContext } from "../context/WindowContext";
 import { useStartup } from "../hooks/useStartup";
-import { useCMSContent } from "../hooks/useDesktopItems";
 import { useDeepLinking } from "../hooks/useDeepLinking";
 import SEO from "./SEO";
 import { playSound } from "../data/sounds";
 import { getCursorStyle } from "../data/cursors";
 
 const Desktop = memo(({ onFullScreenChange, onTriggerBSOD }) => {
+  // System context
+  const {
+    isLoading,
+    isDelaying,
+    progress,
+    menuBarVisible,
+    skipLoading,
+    isShuttingDown,
+    shutdownStage,
+    startShutdown,
+    triggerBSOD: systemTriggerBSOD,
+  } = useSystem();
+
+  // Desktop context
+  const {
+    setSelectedIcon,
+  } = useDesktopContext();
+
+  // Window context
   const {
     openWindows,
     focusedWindow,
     minimizedWindows,
-    minimizedWindowIds,
     loadingWindows,
     handleItemDoubleClick,
-    handleMinimizeWindow,
-    handleRestoreWindow: handleRestoreWindowBase,
-    handleCloseWindow: handleCloseWindowBase,
+    handleRestoreWindow,
     focusWindow,
-    updateWindowOriginRect,
-  } = useWindowSystem();
-  const { zoomAnimations, triggerZoomAnimation, handleAnimationComplete } =
-    useZoomAnimationManager();
-  const { isShuttingDown, shutdownStage, startShutdown } = useShutdown();
+    zoomAnimations,
+    handleAnimationComplete,
+    hasFullScreenWindow,
+    hasActiveWindows,
+  } = useWindowContext();
 
-  const [selectedIcon, setSelectedIcon] = useState(null);
   const [isTaskbarCollapsed, setIsTaskbarCollapsed] = useState(false);
-  const [windowLoadingStates, setWindowLoadingStates] = useState({});
 
-  const { folderMap, cdDrive } = useCMSContent();
-  const { allDesktopItems, itemPositions, handleItemPositionChange } =
-    useDesktop(cdDrive);
+  const effectiveTriggerBSOD = onTriggerBSOD || systemTriggerBSOD;
 
-  const { isLoading, isDelaying, progress, menuBarVisible, skipLoading } =
-    useLoadingScreen();
-
+  // Startup hook
   const { hasStarted } = useStartup({
     isLoading,
     isDelaying,
     isShuttingDown,
-    handleItemDoubleClick: handleItemDoubleClick,
+    handleItemDoubleClick,
   });
 
-  // Deep linking and URL synchronization for SEO and shareable links
+  // Deep linking and URL synchronization
   useDeepLinking({
     handleItemDoubleClick,
     openWindows,
@@ -62,37 +69,11 @@ const Desktop = memo(({ onFullScreenChange, onTriggerBSOD }) => {
     hasBooted: hasStarted,
   });
 
-  const handleRestoreWindow = useCallback(
-    (windowId, extra = {}) => {
-      if (extra?.originRect) {
-        updateWindowOriginRect(windowId, extra.originRect);
-      }
-      handleRestoreWindowBase(windowId);
-    },
-    [handleRestoreWindowBase, updateWindowOriginRect]
-  );
-
-  const handleCloseWindow = useCallback(
-    (windowId) => {
-      handleCloseWindowBase(windowId);
-      setWindowLoadingStates((prev) => {
-        const newStates = { ...prev };
-        delete newStates[windowId];
-        return newStates;
-      });
-    },
-    [handleCloseWindowBase]
-  );
-
   const handleDesktopClick = useCallback((e) => {
     if (e.target === e.currentTarget) {
       setSelectedIcon(null);
     }
-  }, []);
-
-  const handleShutdown = useCallback(() => {
-    startShutdown();
-  }, [startShutdown]);
+  }, [setSelectedIcon]);
 
   const handleToggleTaskbarCollapse = useCallback(async () => {
     const newCollapsedState = !isTaskbarCollapsed;
@@ -101,80 +82,6 @@ const Desktop = memo(({ onFullScreenChange, onTriggerBSOD }) => {
     await playSound(soundType);
   }, [isTaskbarCollapsed]);
 
-  // Memoize folder data lookup for better performance
-  const folderDataMap = useMemo(() => {
-    const map = new Map();
-    const processItems = (itemList) => {
-      itemList.forEach((item) => {
-        if (item.type === "folder") {
-          map.set(item.id, item);
-        }
-        if (item.contents) {
-          processItems(item.contents);
-        }
-      });
-    };
-    processItems(allDesktopItems);
-
-    // Merge dynamic folder contents from Sanity
-    Object.entries(folderMap).forEach(([folderId, dynamicItems]) => {
-      const folder = map.get(folderId);
-      if (folder) {
-        folder.contents = dynamicItems;
-        // Also index sub-folders inside dynamic content
-        const processDynamic = (items) => {
-          items.forEach((item) => {
-            if (item.type === "folder") {
-              map.set(item.id, item);
-              if (item.contents) processDynamic(item.contents);
-            }
-          });
-        };
-        processDynamic(dynamicItems);
-      }
-    });
-
-    return map;
-  }, [allDesktopItems, folderMap]);
-
-  const renderFolderContent = useCallback(
-    (folderId) => {
-      const folderData = folderDataMap.get(folderId);
-
-      return (
-        <Explorer
-          folderId={folderId}
-          folderData={folderData}
-          onIconDoubleClick={(item, extra) =>
-            handleItemDoubleClick(item, undefined, extra)
-          }
-          onFolderDoubleClick={(item, extra) =>
-            handleItemDoubleClick(item, undefined, extra)
-          }
-          onIconPositionChange={handleItemPositionChange}
-          onFolderPositionChange={handleItemPositionChange}
-          onIconSelect={setSelectedIcon}
-          onFolderSelect={setSelectedIcon}
-          selectedItem={selectedIcon}
-        />
-      );
-    },
-    [
-      folderDataMap,
-      handleItemDoubleClick,
-      handleItemPositionChange,
-      selectedIcon,
-    ]
-  );
-
-  // Handle window loading state changes
-  const handleWindowLoadingChange = useCallback((windowId, isLoading) => {
-    setWindowLoadingStates((prev) => ({
-      ...prev,
-      [windowId]: isLoading,
-    }));
-  }, []);
-
   // Handle cursor state during shutdown
   useEffect(() => {
     if (isShuttingDown && shutdownStage < 2) {
@@ -182,32 +89,10 @@ const Desktop = memo(({ onFullScreenChange, onTriggerBSOD }) => {
     }
   }, [isShuttingDown, shutdownStage]);
 
-
-
-  // Memoize full-screen window calculation to avoid duplicate computation
-  const hasFullScreenWindow = useMemo(() => {
-    return openWindows.some(
-      (win) =>
-        win.isFullScreen &&
-        !minimizedWindowIds.has(win.id) &&
-        windowLoadingStates[win.id] === false
-    );
-  }, [openWindows, minimizedWindowIds, windowLoadingStates]);
-
   // Notify parent of full-screen state
   useEffect(() => {
     onFullScreenChange?.(hasFullScreenWindow);
   }, [hasFullScreenWindow, onFullScreenChange]);
-
-  // Determine if there are any windows currently visible or minimized (requiring the safe area)
-  const hasActiveWindows = useMemo(() => {
-    const hasVisibleContent = openWindows.some(
-      (win) => win.isDialog || windowLoadingStates[win.id] === false
-    );
-    const hasMinimizedWindows = minimizedWindows.length > 0;
-
-    return hasVisibleContent || hasMinimizedWindows;
-  }, [openWindows, windowLoadingStates, minimizedWindows.length]);
 
   // Manage mobile safe area buffer visibility class based on active windows
   useEffect(() => {
@@ -276,7 +161,7 @@ const Desktop = memo(({ onFullScreenChange, onTriggerBSOD }) => {
       {!hasFullScreenWindow && (
         <MenuBar
           visible={menuBarVisible && shutdownStage === 0}
-          onShutdown={handleShutdown}
+          onShutdown={startShutdown}
         />
       )}
       <div
@@ -292,26 +177,10 @@ const Desktop = memo(({ onFullScreenChange, onTriggerBSOD }) => {
         role="main"
         aria-label="Desktop environment"
       >
-        <DesktopIcons
-          allDesktopItems={allDesktopItems}
-          itemPositions={itemPositions}
-          handleItemPositionChange={handleItemPositionChange}
-          handleItemDoubleClick={handleItemDoubleClick}
-          selectedIcon={selectedIcon}
-          setSelectedIcon={setSelectedIcon}
-        />
+        <DesktopIcons />
         <DesktopWindows
-          openWindows={openWindows}
-          focusedWindow={focusedWindow}
-          minimizedWindowIds={minimizedWindowIds}
-          renderFolderContent={renderFolderContent}
-          handleCloseWindow={handleCloseWindow}
-          onTriggerBSOD={onTriggerBSOD}
-          triggerZoomAnimation={triggerZoomAnimation}
-          handleMinimizeWindow={handleMinimizeWindow}
-          focusWindow={focusWindow}
+          onTriggerBSOD={effectiveTriggerBSOD}
           onFullScreenChange={onFullScreenChange}
-          handleWindowLoadingChange={handleWindowLoadingChange}
         />
 
         {!hasFullScreenWindow && (

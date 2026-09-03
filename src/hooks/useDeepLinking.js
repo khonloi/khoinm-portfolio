@@ -13,19 +13,30 @@ export const useDeepLinking = ({
   hasBooted,
 }) => {
   const initialHandledRef = useRef(false);
+  const openWindowsRef = useRef(openWindows);
+  const initialTargetRef = useRef(
+    (() => {
+      if (typeof window === 'undefined') return null;
+      const params = new URLSearchParams(window.location.search);
+      return params.get('open') || params.get('app') || params.get('window');
+    })()
+  );
+
+  useEffect(() => {
+    openWindowsRef.current = openWindows;
+  }, [openWindows]);
 
   // 1. Handle initial deep link on page load after desktop boots
   useEffect(() => {
     if (!hasBooted || initialHandledRef.current) return;
+    initialHandledRef.current = true;
 
-    const params = new URLSearchParams(window.location.search);
-    const target = params.get('open') || params.get('app') || params.get('window');
+    const target = initialTargetRef.current;
 
     if (target) {
-      initialHandledRef.current = true;
       // Slight delay to ensure desktop is fully ready
       const timer = setTimeout(() => {
-        const isAlreadyOpen = openWindows.some((w) => w.id === target);
+        const isAlreadyOpen = openWindowsRef.current.some((w) => w.id === target);
         if (isAlreadyOpen) {
           focusWindow(target);
         } else {
@@ -34,7 +45,7 @@ export const useDeepLinking = ({
       }, 100);
       return () => clearTimeout(timer);
     }
-  }, [hasBooted, openWindows, focusWindow, handleItemDoubleClick]);
+  }, [hasBooted, focusWindow, handleItemDoubleClick]);
 
   // 2. Sync URL when focused window changes
   useEffect(() => {
@@ -61,7 +72,7 @@ export const useDeepLinking = ({
       const target = params.get('open') || e.state?.open;
 
       if (target) {
-        const isAlreadyOpen = openWindows.some((w) => w.id === target);
+        const isAlreadyOpen = openWindowsRef.current.some((w) => w.id === target);
         if (isAlreadyOpen) {
           focusWindow(target);
         } else {
@@ -72,7 +83,7 @@ export const useDeepLinking = ({
 
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
-  }, [openWindows, focusWindow, handleItemDoubleClick]);
+  }, [focusWindow, handleItemDoubleClick]);
 };
 
 export default useDeepLinking;

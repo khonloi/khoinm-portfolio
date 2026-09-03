@@ -5,6 +5,7 @@ import keyGrayIcon from "../assets/icons/win-keys.ico";
 import availableIcon from "../assets/icons/available.png";
 import unavailableIcon from "../assets/icons/un-available.png";
 import { useServiceStatus } from "../hooks/useServiceStatus";
+import { useSystem } from "../context/SystemContext";
 
 const shutdownMessage = "Do you want to exit your session?";
 
@@ -25,7 +26,9 @@ const formatDate = (date) => {
   return `${day} ${month}`;
 };
 
-const MenuBar = ({ visible = true, onShutdown }) => {
+const MenuBar = ({ visible = true, onShutdown: passedShutdown }) => {
+  const { startShutdown } = useSystem();
+  const onShutdown = passedShutdown || startShutdown;
   const [currentTime, setCurrentTime] = useState(new Date());
   const [showShutdownDialog, setShowShutdownDialog] = useState(false);
   const { isAvailable, statusText } = useServiceStatus(true);
