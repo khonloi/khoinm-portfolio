@@ -7,6 +7,7 @@ import { SystemProvider, useSystem } from './context/SystemContext';
 import { DesktopProvider } from './context/DesktopContext';
 import { WindowProvider } from './context/WindowContext';
 import { setCursorVariables } from './data/cursors';
+import ErrorBoundary from './components/ErrorBoundary';
 
 const Editor = React.lazy(() => import('./components/Editor'));
 
@@ -74,7 +75,9 @@ function App() {
     <SystemProvider>
       <DesktopProvider>
         <WindowProvider>
-          <AppShell />
+          <ErrorBoundary name="Desktop" onClose={() => window.location.reload()}>
+            <AppShell />
+          </ErrorBoundary>
         </WindowProvider>
       </DesktopProvider>
     </SystemProvider>

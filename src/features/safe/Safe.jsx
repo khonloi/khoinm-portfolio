@@ -5,6 +5,7 @@ import Input from '../../components/Input';
 
 const Safe = ({ onClose }) => {
   const [password, setPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
   const secretPassword = import.meta.env.VITE_EASTER_EGG_PASSWORD;
   const easterEggUrl = import.meta.env.VITE_EASTER_EGG_URL;
@@ -14,7 +15,8 @@ const Safe = ({ onClose }) => {
       window.open(easterEggUrl, "_blank", "noopener,noreferrer");
       onClose();
     } else {
-      alert("Incorrect password");
+      setErrorMessage("Incorrect password. Try again.");
+      setPassword('');
     }
   };
 
@@ -31,6 +33,9 @@ const Safe = ({ onClose }) => {
           if (e.key === 'Enter') handleUnlock();
         }}
       />
+      {errorMessage && (
+        <div className="text-red-600 text-sm mt-1">{errorMessage}</div>
+      )}
     </div>
   );
 

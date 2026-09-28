@@ -4,6 +4,7 @@ import Explorer from "../Explorer";
 import { renderWindowContent } from "../../config/programConfig";
 import { useWindowContext } from "../../context/WindowContext";
 import { useDesktopContext } from "../../context/DesktopContext";
+import ErrorBoundary from "../ErrorBoundary";
 
 const DesktopWindows = memo(({
   openWindows: passedOpenWindows,
@@ -85,7 +86,9 @@ const DesktopWindows = memo(({
             onLoadingChange={handleWindowLoadingChange}
             aria-label={`${win.title} window`}
           >
-            {content}
+            <ErrorBoundary name={win.title} onClose={() => handleCloseWindow(win.id)}>
+              {content}
+            </ErrorBoundary>
           </Window>
         );
       })}
