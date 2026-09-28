@@ -23,6 +23,13 @@ function AppShell() {
 
   return (
     <div className={`App ${isFullScreen ? 'fullscreen' : ''}`}>
+      {/* Skip to content link for keyboard/screen reader users */}
+      <a
+        href="#desktop-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-1 focus:left-1 focus:z-[999999] focus:bg-windows-yellow focus:text-windows-black focus:px-4 focus:py-2 focus:text-lg focus:font-bold"
+      >
+        Skip to desktop content
+      </a>
       <Desktop />
 
       <div className="mobile-safe-buffer" />

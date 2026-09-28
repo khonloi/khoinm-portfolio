@@ -1,6 +1,6 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-import { VitePWA } from 'vite-plugin-pwa'
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import { VitePWA } from 'vite-plugin-pwa';
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -9,42 +9,44 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       devOptions: {
-        enabled: true
+        enabled: true,
       },
       manifest: {
         name: 'Khoi NM - Creative Developer',
         short_name: 'Khoi NM',
-        description: 'Khoi NM\'s creative developer portfolio',
-        theme_color: '#008080',
+        description: "Khoi NM's creative developer portfolio",
+        theme_color: '#b26b93',
+        lang: 'en',
+        categories: ['entertainment', 'productivity'],
         icons: [
           {
             src: '/favicon.ico',
             sizes: '64x64 32x32 24x24 16x16',
-            type: 'image/x-icon'
+            type: 'image/x-icon',
           },
           {
             src: '/og-image.png',
             sizes: '192x192',
             type: 'image/png',
-            purpose: 'any'
+            purpose: 'any',
           },
           {
             src: '/og-image.png',
             sizes: '512x512',
             type: 'image/png',
-            purpose: 'maskable'
-          }
+            purpose: 'maskable',
+          },
         ],
-        background_color: '#008080',
-        display: 'standalone'
+        background_color: '#b26b93',
+        display: 'standalone',
       },
       workbox: {
         maximumFileSizeToCacheInBytes: 6000000, // 6MB to accommodate Sanity studio chunk
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,webp,ttf,cur}']
-      }
-    })
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,webp,ttf,cur}'],
+      },
+    }),
   ],
-  base: './',  // Use relative paths for better portability across different hosting (Vercel, GitHub Pages)
+  base: './', // Use relative paths for better portability across different hosting (Vercel, GitHub Pages)
   build: {
     assetsInlineLimit: 0, // Ensures proper asset handling
     rollupOptions: {
@@ -58,13 +60,13 @@ export default defineConfig({
           'vendor-react': ['react', 'react-dom'],
           'vendor-utils': ['@emailjs/browser'],
           'vendor-sanity': ['sanity', 'sanity/structure'],
-        }
-      }
+        },
+      },
     },
     // Enable source maps for debugging
     sourcemap: false,
     // Optimize chunk size
-    chunkSizeWarningLimit: 1000
+    chunkSizeWarningLimit: 1000,
   },
   resolve: {
     alias: {
@@ -77,10 +79,10 @@ export default defineConfig({
       '@lib': '/src/lib',
       '@assets': '/src/assets',
       '@context': '/src/context',
-    }
+    },
   },
   // Optimize dependencies
   optimizeDeps: {
-    include: ['react', 'react-dom']
-  }
+    include: ['react', 'react-dom'],
+  },
 });

@@ -119,7 +119,7 @@ const Icon = memo(({
 
     // Style composition
     const itemClasses = [
-        "windows-icon flex flex-col items-center w-20 h-24 select-none",
+        "windows-icon flex flex-col items-center w-20 h-24 select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-windows-yellow focus-visible:ring-offset-1",
         className,
         !isImageLoaded ? "invisible" : ""
     ].filter(Boolean).join(" ");

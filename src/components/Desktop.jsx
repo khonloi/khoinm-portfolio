@@ -165,6 +165,7 @@ const Desktop = memo(({ onFullScreenChange, onTriggerBSOD }) => {
         />
       )}
       <div
+        id="desktop-content"
         className={`desktop fixed w-screen p-0 m-0 ${
           hasFullScreenWindow
             ? "top-0 h-[100dvh]"

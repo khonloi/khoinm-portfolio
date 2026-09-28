@@ -84,6 +84,9 @@ const LoadingScreen = ({
 
   // Sequence sequences handler
   useEffect(() => {
+    const prefersReducedMotion = typeof window !== 'undefined' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
     clearTimeouts();
     setStage(1);
     setShowRestartMessage(false);
@@ -102,6 +105,11 @@ const LoadingScreen = ({
       const interval = setInterval(() => setShowCursor(c => !c), 150);
 
       const sequence = async () => {
+        if (prefersReducedMotion) {
+          setStage(LOADING_STAGES.CARD_DISPLAY);
+          return;
+        }
+
         // Logo screen stage (1)
         await new Promise(r => addTimeout(r, 3000));
 
