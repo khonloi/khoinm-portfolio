@@ -12,7 +12,9 @@ const client = createClient({
   projectId: import.meta.env.VITE_SANITY_PROJECT_ID,
   dataset: import.meta.env.VITE_SANITY_DATASET ?? 'production',
   apiVersion: import.meta.env.VITE_SANITY_API_VERSION ?? '2024-01-01',
-  token: import.meta.env.VITE_SANITY_TOKEN, // leave unset for public datasets
+  // Token intentionally excluded from client bundle for security.
+  // For public datasets, useCdn:true is sufficient.
+  // For private datasets, proxy through a Vercel serverless function.
   useCdn: true,
 });
 
