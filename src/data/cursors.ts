@@ -4,8 +4,10 @@ import defaultLink from '../assets/cursors/default_link.cur?url';
 import defaultWait from '../assets/cursors/default_wait.cur?url';
 import defaultBusy from '../assets/cursors/default_busy.cur?url';
 
+export type CursorType = 'arrow' | 'link' | 'wait' | 'busy';
+
 // Export cursor URLs
-export const cursors = {
+export const cursors: Record<CursorType, string> = {
   arrow: defaultArrow,
   link: defaultLink,
   wait: defaultWait,
@@ -13,7 +15,7 @@ export const cursors = {
 };
 
 // Set CSS custom properties for cursors
-export const setCursorVariables = () => {
+export const setCursorVariables = (): void => {
   const root = document.documentElement;
   root.style.setProperty('--cursor-arrow', `url(${defaultArrow}), auto`);
   root.style.setProperty('--cursor-link', `url(${defaultLink}), pointer`);
@@ -25,7 +27,7 @@ export const setCursorVariables = () => {
 };
 
 // Preload cursor files to prevent flickers
-export const preloadCursors = () => {
+export const preloadCursors = (): void => {
   Object.values(cursors).forEach((url) => {
     const img = new Image();
     img.src = url;
@@ -33,8 +35,9 @@ export const preloadCursors = () => {
 };
 
 // Get cursor style value
-export const getCursorStyle = (type = 'arrow') => {
-  return cursors[type]
-    ? `url(${cursors[type]}), ${type === 'link' ? 'pointer' : type === 'wait' || type === 'busy' ? 'wait' : 'auto'}`
+export const getCursorStyle = (type: CursorType | string = 'arrow'): string => {
+  const cursorUrl = cursors[type as CursorType];
+  return cursorUrl
+    ? `url(${cursorUrl}), ${type === 'link' ? 'pointer' : type === 'wait' || type === 'busy' ? 'wait' : 'auto'}`
     : 'auto';
 };

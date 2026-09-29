@@ -1,7 +1,18 @@
-
-import React, { lazy } from "react";
+import React, { lazy, type ComponentType, type ReactNode } from "react";
 import Dialog from "../components/Dialog";
 import { ICON_MAP } from './iconImports';
+
+interface DialogProps {
+  id?: string;
+  isVisible?: boolean;
+  title?: string;
+  message?: string;
+  icon?: string;
+  buttons?: Array<{ label: string; onClick: () => void }>;
+  onClose?: () => void;
+}
+
+const DialogComponent = Dialog as ComponentType<DialogProps>;
 
 const { winPostitIcon } = ICON_MAP;
 
@@ -19,10 +30,13 @@ const Notebook = lazy(() => import("../features/notebook/Notebook"));
 const PhotoViewer = lazy(() => import("../features/photo-viewer/PhotoViewer"));
 const Standby = lazy(() => import("../features/standby/Standby"));
 
-
+export interface WindowData {
+  filetype?: string;
+  [key: string]: unknown;
+}
 
 // Window content registry for better maintainability and performance
-const windowContentRegistry = {
+const windowContentRegistry: Record<string, ComponentType<any>> = {
   about: About,
   welcome: Welcome,
   message: Message,
@@ -64,7 +78,14 @@ const windowContentRegistry = {
 };
 
 // Window content renderer function - optimized with registry lookup
-export const renderWindowContent = (windowId, windowTitle, onClose, icon, onTriggerBSOD, winData = {}) => {
+export const renderWindowContent = (
+  windowId: string,
+  windowTitle: string,
+  onClose: () => void,
+  icon?: string,
+  onTriggerBSOD?: () => void,
+  winData: WindowData = {}
+): ReactNode => {
   // If filetype is provided, override the component mapping
   let Component = windowContentRegistry[windowId];
 
@@ -85,7 +106,7 @@ export const renderWindowContent = (windowId, windowTitle, onClose, icon, onTrig
   }
 
   return (
-    <Dialog
+    <DialogComponent
       isVisible={true}
       title={windowTitle}
       message="This program is currently being updated."
@@ -95,4 +116,3 @@ export const renderWindowContent = (windowId, windowTitle, onClose, icon, onTrig
     />
   );
 };
-

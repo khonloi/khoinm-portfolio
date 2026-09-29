@@ -99,7 +99,7 @@ import winWindowWordIcon from "../assets/icons/win-window-word.ico";
 import winWordpadIcon from "../assets/icons/win-wordpad.ico";
 import treeIcon from "../assets/icons/tree.ico";
 
-export const ICON_MAP = {
+export const ICON_MAP: Record<string, string> = {
   winBriefcaseIcon,
   winCalculatorIcon,
   winCalendarIcon,

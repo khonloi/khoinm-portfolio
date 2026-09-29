@@ -1,4 +1,6 @@
 import { ICON_MAP } from './iconImports';
+import type { DesktopItem } from '../types';
+
 const {
   winBriefcaseIcon, winCalculatorIcon, winCalendarIcon, winClockIcon,
   winCompressionIcon, winComputerIcon, winDocumentsIcon, winFileManagerIcon,
@@ -11,7 +13,7 @@ const {
 } = ICON_MAP;
 
 // Unified desktop items configuration
-export const desktopItems = [
+export const desktopItems: DesktopItem[] = [
   {
     id: "about",
     label: "My Information",

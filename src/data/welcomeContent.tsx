@@ -1,6 +1,11 @@
-import React from "react";
+import React, { type ReactNode } from "react";
 
-export const WELCOME_CONTENT = {
+export interface WelcomeMenuItem {
+  id: string;
+  label: string;
+}
+
+export const WELCOME_CONTENT: Record<string, ReactNode> = {
   welcome: (
     <>
       <h2 className="mt-0 mb-2 text-xl font-bold">Welcome to Pane 3.1</h2>
@@ -85,9 +90,8 @@ export const WELCOME_CONTENT = {
   ),
 };
 
-export const MENU_ITEMS = [
+export const MENU_ITEMS: WelcomeMenuItem[] = [
   { id: "welcome", label: "Welcome" },
   { id: "discover", label: "Discover" },
   { id: "contact-now", label: "Contact" },
 ];
-

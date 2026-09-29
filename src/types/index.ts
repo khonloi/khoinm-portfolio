@@ -10,14 +10,25 @@ export interface SkillCategory {
 
 export interface DesktopItem {
   id: string;
-  title: string;
+  label?: string;
+  title?: string;
   icon?: string;
-  type?: 'file' | 'folder' | 'app' | 'link';
+  iconSrc?: string;
+  type?: 'file' | 'folder' | 'app' | 'link' | 'icon';
   windowId?: string;
   url?: string;
-  position?: { x: number; y: number };
+  position?: 'left' | 'right' | { x: number; y: number };
   content?: string;
+  filetype?: string;
+  fileContent?: string;
+  isMaximizable?: boolean;
+  isFullScreen?: boolean;
+  isDialog?: boolean;
+  startup?: boolean;
+  hidden?: boolean;
+  contents?: DesktopItem[];
 }
+
 
 export interface WindowState {
   id: string;

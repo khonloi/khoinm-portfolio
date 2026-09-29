@@ -1,11 +1,19 @@
-const audioCache = new Map();
+import type React from 'react';
+
+const audioCache = new Map<string, HTMLAudioElement>();
+
+export interface PlaySoundOptions {
+  volume?: number;
+  preventDuplicate?: boolean;
+  audioRef?: React.MutableRefObject<HTMLAudioElement | null> | { current: HTMLAudioElement | null } | null;
+}
 
 /**
  * Play a sound file with caching and fallback support.
- * @param {string} soundType - The name of the sound file (without extension)
- * @param {Object} options - Optional configuration
+ * @param soundType - The name of the sound file (without extension)
+ * @param options - Optional configuration
  */
-export const playSound = async (soundType, options = {}) => {
+export const playSound = async (soundType: string, options: PlaySoundOptions = {}): Promise<void> => {
   const { volume = 0.7, preventDuplicate = false, audioRef = null } = options;
   const baseUrl = import.meta.env.BASE_URL || '/';
 
@@ -23,7 +31,7 @@ export const playSound = async (soundType, options = {}) => {
 
   // Clone or reset audio to allow overlapping plays or restarts
   try {
-    const playAudio = audio.cloneNode();
+    const playAudio = audio.cloneNode() as HTMLAudioElement;
     playAudio.volume = volume;
 
     if (audioRef) {
