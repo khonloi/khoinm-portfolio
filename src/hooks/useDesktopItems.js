@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { client } from '../lib/sanityClient';
 import { ICON_MAP } from '../config/programConfig';
 
-const CMS_JSON_QUERY = `*[_type in ["certificateList", "projectList", "stuffList", "onlineAccountList", "cdDrive"]] {
+const CMS_JSON_QUERY = `*[_type in ["certificateList", "projectList", "stuffList", "onlineAccountList", "cdDrive", "customShortcut"]] {
   _type,
   jsonContent,
   label,
@@ -12,6 +12,7 @@ const CMS_JSON_QUERY = `*[_type in ["certificateList", "projectList", "stuffList
 export const useCMSContent = () => {
   const [folderMap, setFolderMap] = useState({});
   const [cdDrive, setCdDrive] = useState(null);
+  const [customShortcuts, setCustomShortcuts] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -69,6 +70,21 @@ export const useCMSContent = () => {
               console.error(`Failed to parse JSON for ${folderId}:`, e);
             }
           }
+          
+          if (doc._type === 'customShortcut' && doc.jsonContent) {
+            try {
+              const parsed = JSON.parse(doc.jsonContent);
+              if (Array.isArray(parsed)) {
+                const shortcuts = processItems(parsed).map(item => ({
+                  ...item,
+                  position: 'right', // Force position right to line up below CD Drive
+                }));
+                setCustomShortcuts(shortcuts);
+              }
+            } catch (e) {
+              console.error('Failed to parse JSON for customShortcut:', e);
+            }
+          }
         });
 
         setFolderMap(map);
@@ -85,5 +101,5 @@ export const useCMSContent = () => {
     fetchContent();
   }, []);
 
-  return { folderMap, cdDrive, loading };
+  return { folderMap, cdDrive, customShortcuts, loading };
 };

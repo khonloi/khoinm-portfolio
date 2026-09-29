@@ -16,12 +16,12 @@ const POSITIONING_CONSTANTS = {
 };
 
 export const DesktopProvider = ({ children }) => {
-  const { folderMap, cdDrive, loading: cmsLoading } = useCMSContent();
+  const { folderMap, cdDrive, customShortcuts, loading: cmsLoading } = useCMSContent();
   const [selectedIcon, setSelectedIcon] = useState(null);
 
-  // Memoized desktop items merged with cdDrive
+  // Memoized desktop items merged with cdDrive and customShortcuts
   const allDesktopItems = useMemo(() => {
-    return desktopItems
+    const baseItems = desktopItems
       .map((item) => {
         if (item.id === 'cddrive' && cdDrive) {
           return {
@@ -33,7 +33,13 @@ export const DesktopProvider = ({ children }) => {
         return item;
       })
       .filter((item) => !item.hidden);
-  }, [cdDrive]);
+
+    if (customShortcuts && customShortcuts.length > 0) {
+      baseItems.push(...customShortcuts);
+    }
+
+    return baseItems;
+  }, [cdDrive, customShortcuts]);
 
   // Default positions calculation
   const calculateDefaultPositions = useCallback(() => {

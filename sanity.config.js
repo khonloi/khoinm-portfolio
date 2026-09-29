@@ -8,6 +8,7 @@ import stuffList from './sanity/schemas/stuffList';
 import onlineAccountList from './sanity/schemas/onlineAccountList';
 import cdDrive from './sanity/schemas/cdDrive';
 import serviceStatus from './sanity/schemas/serviceStatus';
+import customShortcut from './sanity/schemas/customShortcut';
 
 export default defineConfig({
   name: 'default',
@@ -30,6 +31,7 @@ export default defineConfig({
       onlineAccountList,
       cdDrive,
       serviceStatus,
+      customShortcut,
     ],
   },
 });
