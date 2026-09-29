@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, memo } from "react";
+import React, { useState, useEffect, useCallback, memo, useRef } from "react";
 import Button from "./Button";
 import { useDragDrop } from "../hooks/useDragDrop";
 
@@ -33,11 +33,61 @@ const Dialog = memo(({
         () => { } // Dialogs don't need complex focus management like desktop windows
     );
 
+    const previousFocusRef = useRef(null);
+
     // Initial loading simulated delay
     useEffect(() => {
         const timer = setTimeout(() => setIsLoading(false), 500);
         return () => clearTimeout(timer);
     }, []);
+
+    // Focus trap and ARIA focus management
+    useEffect(() => {
+        if (!isVisible || isLoading || !elementRef.current) return;
+
+        previousFocusRef.current = document.activeElement;
+
+        const focusableElements = elementRef.current.querySelectorAll(
+            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+        if (focusableElements && focusableElements.length > 0) {
+            focusableElements[0].focus();
+        }
+
+        const handleKeyDown = (e) => {
+            if (e.key === 'Escape') {
+                onClose?.(id);
+                return;
+            }
+            if (e.key !== 'Tab') return;
+
+            const focusable = elementRef.current.querySelectorAll(
+                'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+            );
+            
+            if (!focusable || focusable.length === 0) return;
+
+            const firstElement = focusable[0];
+            const lastElement = focusable[focusable.length - 1];
+
+            if (e.shiftKey && document.activeElement === firstElement) {
+                lastElement.focus();
+                e.preventDefault();
+            } else if (!e.shiftKey && document.activeElement === lastElement) {
+                firstElement.focus();
+                e.preventDefault();
+            }
+        };
+
+        document.addEventListener('keydown', handleKeyDown);
+
+        return () => {
+            document.removeEventListener('keydown', handleKeyDown);
+            if (previousFocusRef.current && typeof previousFocusRef.current.focus === 'function') {
+                previousFocusRef.current.focus();
+            }
+        };
+    }, [isVisible, isLoading, id, onClose, elementRef]);
 
     const handleTitleBarAction = useCallback((e) => {
         if (!e.target.closest(".window-title-bar")) return;
@@ -59,13 +109,20 @@ const Dialog = memo(({
     };
 
     const windowElement = (
-        <div ref={elementRef} className="window-outer bg-windows-black p-[2px] min-w-[320px] origin-center trim-window-corners" style={windowStyle}>
+        <div 
+          ref={elementRef} 
+          className="window-outer bg-windows-black p-[2px] min-w-[320px] origin-center trim-window-corners" 
+          style={windowStyle}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby={`${id}-title`}
+        >
             <div className="h-full relative bg-windows-grey trim-corners" onMouseDown={handleTitleBarAction} onTouchStart={handleTitleBarAction}>
                 <div className="h-full flex flex-col border-t-2 border-l-2 border-windows-white p-1 pr-1.5 pb-1.5 bg-windows-grey overflow-hidden">
                     {/* Window Frame: Title and Controls */}
                     <div className="bg-windows-black p-[2px] mb-1.5 relative shrink-0">
                       <div className="window-title-bar flex justify-between items-center w-full h-full bg-windows-purple text-windows-white">
-                        <span className="font-bold absolute left-1/2 -translate-x-1/2 select-none">{title}</span>
+                        <span id={`${id}-title`} className="font-bold absolute left-1/2 -translate-x-1/2 select-none">{title}</span>
                         <div className="flex gap-0.5">
                             <Button
                                 variant="control"

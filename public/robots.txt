@@ -1,6 +1,4 @@
 User-agent: *
 Allow: /
-Disallow: /editor/
 
-# Sitemaps
 Sitemap: https://khoinm.vercel.app/sitemap.xml

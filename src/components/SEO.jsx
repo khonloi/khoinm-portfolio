@@ -2,15 +2,15 @@ import React, { useEffect, useMemo } from 'react';
 
 const METADATA_MAP = {
   about: {
-    title: 'My Information | Khoi NM - Creative Developer',
-    description: 'Learn about Khoi NM, a creative developer specializing in frontend engineering, UI/UX design, and interactive retro web experiences.',
+    title: 'My Information | Khoi NM - Full-Stack Developer',
+    description: 'Learn about Khoi NM, a full-stack developer specializing in front-end engineering, UI/UX design, and interactive retro web experiences.',
   },
   projects: {
-    title: 'Projects Portfolio | Khoi NM - Creative Developer',
-    description: 'Explore creative web projects, interactive retro web applications, and modern frontend experiments developed by Khoi NM.',
+    title: 'Projects Portfolio | Khoi NM - Full-Stack Developer',
+    description: 'Explore full-stack web projects, interactive retro web applications, and modern front-end experiments developed by Khoi NM.',
   },
   certificates: {
-    title: 'Certificates & Credentials | Khoi NM - Creative Developer',
+    title: 'Certificates & Credentials | Khoi NM - Full-Stack Developer',
     description: 'Professional certificates, achievements, and technical credentials earned by Khoi NM.',
   },
   onlineAccounts: {
@@ -19,11 +19,11 @@ const METADATA_MAP = {
   },
   message: {
     title: 'Send a Message | Contact Khoi NM',
-    description: 'Get in touch with Khoi NM for collaborative projects, freelance opportunities, or creative development inquiries.',
+    description: 'Get in touch with Khoi NM for collaborative projects, freelance opportunities, or full-stack development inquiries.',
   },
   internet: {
     title: 'News & Tech Logs | Khoi NM',
-    description: 'Read the latest tech news, development insights, and creative articles on Khoi NM\'s retro portfolio.',
+    description: 'Read the latest tech news, development insights, and full-stack articles on Khoi NM\'s retro portfolio.',
   },
   programs: {
     title: 'Retro Programs & Utilities | Khoi NM Windows 3.1',
@@ -42,7 +42,7 @@ const METADATA_MAP = {
     description: 'Create retro pixel art and drawings with the interactive in-browser Windows 3.1 Paint app.',
   },
   welcome: {
-    title: 'Welcome to PANE | Khoi NM Creative Developer',
+    title: 'Welcome to PANE | Khoi NM Full-Stack Developer',
     description: 'Welcome to Khoi NM\'s interactive retro Windows portfolio experience. Discover projects, skills, and resume.',
   },
   notebook: {
@@ -64,8 +64,8 @@ const METADATA_MAP = {
 };
 
 const DEFAULT_SEO = {
-  title: 'Khoi NM | Creative Developer - Retro Windows Experience',
-  description: 'Khoi NM\'s creative developer portfolio, stylized as an interactive retro Windows desktop experience. Explore innovative frontend projects, web applications, skills, and resume.',
+  title: 'Khoi NM | Full-Stack Developer - Retro Windows Experience',
+  description: 'Khoi NM\'s full-stack developer portfolio, stylized as an interactive retro Windows desktop experience. Explore innovative front-end projects, web applications, skills, and resume.',
 };
 
 const BASE_URL = 'https://khoinm.vercel.app';
@@ -85,8 +85,8 @@ export const SEO = ({ focusedWindow, openWindows = [] }) => {
       const activeWin = openWindows.find(w => w.id === focusedWindow);
       if (activeWin?.title) {
         return {
-          title: `${activeWin.title} | Khoi NM - Creative Developer`,
-          description: `View ${activeWin.title} on Khoi NM's creative developer retro portfolio.`,
+          title: `${activeWin.title} | Khoi NM - Full-Stack Developer`,
+          description: `View ${activeWin.title} on Khoi NM's full-stack developer retro portfolio.`,
         };
       }
     }

@@ -1,13 +1,15 @@
 {
-  "name": "pane",
+  "name": "khoinm-portfolio",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
+  "description": "Khoi NM's full-stack developer portfolio — interactive retro Windows desktop experience",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "prebuild": "node scripts/generate-sitemap.js",
-    "build": "vite build",
+    "build": "node --max-old-space-size=4096 ./node_modules/vite/bin/vite.js build",
     "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
     "format": "prettier --write .",
     "test": "vitest run",
     "test:watch": "vitest",
@@ -30,9 +32,13 @@
   "devDependencies": {
     "@eslint/js": "^9.25.0",
     "@tailwindcss/postcss": "^4.2.2",
+    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/react": "^16.3.3",
+    "@types/node": "^26.6.3",
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19.1.2",
     "@vitejs/plugin-react": "^4.4.1",
+    "@vitest/coverage-v8": "^5.0.2",
     "autoprefixer": "^10.4.27",
     "eslint": "^9.25.0",
     "eslint-plugin-react-hooks": "^5.2.0",
@@ -43,8 +49,10 @@
     "prettier": "^3.8.1",
     "sharp": "^0.35.3",
     "tailwindcss": "^4.2.2",
+    "typescript": "^5.9.3",
     "vite": "^6.3.5",
     "vite-plugin-pwa": "^1.3.0",
+    "vitest": "^5.0.2",
     "workbox-window": "^7.4.1"
   },
   "homepage": "https://khoinm.vercel.app"

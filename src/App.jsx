@@ -1,15 +1,52 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Analytics } from '@vercel/analytics/react';
 import Desktop from './components/Desktop';
 import BSOD from './components/BSOD';
 import Dialog from './components/Dialog';
 import { SystemProvider, useSystem } from './context/SystemContext';
 import { DesktopProvider } from './context/DesktopContext';
-import { WindowProvider } from './context/WindowContext';
+import { WindowProvider, useWindowContext } from './context/WindowContext';
 import { setCursorVariables } from './data/cursors';
 import ErrorBoundary from './components/ErrorBoundary';
 
 const Editor = React.lazy(() => import('./components/Editor'));
+
+function WindowAnnouncer() {
+  const { openWindows, focusedWindow } = useWindowContext();
+  const [announcement, setAnnouncement] = useState('');
+  const prevWindowsRef = useRef([]);
+
+  useEffect(() => {
+    const prev = prevWindowsRef.current;
+    const curr = openWindows;
+
+    if (curr.length > prev.length) {
+      const newWin = curr.find(w => !prev.some(pw => pw.id === w.id));
+      if (newWin) {
+        setAnnouncement(`${newWin.title} window opened`);
+      }
+    } else if (curr.length < prev.length) {
+      const closedWin = prev.find(pw => !curr.some(w => w.id === pw.id));
+      if (closedWin) {
+        setAnnouncement(`${closedWin.title} window closed`);
+      }
+    } else if (focusedWindow) {
+      const focusedWin = curr.find(w => w.id === focusedWindow);
+      // Don't repeat focus announcement if it's the same window that just opened
+      if (focusedWin && setAnnouncement !== `${focusedWin.title} window opened`) {
+        setAnnouncement(`${focusedWin.title} window focused`);
+      }
+    }
+
+    prevWindowsRef.current = curr;
+  }, [openWindows, focusedWindow]);
+
+  return (
+    <div aria-live="polite" aria-atomic="true" className="sr-only">
+      {announcement}
+    </div>
+  );
+}
 
 function AppShell() {
   const {
@@ -30,6 +67,7 @@ function AppShell() {
       >
         Skip to desktop content
       </a>
+      <WindowAnnouncer />
       <Desktop />
 
       <div className="mobile-safe-buffer" />

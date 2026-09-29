@@ -6,7 +6,7 @@
 [![Sanity](https://img.shields.io/badge/Sanity-F03E2F?style=for-the-badge&logo=sanity&logoColor=white)](https://www.sanity.io/)
 [![Vercel](https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://vercel.com/)
 
-**Pane** is a high-fidelity, interactive desktop environment inspired by classic retro Windows operating systems. It serves as a creative developer portfolio, combining vintage desktop computing aesthetics with modern frontend technologies, headless content management, and progressive web application capabilities.
+**Pane** is a high-fidelity, interactive desktop environment inspired by classic retro Windows operating systems. It serves as a full-stack developer portfolio, combining vintage desktop computing aesthetics with modern front-end technologies, headless content management, and progressive web application capabilities.
 
 **Live Demo:** [https://khoinm.vercel.app](https://khoinm.vercel.app)
 

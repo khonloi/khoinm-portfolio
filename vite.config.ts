@@ -43,6 +43,7 @@ export default defineConfig({
       workbox: {
         maximumFileSizeToCacheInBytes: 3000000, // 3MB limit
         globPatterns: ['**/*.{js,css,html,ico,png,svg,webp,ttf,cur}'],
+        globIgnores: ['**/vendor-sanity*'],
         navigateFallbackDenylist: [/^\/editor/],
       },
     }),
@@ -57,10 +58,16 @@ export default defineConfig({
         chunkFileNames: 'assets/[name]-[hash].js',
         assetFileNames: 'assets/[name]-[hash].[ext]',
         // Split vendor chunks for better caching and smaller sizes
-        manualChunks: {
-          'vendor-react': ['react', 'react-dom'],
-          'vendor-utils': ['@emailjs/browser'],
-          'vendor-sanity': ['sanity', 'sanity/structure'],
+        manualChunks(id) {
+          if (
+            id.includes('node_modules/sanity') ||
+            id.includes('node_modules/@sanity')
+          ) {
+            return 'vendor-sanity';
+          }
+          if (id.includes('node_modules/@emailjs')) {
+            return 'vendor-utils';
+          }
         },
       },
     },

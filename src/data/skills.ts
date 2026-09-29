@@ -1,7 +1,9 @@
-export const SKILLS_DATA = [
+import type { SkillCategory } from '../types';
+
+export const SKILLS_DATA: SkillCategory[] = [
   {
-    id: 'frontend',
-    title: 'Frontend Development',
+    id: 'front-end',
+    title: 'Front-End Development',
     skills: [
       'HTML5 / CSS3',
       'JavaScript (ES6) / TypeScript',
@@ -27,3 +29,5 @@ export const SKILLS_DATA = [
     skills: ['Git / GitHub', 'Vite / Webpack', 'Postman'],
   },
 ];
+
+export default SKILLS_DATA;
