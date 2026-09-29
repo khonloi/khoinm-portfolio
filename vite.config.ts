@@ -11,6 +11,7 @@ export default defineConfig({
       devOptions: {
         enabled: true,
       },
+      showMaximumFileSizeToCacheInBytesWarning: true,
       manifest: {
         name: 'Khoi NM - Full-Stack Developer',
         short_name: 'Khoi NM',
