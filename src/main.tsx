@@ -1,10 +1,7 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App'
-// Import common CSS files once at the root level
-import './css/variables.css'
-import './css/base.css'
-import './css/components.css'
+// Consolidated root styles (imports variables, base, tailwind, and components)
 import './index.css'
 
 createRoot(document.getElementById('root')!).render(

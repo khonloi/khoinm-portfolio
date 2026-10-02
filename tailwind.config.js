@@ -31,6 +31,25 @@ export default {
       animation: {
         flash: 'flash-label 0.125s steps(1) infinite',
       },
+      cursor: {
+        'win-arrow': 'var(--cursor-arrow)',
+        'win-link': 'var(--cursor-link)',
+        'win-wait': 'var(--cursor-wait)',
+        'win-busy': 'var(--cursor-busy)',
+      },
+      boxShadow: {
+        'win-outset': 'inset 1.5px 1.5px var(--windows-white), inset -1.5px -1.5px var(--windows-grey-dark)',
+        'win-inset': 'inset 1.5px 1.5px var(--windows-grey-dark), inset -1.5px -1.5px var(--windows-white)',
+        'win-window': 'inset 1px 1px var(--windows-white), inset -1px -1px var(--windows-grey-dark), inset 2px 2px var(--windows-grey-light), inset -2px -2px var(--windows-black)',
+      },
+      zIndex: {
+        window: '1000',
+        taskbar: '10000',
+        modal: '90000',
+        zoom: '99999',
+        overlay: '100000',
+        'mobile-buffer': '100001',
+      },
     },
   },
 

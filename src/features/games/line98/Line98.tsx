@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import './Line98.css';
+import styles from './Line98.module.css';
 import Button from '../../../components/Button';
 
 import moveSound from './sounds/inside-your-computer-error.mp3';
@@ -306,16 +306,16 @@ const Line98: React.FC = () => {
   }, [score, highScore]);
 
   return (
-    <div className="line98-container">
-      <div className="line98-header">
-        <div className="line98-score-value">{score.toString().padStart(3, '0')}</div>
-        <div className="line98-timer-display">
-          <div className="line98-digital-value">{timer.toString().padStart(3, '0')}</div>
+    <div className={styles.container}>
+      <div className={styles.header}>
+        <div className={styles.scoreValue}>{score.toString().padStart(3, '0')}</div>
+        <div className={styles.timerDisplay}>
+          <div className={styles.digitalValue}>{timer.toString().padStart(3, '0')}</div>
         </div>
-        <div className="line98-score-value">{highScore.toString().padStart(3, '0')}</div>
+        <div className={styles.scoreValue}>{highScore.toString().padStart(3, '0')}</div>
       </div>
 
-      <div className="line98-grid">
+      <div className={styles.grid}>
         {grid.map((row, ri) => (
           row.map((cell, ci) => {
             const preview = previews.find(p => p.r === ri && p.c === ci);
@@ -323,18 +323,18 @@ const Line98: React.FC = () => {
             return (
               <div
                 key={`${ri}-${ci}`}
-                className={`line98-cell ${isSelected ? 'line98-selected' : ''}`}
+                className={`${styles.cell} ${isSelected ? styles.selected : ''}`}
                 onClick={() => handleCellClick(ri, ci)}
               >
                 {grid[ri][ci] !== 0 ? (
-                  <div className={`line98-ball line98-ball-${grid[ri][ci]}`} />
+                  <div className={`${styles.ball} ${styles[`ball${grid[ri][ci]}`]}`} />
                 ) : (
                   <>
                     {movingBall && movingBall.r === ri && movingBall.c === ci && (
-                      <div className={`line98-ball line98-ball-${movingBall.color}`} />
+                      <div className={`${styles.ball} ${styles[`ball${movingBall.color}`]}`} />
                     )}
                     {preview && !movingBall && (
-                      <div className={`line98-ball line98-ball-${preview.color} line98-ball-ghost`} />
+                      <div className={`${styles.ball} ${styles[`ball${preview.color}`]} ${styles.ballGhost}`} />
                     )}
                   </>
                 )}
@@ -345,9 +345,9 @@ const Line98: React.FC = () => {
         ))}
       </div>
 
-      <div className="line98-footer">
+      <div className={styles.footer}>
         <Button
-          className="line98-sound-btn"
+          className={styles.soundBtn}
           onClick={() => setSoundOn(!soundOn)}
         >
           Sound {soundOn ? 'ON' : 'OFF'}
@@ -356,8 +356,8 @@ const Line98: React.FC = () => {
       </div>
 
       {isGameOver && (
-        <div className="line98-game-over-overlay">
-          <div className="line98-game-over-modal">
+        <div className={styles.gameOverOverlay}>
+          <div className={styles.gameOverModal}>
             <h2>Game Over</h2>
             <p>Score: {score}</p>
             <Button onClick={initGame}>New Game</Button>

@@ -1,16 +1,16 @@
 @font-face {
   font-family: "W95FA";
-  src: url("../assets/fonts/W95FA.ttf") format("truetype");
+  src: url("@assets/fonts/W95FA.ttf") format("truetype");
 }
 
 @font-face {
   font-family: "Pixel Operator";
-  src: url("../assets/fonts/PixelOperator.ttf") format("truetype");
+  src: url("@assets/fonts/PixelOperator.ttf") format("truetype");
 }
 
 @font-face {
   font-family: "Modern DOS";
-  src: url("../assets/fonts/ModernDOS8x16.ttf") format("truetype");
+  src: url("@assets/fonts/ModernDOS8x16.ttf") format("truetype");
 }
 
 :root {

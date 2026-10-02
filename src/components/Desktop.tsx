@@ -157,8 +157,7 @@ const Desktop = memo<DesktopProps>(({ onFullScreenChange, onTriggerBSOD }) => {
       />
       {isShuttingDown && shutdownStage < 2 && (
         <div
-          className="overlay"
-          style={{ zIndex: 100000, cursor: getCursorStyle("busy") }}
+          className="overlay cursor-win-busy"
         />
       )}
       {!hasFullScreenWindow && (
