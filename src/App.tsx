@@ -13,7 +13,7 @@ import ErrorBoundary from './components/ErrorBoundary';
 
 import type { WindowState } from './types';
 
-const Editor = React.lazy(() => import('./components/Editor'));
+const Editor = React.lazy(() => import('./features/editor'));
 
 function WindowAnnouncer() {
   const openWindows = useWindowStore((s) => s.openWindows);
