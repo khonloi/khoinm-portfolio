@@ -145,7 +145,7 @@ export const SEO: React.FC<SEOProps> = ({ focusedWindow, openWindows = [] }) => 
       twitterDesc.setAttribute('content', currentMeta.description);
     }
 
-    let linkCanonical = document.querySelector('link[rel="canonical"]');
+    const linkCanonical = document.querySelector('link[rel="canonical"]');
     if (linkCanonical) {
       linkCanonical.setAttribute('href', canonicalUrl);
     }

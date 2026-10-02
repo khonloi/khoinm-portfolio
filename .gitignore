@@ -1,5 +1,50 @@
-# Logs
-logs
+# ==========================================
+# Dependencies & Package Managers
+# ==========================================
+node_modules/
+.pnp
+.pnp.js
+
+# ==========================================
+# Production Builds & Outputs
+# ==========================================
+dist/
+dist-ssr/
+build/
+*.tsbuildinfo
+
+# ==========================================
+# Testing & Code Coverage
+# ==========================================
+coverage/
+*.lcov
+.nyc_output/
+.vitest/
+
+# ==========================================
+# Caches & Temporary Build Artifacts
+# ==========================================
+.vite/
+.cache/
+.eslintcache
+.stylelintcache
+*.tmp
+*.temp
+
+# ==========================================
+# Environment Variables & Secrets
+# ==========================================
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.local
+
+# ==========================================
+# Logs & Debug Output
+# ==========================================
+logs/
 *.log
 npm-debug.log*
 yarn-debug.log*
@@ -7,22 +52,40 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
-coverage
-*.local
-
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
+# ==========================================
+# Operating System Files
+# ==========================================
+# macOS
 .DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+[Dd]esktop.ini
+$RECYCLE.BIN/
+*.stackdump
+
+# Linux
+*~
+
+# ==========================================
+# IDEs & Editor Configuration
+# ==========================================
+.idea/
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
-.env
-# Lock files are auto-generated
-package-lock.json
+*.bak
+.sublime-workspace
+.sublime-project
+
+# VS Code (ignore user settings, keep shared extensions)
+.vscode/*
+!.vscode/extensions.json

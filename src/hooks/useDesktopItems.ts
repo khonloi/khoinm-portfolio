@@ -31,7 +31,7 @@ export const useCMSContent = () => {
         const processItems = (items: any[]): DesktopItem[] => {
           return items.map((item: any) => {
             let iconSrc = item.iconSrc;
-            let type = item.type || 'icon';
+            const type = item.type || 'icon';
 
             // Automatic icon assignment based on filetype IF iconSrc is not manually provided
             if (!iconSrc && !item.customIconUrl) {

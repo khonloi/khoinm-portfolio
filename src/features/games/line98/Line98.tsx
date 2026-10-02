@@ -70,11 +70,11 @@ const Line98: React.FC = () => {
       [1, -1]  // Diagonal /
     ];
 
-    let allToRemove = new Set<string>();
+    const allToRemove = new Set<string>();
     allToRemove.add(`${r},${c}`);
 
     directions.forEach(([dr, dc]) => {
-      let line = [`${r},${c}`];
+      const line = [`${r},${c}`];
 
       let nr = r + dr, nc = c + dc;
       while (nr >= 0 && nr < GRID_SIZE && nc >= 0 && nc < GRID_SIZE && board[nr][nc] === color) {
@@ -106,7 +106,7 @@ const Line98: React.FC = () => {
 
   const spawnNewBalls = useCallback((currentGrid: number[][], currentPreviews: PreviewBall[]): number[][] => {
     const nextGrid = currentGrid.map(row => [...row]);
-    let actualSpawned: [number, number][] = [];
+    const actualSpawned: [number, number][] = [];
 
     currentPreviews.forEach(({ color, r, c }) => {
       if (nextGrid[r][c] !== 0) {

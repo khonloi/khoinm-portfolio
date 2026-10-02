@@ -50,7 +50,7 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({
   mode = "loading",
   progress: initialProgress = 0,
   onSkip,
-  onComplete,
+  onComplete: _onComplete,
 }) => {
   const [stage, setStage] = useState(1);
   const [imageLoaded, setImageLoaded] = useState(false);
