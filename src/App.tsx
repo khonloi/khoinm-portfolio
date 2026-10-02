@@ -3,9 +3,11 @@ import { Analytics } from '@vercel/analytics/react';
 import Desktop from './components/Desktop';
 import BSOD from './components/BSOD';
 import Dialog from './components/Dialog';
-import { SystemProvider, useSystem } from './context/SystemContext';
+import { SystemProvider } from './context/SystemContext';
 import { DesktopProvider } from './context/DesktopContext';
-import { WindowProvider, useWindowContext } from './context/WindowContext';
+import { WindowProvider } from './context/WindowContext';
+import { useWindowStore } from './stores/useWindowStore';
+import { useSystemStore } from './stores/useSystemStore';
 import { setCursorVariables } from './data/cursors';
 import ErrorBoundary from './components/ErrorBoundary';
 
@@ -14,7 +16,8 @@ import type { WindowState } from './types';
 const Editor = React.lazy(() => import('./components/Editor'));
 
 function WindowAnnouncer() {
-  const { openWindows, focusedWindow } = useWindowContext();
+  const openWindows = useWindowStore((s) => s.openWindows);
+  const focusedWindow = useWindowStore((s) => s.focusedWindow);
   const [announcement, setAnnouncement] = useState('');
   const prevWindowsRef = useRef<WindowState[]>([]);
 
@@ -51,14 +54,12 @@ function WindowAnnouncer() {
 }
 
 function AppShell() {
-  const {
-    isFullScreen,
-    isBSODActive,
-    closeBSOD,
-    showOfflineDialog,
-    setShowOfflineDialog,
-    networkIcon,
-  } = useSystem();
+  const isFullScreen = useSystemStore((s) => s.isFullScreen);
+  const isBSODActive = useSystemStore((s) => s.isBSODActive);
+  const closeBSOD = useSystemStore((s) => s.closeBSOD);
+  const showOfflineDialog = useSystemStore((s) => s.showOfflineDialog);
+  const setShowOfflineDialog = useSystemStore((s) => s.setShowOfflineDialog);
+  const networkIcon = useSystemStore((s) => s.networkIcon);
 
   return (
     <div className={`App ${isFullScreen ? 'fullscreen' : ''}`}>

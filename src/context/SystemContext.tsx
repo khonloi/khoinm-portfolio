@@ -1,9 +1,9 @@
 /* eslint-disable react-refresh/only-export-components */
-import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
+import React, { createContext, useContext, useCallback, useEffect, useMemo } from 'react';
 import { useLoadingScreen } from '../hooks/useLoadingScreen';
 import { useShutdown } from '../hooks/useShutdown';
 import { useNetworkStatus } from '../hooks/useNetworkStatus';
-import networkIcon from '../assets/icons/win-local-area-network.ico';
+import { useSystemStore } from '../stores/useSystemStore';
 import type { SystemContextType } from '../types';
 
 export const SystemContext = createContext<SystemContextType | null>(null);
@@ -14,65 +14,103 @@ export interface SystemProviderProps {
   onTriggerBSOD?: () => void;
 }
 
-export const SystemProvider: React.FC<SystemProviderProps> = ({ children, onFullScreenChange, onTriggerBSOD }) => {
-  const [isFullScreen, setIsFullScreen] = useState(false);
-  const [isBSODActive, setIsBSODActive] = useState(false);
+export const SystemProvider: React.FC<SystemProviderProps> = ({
+  children,
+  onFullScreenChange,
+  onTriggerBSOD,
+}) => {
   const isOnline = useNetworkStatus();
-  const [showOfflineDialog, setShowOfflineDialog] = useState(false);
+  const loading = useLoadingScreen();
+  const shutdown = useShutdown();
+  const store = useSystemStore();
 
+  // Sync network status
   useEffect(() => {
-    if (!isOnline) {
-      setShowOfflineDialog(true);
-    }
+    useSystemStore.getState().setIsOnline(isOnline);
   }, [isOnline]);
 
-  const {
-    isLoading,
-    isDelaying,
-    progress,
-    menuBarVisible,
-    skipLoading,
-  } = useLoadingScreen();
+  // Sync loading screen state
+  useEffect(() => {
+    useSystemStore.getState().setLoadingState({
+      isLoading: loading.isLoading,
+      isDelaying: loading.isDelaying,
+      progress: loading.progress,
+      menuBarVisible: loading.menuBarVisible,
+    });
+  }, [loading.isLoading, loading.isDelaying, loading.progress, loading.menuBarVisible]);
 
-  const {
-    isShuttingDown,
-    shutdownStage,
-    startShutdown,
-  } = useShutdown();
+  // Sync shutdown state
+  useEffect(() => {
+    useSystemStore.getState().setShutdownStage(shutdown.shutdownStage);
+  }, [shutdown.shutdownStage]);
 
-  const handleFullScreenChange = useCallback((active: boolean) => {
-    setIsFullScreen(active);
-    onFullScreenChange?.(active);
-  }, [onFullScreenChange]);
+  const handleFullScreenChange = useCallback(
+    (active: boolean) => {
+      useSystemStore.getState().setIsFullScreen(active);
+      onFullScreenChange?.(active);
+    },
+    [onFullScreenChange]
+  );
 
   const triggerBSOD = useCallback(() => {
-    setIsBSODActive(true);
+    useSystemStore.getState().triggerBSOD();
     onTriggerBSOD?.();
   }, [onTriggerBSOD]);
 
   const closeBSOD = useCallback(() => {
-    setIsBSODActive(false);
+    useSystemStore.getState().closeBSOD();
   }, []);
 
-  const value = {
-    isFullScreen,
-    setIsFullScreen: handleFullScreenChange,
-    isBSODActive,
-    triggerBSOD,
-    closeBSOD,
-    isOnline,
-    showOfflineDialog,
-    setShowOfflineDialog,
-    networkIcon,
-    isLoading,
-    isDelaying,
-    progress,
-    menuBarVisible,
-    skipLoading,
-    isShuttingDown,
-    shutdownStage,
-    startShutdown,
-  };
+  const setShowOfflineDialog = useCallback((show: boolean) => {
+    useSystemStore.getState().setShowOfflineDialog(show);
+  }, []);
+
+  const handleStartShutdown = useCallback(() => {
+    useSystemStore.getState().startShutdown();
+    shutdown.startShutdown();
+  }, [shutdown]);
+
+  const value: SystemContextType = useMemo(
+    () => ({
+      isFullScreen: store.isFullScreen,
+      setIsFullScreen: handleFullScreenChange,
+      isBSODActive: store.isBSODActive,
+      triggerBSOD,
+      closeBSOD,
+      isOnline: store.isOnline,
+      showOfflineDialog: store.showOfflineDialog,
+      setShowOfflineDialog,
+      networkIcon: store.networkIcon,
+      isLoading: store.isLoading,
+      isDelaying: store.isDelaying,
+      progress: store.progress,
+      menuBarVisible: store.menuBarVisible,
+      skipLoading: loading.skipLoading,
+      isShuttingDown: store.isShuttingDown || shutdown.isShuttingDown,
+      shutdownStage: store.shutdownStage,
+      startShutdown: handleStartShutdown,
+    }),
+    [
+      store.isFullScreen,
+      handleFullScreenChange,
+      store.isBSODActive,
+      triggerBSOD,
+      closeBSOD,
+      store.isOnline,
+      store.showOfflineDialog,
+      setShowOfflineDialog,
+      store.networkIcon,
+      store.isLoading,
+      store.isDelaying,
+      store.progress,
+      store.menuBarVisible,
+      loading.skipLoading,
+      store.isShuttingDown,
+      shutdown.isShuttingDown,
+      store.shutdownStage,
+      handleStartShutdown,
+    ]
+  );
 
   return (
     <SystemContext.Provider value={value}>
@@ -81,12 +119,52 @@ export const SystemProvider: React.FC<SystemProviderProps> = ({ children, onFull
   );
 };
 
-export const useSystem = () => {
+export const useSystem = (): SystemContextType => {
   const context = useContext(SystemContext);
-  if (!context) {
-    throw new Error('useSystem must be used within a SystemProvider');
-  }
-  return context;
+  const store = useSystemStore();
+
+  const fallbackValue: SystemContextType = useMemo(
+    () => ({
+      isFullScreen: store.isFullScreen,
+      setIsFullScreen: store.setIsFullScreen,
+      isBSODActive: store.isBSODActive,
+      triggerBSOD: store.triggerBSOD,
+      closeBSOD: store.closeBSOD,
+      isOnline: store.isOnline,
+      showOfflineDialog: store.showOfflineDialog,
+      setShowOfflineDialog: store.setShowOfflineDialog,
+      networkIcon: store.networkIcon,
+      isLoading: store.isLoading,
+      isDelaying: store.isDelaying,
+      progress: store.progress,
+      menuBarVisible: store.menuBarVisible,
+      skipLoading: store.skipLoading,
+      isShuttingDown: store.isShuttingDown,
+      shutdownStage: store.shutdownStage,
+      startShutdown: store.startShutdown,
+    }),
+    [
+      store.isFullScreen,
+      store.setIsFullScreen,
+      store.isBSODActive,
+      store.triggerBSOD,
+      store.closeBSOD,
+      store.isOnline,
+      store.showOfflineDialog,
+      store.setShowOfflineDialog,
+      store.networkIcon,
+      store.isLoading,
+      store.isDelaying,
+      store.progress,
+      store.menuBarVisible,
+      store.skipLoading,
+      store.isShuttingDown,
+      store.shutdownStage,
+      store.startShutdown,
+    ]
+  );
+
+  return context || fallbackValue;
 };
 
 export default SystemContext;

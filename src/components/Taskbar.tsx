@@ -1,6 +1,6 @@
 import React, { memo } from 'react';
 import Button from './Button';
-import { useWindowContext } from '../context/WindowContext';
+import { useWindowStore } from '../stores/useWindowStore';
 import { MinimizedWindow, Rect } from '../types';
 
 export interface TaskbarProps {
@@ -17,9 +17,10 @@ const Taskbar = memo<TaskbarProps>(({
   isCollapsed,
   onToggleCollapse,
 }) => {
-  const windowCtx = useWindowContext();
-  const minimizedWindows = passedMinimized || windowCtx.minimizedWindows;
-  const onRestore = passedRestore || windowCtx.handleRestoreWindow;
+  const storeMinimized = useWindowStore((s) => s.minimizedWindows);
+  const storeRestore = useWindowStore((s) => s.handleRestoreWindow);
+  const minimizedWindows = passedMinimized || storeMinimized;
+  const onRestore = passedRestore || storeRestore;
 
   // Don't render taskbar if there are no minimized windows
   if (!minimizedWindows || minimizedWindows.length === 0) {

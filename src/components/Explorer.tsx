@@ -1,8 +1,8 @@
 import React, { memo, useCallback } from 'react';
 import Icon from './Icon';
 import flashlightGif from '../assets/images/flashlight.gif';
-import { useDesktopContext } from '../context/DesktopContext';
-import { useWindowContext } from '../context/WindowContext';
+import { useDesktopStore } from '../stores/useDesktopStore';
+import { useWindowStore } from '../stores/useWindowStore';
 import { DesktopItem, Rect } from '../types';
 
 export interface ExplorerProps {
@@ -26,11 +26,13 @@ const Explorer = memo<ExplorerProps>(({
   selectedItem: passedSelectedItem,
   onMoveIcon,
 }) => {
-  const desktopCtx = useDesktopContext();
-  const windowCtx = useWindowContext();
+  const storeFolderData = useDesktopStore((s) => (folderId ? s.folderDataMap.get(folderId) : undefined));
+  const storeSelectedIcon = useDesktopStore((s) => s.selectedIcon);
+  const storeSetSelectedIcon = useDesktopStore((s) => s.setSelectedIcon);
+  const storeItemDoubleClick = useWindowStore((s) => s.handleItemDoubleClick);
 
-  const folderData = passedFolderData || (folderId ? desktopCtx.folderDataMap.get(folderId) : undefined);
-  const selectedItem = passedSelectedItem !== undefined ? passedSelectedItem : desktopCtx.selectedIcon;
+  const folderData = passedFolderData || storeFolderData;
+  const selectedItem = passedSelectedItem !== undefined ? passedSelectedItem : storeSelectedIcon;
 
   const handleItemDoubleClick = useCallback((item: DesktopItem, extra?: { originRect?: Rect }) => {
     if (item.type === 'folder' && onFolderDoubleClick) {
@@ -38,12 +40,12 @@ const Explorer = memo<ExplorerProps>(({
     } else if (onIconDoubleClick) {
       onIconDoubleClick(item, extra);
     } else {
-      windowCtx.handleItemDoubleClick(item, undefined, extra);
+      storeItemDoubleClick(item, undefined, extra);
     }
-  }, [onFolderDoubleClick, onIconDoubleClick, windowCtx]);
+  }, [onFolderDoubleClick, onIconDoubleClick, storeItemDoubleClick]);
 
-  const handleIconSelect = onIconSelect || desktopCtx.setSelectedIcon;
-  const handleFolderSelect = onFolderSelect || desktopCtx.setSelectedIcon;
+  const handleIconSelect = onIconSelect || storeSetSelectedIcon;
+  const handleFolderSelect = onFolderSelect || storeSetSelectedIcon;
 
   const handleDrop = useCallback((draggedIconId: string, targetFolderId: string) => {
     if (onMoveIcon) {

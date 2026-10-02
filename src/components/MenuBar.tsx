@@ -5,7 +5,7 @@ import keyGrayIcon from "../assets/icons/win-keys.ico";
 import availableIcon from "../assets/icons/available.png";
 import unavailableIcon from "../assets/icons/un-available.png";
 import { useServiceStatus } from "../hooks/useServiceStatus";
-import { useSystem } from "../context/SystemContext";
+import { useSystemStore } from "../stores/useSystemStore";
 
 export interface MenuBarProps {
   visible?: boolean;
@@ -32,7 +32,7 @@ const formatDate = (date: Date) => {
 };
 
 const MenuBar: React.FC<MenuBarProps> = ({ visible = true, onShutdown: passedShutdown }) => {
-  const { startShutdown } = useSystem();
+  const startShutdown = useSystemStore((s) => s.startShutdown);
   const onShutdown = passedShutdown || startShutdown;
   const [currentTime, setCurrentTime] = useState(new Date());
   const [showShutdownDialog, setShowShutdownDialog] = useState(false);

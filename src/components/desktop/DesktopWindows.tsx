@@ -2,8 +2,8 @@ import React, { memo, useCallback } from "react";
 import Window from "../Window";
 import Explorer from "../Explorer";
 import { renderWindowContent } from "../../config/programConfig";
-import { useWindowContext } from "../../context/WindowContext";
-import { useDesktopContext } from "../../context/DesktopContext";
+import { useWindowStore } from "../../stores/useWindowStore";
+import { useDesktopStore } from "../../stores/useDesktopStore";
 import ErrorBoundary from "../ErrorBoundary";
 import type { WindowState, TriggerZoomAnimationOptions } from "../../types";
 
@@ -34,17 +34,24 @@ const DesktopWindows = memo<DesktopWindowsProps>(({
   onFullScreenChange,
   handleWindowLoadingChange: passedLoadingChange,
 }) => {
-  const windowCtx = useWindowContext();
-  const { folderDataMap } = useDesktopContext();
+  const storeOpenWindows = useWindowStore((s) => s.openWindows);
+  const storeFocusedWindow = useWindowStore((s) => s.focusedWindow);
+  const storeMinimizedWindowIds = useWindowStore((s) => s.minimizedWindowIds);
+  const storeCloseWindow = useWindowStore((s) => s.handleCloseWindow);
+  const storeZoomAnimation = useWindowStore((s) => s.triggerZoomAnimation);
+  const storeMinimizeWindow = useWindowStore((s) => s.handleMinimizeWindow);
+  const storeFocusWindow = useWindowStore((s) => s.focusWindow);
+  const storeLoadingChange = useWindowStore((s) => s.handleWindowLoadingChange);
+  const folderDataMap = useDesktopStore((s) => s.folderDataMap);
 
-  const openWindows = passedOpenWindows || windowCtx.openWindows;
-  const focusedWindow = passedFocusedWindow !== undefined ? passedFocusedWindow : windowCtx.focusedWindow;
-  const minimizedWindowIds = passedMinimizedWindowIds || windowCtx.minimizedWindowIds;
-  const handleCloseWindow = passedClose || windowCtx.handleCloseWindow;
-  const triggerZoomAnimation = passedZoom || windowCtx.triggerZoomAnimation;
-  const handleMinimizeWindow = passedMinimize || windowCtx.handleMinimizeWindow;
-  const focusWindow = passedFocus || windowCtx.focusWindow;
-  const handleWindowLoadingChange = passedLoadingChange || windowCtx.handleWindowLoadingChange;
+  const openWindows = passedOpenWindows || storeOpenWindows;
+  const focusedWindow = passedFocusedWindow !== undefined ? passedFocusedWindow : storeFocusedWindow;
+  const minimizedWindowIds = passedMinimizedWindowIds || storeMinimizedWindowIds;
+  const handleCloseWindow = passedClose || storeCloseWindow;
+  const triggerZoomAnimation = passedZoom || storeZoomAnimation;
+  const handleMinimizeWindow = passedMinimize || storeMinimizeWindow;
+  const focusWindow = passedFocus || storeFocusWindow;
+  const handleWindowLoadingChange = passedLoadingChange || storeLoadingChange;
 
   const defaultRenderFolderContent = useCallback(
     (folderId: string) => {

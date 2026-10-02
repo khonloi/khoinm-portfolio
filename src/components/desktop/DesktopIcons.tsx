@@ -1,7 +1,7 @@
 import React, { memo, useEffect } from "react";
 import Icon from "../Icon";
-import { useDesktopContext } from "../../context/DesktopContext";
-import { useWindowContext } from "../../context/WindowContext";
+import { useDesktopStore } from "../../stores/useDesktopStore";
+import { useWindowStore } from "../../stores/useWindowStore";
 import type { DesktopItem, Position } from "../../types";
 
 export interface DesktopIconsProps {
@@ -21,15 +21,19 @@ const DesktopIcons = memo<DesktopIconsProps>(({
   selectedIcon: passedSelected,
   setSelectedIcon: passedSetSelected,
 }) => {
-  const desktopCtx = useDesktopContext();
-  const windowCtx = useWindowContext();
+  const storeItems = useDesktopStore((s) => s.allDesktopItems);
+  const storePositions = useDesktopStore((s) => s.itemPositions);
+  const storePosChange = useDesktopStore((s) => s.handleItemPositionChange);
+  const storeDoubleClick = useWindowStore((s) => s.handleItemDoubleClick);
+  const storeSelected = useDesktopStore((s) => s.selectedIcon);
+  const storeSetSelected = useDesktopStore((s) => s.setSelectedIcon);
 
-  const allDesktopItems = passedItems || desktopCtx.allDesktopItems;
-  const itemPositions = passedPositions || desktopCtx.itemPositions;
-  const handleItemPositionChange = passedPosChange || desktopCtx.handleItemPositionChange;
-  const handleItemDoubleClick = passedDoubleClick || windowCtx.handleItemDoubleClick;
-  const selectedIcon = passedSelected !== undefined ? passedSelected : desktopCtx.selectedIcon;
-  const setSelectedIcon = passedSetSelected || desktopCtx.setSelectedIcon;
+  const allDesktopItems = passedItems || storeItems;
+  const itemPositions = passedPositions || storePositions;
+  const handleItemPositionChange = passedPosChange || storePosChange;
+  const handleItemDoubleClick = passedDoubleClick || storeDoubleClick;
+  const selectedIcon = passedSelected !== undefined ? passedSelected : storeSelected;
+  const setSelectedIcon = passedSetSelected || storeSetSelected;
   // Keyboard navigation for desktop icons
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {

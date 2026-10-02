@@ -3,6 +3,8 @@ import { vi, describe, it, expect, beforeEach } from 'vitest';
 import { useWindowSystem } from '../useWindowSystem';
 import * as sounds from '../../../data/sounds';
 
+import { useWindowStore } from '../../../stores/useWindowStore';
+
 // Mock the sounds to prevent audio playback errors during tests
 vi.mock('../../../data/sounds', () => ({
   playSound: vi.fn(),
@@ -11,6 +13,7 @@ vi.mock('../../../data/sounds', () => ({
 describe('useWindowSystem', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    useWindowStore.getState().reset();
   });
 
   it('should initialize with empty state', () => {

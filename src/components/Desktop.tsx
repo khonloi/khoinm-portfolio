@@ -5,9 +5,13 @@ import Taskbar from "./Taskbar";
 import MenuBar from "./MenuBar";
 import LoadingScreen from "./LoadingScreen";
 import ZoomRectOverlay from "./ZoomRectOverlay";
-import { useSystem } from "../context/SystemContext";
-import { useDesktopContext } from "../context/DesktopContext";
-import { useWindowContext } from "../context/WindowContext";
+import { useSystemStore } from "../stores/useSystemStore";
+import { useDesktopStore } from "../stores/useDesktopStore";
+import {
+  useWindowStore,
+  selectHasFullScreenWindow,
+  selectHasActiveWindows,
+} from "../stores/useWindowStore";
 import { useStartup } from "../hooks/useStartup";
 import { useDeepLinking } from "../hooks/useDeepLinking";
 import SEO from "./SEO";
@@ -20,38 +24,32 @@ export interface DesktopProps {
 }
 
 const Desktop = memo<DesktopProps>(({ onFullScreenChange, onTriggerBSOD }) => {
-  // System context
-  const {
-    isLoading,
-    isDelaying,
-    progress,
-    menuBarVisible,
-    skipLoading,
-    isShuttingDown,
-    shutdownStage,
-    startShutdown,
-    triggerBSOD: systemTriggerBSOD,
-  } = useSystem();
+  // System store
+  const isLoading = useSystemStore((s) => s.isLoading);
+  const isDelaying = useSystemStore((s) => s.isDelaying);
+  const progress = useSystemStore((s) => s.progress);
+  const menuBarVisible = useSystemStore((s) => s.menuBarVisible);
+  const skipLoading = useSystemStore((s) => s.skipLoading);
+  const isShuttingDown = useSystemStore((s) => s.isShuttingDown);
+  const shutdownStage = useSystemStore((s) => s.shutdownStage);
+  const startShutdown = useSystemStore((s) => s.startShutdown);
+  const systemTriggerBSOD = useSystemStore((s) => s.triggerBSOD);
 
-  // Desktop context
-  const {
-    setSelectedIcon,
-  } = useDesktopContext();
+  // Desktop store
+  const setSelectedIcon = useDesktopStore((s) => s.setSelectedIcon);
 
-  // Window context
-  const {
-    openWindows,
-    focusedWindow,
-    minimizedWindows,
-    loadingWindows,
-    handleItemDoubleClick,
-    handleRestoreWindow,
-    focusWindow,
-    zoomAnimations,
-    handleAnimationComplete,
-    hasFullScreenWindow,
-    hasActiveWindows,
-  } = useWindowContext();
+  // Window store
+  const openWindows = useWindowStore((s) => s.openWindows);
+  const focusedWindow = useWindowStore((s) => s.focusedWindow);
+  const minimizedWindows = useWindowStore((s) => s.minimizedWindows);
+  const loadingWindows = useWindowStore((s) => s.loadingWindows);
+  const handleItemDoubleClick = useWindowStore((s) => s.handleItemDoubleClick);
+  const handleRestoreWindow = useWindowStore((s) => s.handleRestoreWindow);
+  const focusWindow = useWindowStore((s) => s.focusWindow);
+  const zoomAnimations = useWindowStore((s) => s.zoomAnimations);
+  const handleAnimationComplete = useWindowStore((s) => s.handleAnimationComplete);
+  const hasFullScreenWindow = useWindowStore(selectHasFullScreenWindow);
+  const hasActiveWindows = useWindowStore(selectHasActiveWindows);
 
   const [isTaskbarCollapsed, setIsTaskbarCollapsed] = useState(false);
 
