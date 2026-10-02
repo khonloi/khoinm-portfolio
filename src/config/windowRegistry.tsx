@@ -31,8 +31,8 @@ const PhotoViewer = lazy(() => import("../features/photo-viewer/PhotoViewer"));
 const Standby = lazy(() => import("../features/standby/Standby"));
 
 export interface WindowData {
-  filetype?: string;
-  [key: string]: unknown;
+  filetype?: string | null;
+  [key: string]: any;
 }
 
 // Window content registry for better maintainability and performance

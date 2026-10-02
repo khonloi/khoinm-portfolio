@@ -1,0 +1,107 @@
+import { useState, useEffect, useRef, useMemo } from 'react';
+import { playSound } from '../data/sounds';
+import { desktopItems } from '../config/programConfig';
+import startupCard from "../assets/images/startup-card-1.webp";
+import monitorMoonIcon from "../assets/icons/win-post-it.ico";
+import keyGrayIcon from "../assets/icons/win-keys.ico";
+import type { DesktopItem } from '../types';
+
+// Helper to find all programs with startup defined
+const getAllStartups = (items: DesktopItem[]): DesktopItem[] => {
+  let results: DesktopItem[] = [];
+  items.forEach((item) => {
+    if (item.startup !== undefined) results.push(item);
+    if (item.contents) {
+      results = [...results, ...getAllStartups(item.contents)];
+    }
+  });
+  return results;
+};
+
+export interface UseStartupProps {
+  isLoading: boolean;
+  isDelaying: boolean;
+  isShuttingDown: boolean;
+  handleItemDoubleClick: (idOrItem: string | DesktopItem, label?: string, options?: { skipTracking?: boolean }) => void;
+}
+
+export const useStartup = ({
+  isLoading,
+  isDelaying,
+  isShuttingDown,
+  handleItemDoubleClick,
+}: UseStartupProps) => {
+  const [hasBooted, setHasBooted] = useState(false);
+  const [idleSeconds, setIdleSeconds] = useState(0);
+  const hasRunStartupRef = useRef(false);
+
+  const startupPrograms = useMemo(() => getAllStartups(desktopItems), []);
+
+  // Preload assets immediately on hook initialization
+  useEffect(() => {
+    const imagesToPreload = [startupCard, monitorMoonIcon, keyGrayIcon];
+    imagesToPreload.forEach(src => {
+      const img = new Image();
+      img.src = src;
+    });
+  }, []);
+
+  // Handle immediate startup (startup: true) - GUARANTEED TO RUN AT MOST ONCE
+  useEffect(() => {
+    if (!isLoading && !isDelaying && !hasBooted && !isShuttingDown && !hasRunStartupRef.current) {
+      hasRunStartupRef.current = true;
+      const runImmediateStartups = async () => {
+        try {
+          await playSound('startup');
+        } catch (error) {
+          console.warn('Startup sound failed:', error);
+        }
+
+        const immediateStartups = startupPrograms.filter(item => item.startup === true);
+        for (const item of immediateStartups) {
+          handleItemDoubleClick(item.id, item.label, { skipTracking: true });
+        }
+        setHasBooted(true);
+      };
+      runImmediateStartups();
+    }
+  }, [isLoading, isDelaying, hasBooted, isShuttingDown, handleItemDoubleClick, startupPrograms]);
+
+  // Track idle time
+  useEffect(() => {
+    if (isLoading || isDelaying || isShuttingDown || !hasBooted) return;
+
+    const resetIdle = () => setIdleSeconds(0);
+    
+    // Initial reset when booted
+    resetIdle();
+
+    const interval = setInterval(() => {
+      setIdleSeconds(prev => prev + 1);
+    }, 1000);
+
+    window.addEventListener('mousemove', resetIdle);
+    window.addEventListener('keydown', resetIdle);
+    window.addEventListener('mousedown', resetIdle);
+    window.addEventListener('touchstart', resetIdle);
+
+    return () => {
+      window.removeEventListener('mousemove', resetIdle);
+      window.removeEventListener('keydown', resetIdle);
+      window.removeEventListener('mousedown', resetIdle);
+      window.removeEventListener('touchstart', resetIdle);
+      clearInterval(interval);
+    };
+  }, [isLoading, isDelaying, isShuttingDown, hasBooted]);
+
+  // Trigger programs on idle threshold
+  useEffect(() => {
+    startupPrograms.forEach(item => {
+      if (typeof item.startup === 'number' && idleSeconds === item.startup) {
+        handleItemDoubleClick(item.id, item.label, { skipTracking: true });
+      }
+    });
+  }, [idleSeconds, startupPrograms, handleItemDoubleClick]);
+
+  return { hasStarted: hasBooted };
+};
