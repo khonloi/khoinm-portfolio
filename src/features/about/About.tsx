@@ -1,46 +1,93 @@
-import React, { useState, useMemo, memo, useCallback } from "react";
-import LayeredBox from "../../components/LayeredBox";
-import winFolderIcon from "../../assets/icons/win-folder.ico";
-import winFolderOpenDocumentIcon from "../../assets/icons/win-folder-open-document.ico";
-import winDocumentsIcon from "../../assets/icons/win-documents.ico";
-import { SKILLS_DATA } from "../../data/skills";
+import React, { useState, useMemo, memo, useCallback } from 'react';
+import LayeredBox from '../../components/LayeredBox';
+import winFolderIcon from '../../assets/icons/win-folder.ico';
+import winFolderOpenDocumentIcon from '../../assets/icons/win-folder-open-document.ico';
+import winDocumentsIcon from '../../assets/icons/win-documents.ico';
+import { SKILLS_DATA } from '../../data/skills';
 
-import winSwissArmyKnifeIcon from "../../assets/icons/win-swiss-army-knife.ico";
-import winBriefcaseIcon from "../../assets/icons/win-briefcase.ico";
+import winSwissArmyKnifeIcon from '../../assets/icons/win-swiss-army-knife.ico';
+import winBriefcaseIcon from '../../assets/icons/win-briefcase.ico';
 
-import { useAbout } from "./useAbout";
-import { PortableText } from "@portabletext/react";
-import { User } from "lucide-react";
+import { useAbout } from './useAbout';
+import { PortableText } from '@portabletext/react';
+import { User } from 'lucide-react';
 
 const DEFAULT_ABOUT_DATA = {
-  name: "User Name",
-  tagline: "Professional Tagline",
+  name: 'User Name',
+  tagline: 'Professional Tagline',
   portraitUrl: null,
   aboutMe:
-    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+    'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
   experience: [
     {
-      jobTitle: "Job Title",
-      company: "Company Name",
-      date: "Date Range",
+      jobTitle: 'Job Title',
+      company: 'Company Name',
+      date: 'Date Range',
       bullets: [
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-        "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-        "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.",
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+        'Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+        'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.',
       ],
     },
   ],
 };
 
 // Initial folder states
-const INITIAL_FOLDER_STATES: Record<string, boolean> = SKILLS_DATA.reduce<Record<string, boolean>>((acc, folder) => {
+const INITIAL_FOLDER_STATES: Record<string, boolean> = SKILLS_DATA.reduce<
+  Record<string, boolean>
+>((acc, folder) => {
   acc[folder.id] = true;
   return acc;
 }, {});
 
 const About = memo(() => {
-  const [openFolders, setOpenFolders] = useState<Record<string, boolean>>(INITIAL_FOLDER_STATES);
+  const [openFolders, setOpenFolders] = useState<Record<string, boolean>>(
+    INITIAL_FOLDER_STATES
+  );
   const { data: aboutData } = useAbout(DEFAULT_ABOUT_DATA);
+  const containerRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    if (!containerRef.current) return;
+    let curr: HTMLElement | null = containerRef.current;
+    console.log('=== ABOUT OVERFLOW TRACE START ===');
+    while (curr) {
+      console.log(
+        'TRACE ELEMENT: ' +
+          JSON.stringify({
+            tag: curr.tagName,
+            class: curr.className,
+            clientHeight: curr.clientHeight,
+            scrollHeight: curr.scrollHeight,
+            offsetHeight: curr.offsetHeight,
+            height: window.getComputedStyle(curr).height,
+            maxHeight: window.getComputedStyle(curr).maxHeight,
+            overflow: window.getComputedStyle(curr).overflow,
+            overflowY: window.getComputedStyle(curr).overflowY,
+          })
+      );
+      curr = curr.parentElement;
+    }
+    const children = containerRef.current.children;
+    for (let i = 0; i < children.length; i++) {
+      const child = children[i] as HTMLElement;
+      console.log(
+        `TRACE CHILD[${i}]: ` +
+          JSON.stringify({
+            tag: child.tagName,
+            class: child.className,
+            clientHeight: child.clientHeight,
+            scrollHeight: child.scrollHeight,
+            offsetHeight: child.offsetHeight,
+            height: window.getComputedStyle(child).height,
+            maxHeight: window.getComputedStyle(child).maxHeight,
+            overflow: window.getComputedStyle(child).overflow,
+            overflowY: window.getComputedStyle(child).overflowY,
+          })
+      );
+    }
+    console.log('=== ABOUT OVERFLOW TRACE END ===');
+  }, []);
 
   const toggleFolder = useCallback((folderId: string) => {
     setOpenFolders((prev) => ({
@@ -52,46 +99,61 @@ const About = memo(() => {
   const skillsSections = useMemo(
     () =>
       SKILLS_DATA.map((folder) => (
-        <div key={folder.id} className="relative mb-4 before:absolute before:left-2.5 before:top-full before:z-0 before:w-px before:bg-windows-black before:content-['']">
+        <div
+          key={folder.id}
+          className="relative mb-4 last:mb-0 before:absolute before:left-2.5 before:top-full before:z-0 before:w-px before:bg-windows-black before:content-['']"
+        >
           <div
             className="mb-2 flex cursor-[var(--cursor-link)] items-center gap-2 font-bold text-windows-blue"
             onClick={() => toggleFolder(folder.id)}
           >
             <img
-              src={openFolders[folder.id] ? winFolderOpenDocumentIcon : winFolderIcon}
+              src={
+                openFolders[folder.id]
+                  ? winFolderOpenDocumentIcon
+                  : winFolderIcon
+              }
               alt="Folder"
               className="w-5"
-            />{" "}
+            />{' '}
             {folder.title}
           </div>
           <div className="relative -mt-1 before:absolute before:left-2.5 before:h-[calc(100%-9.5px)] before:w-px before:bg-windows-black before:content-['']">
             {openFolders[folder.id] && (
               <ul className="ml-4 pl-2 text-sm">
                 {folder.skills.map((skill, index) => (
-                  <li key={`${folder.id}-${index}`} className="relative mb-2 flex items-center gap-2 pl-1 before:absolute before:-left-3.25 before:h-px before:w-2.5 before:bg-windows-black before:content-['']">
+                  <li
+                    key={`${folder.id}-${index}`}
+                    className="relative mb-2 flex items-center gap-2 pl-1 before:absolute before:-left-3.25 before:h-px before:w-2.5 before:bg-windows-black before:content-['']"
+                  >
                     <img
                       src={winDocumentsIcon}
                       alt="Document"
                       className="w-5"
-                    />{" "}
+                    />{' '}
                     {skill}
                   </li>
                 ))}
               </ul>
             )}
           </div>
-        </div >
+        </div>
       )),
     [openFolders, toggleFolder]
   );
 
   return (
-    <div className="flex h-132 w-full flex-col md:flex-row">
+    <div
+      ref={containerRef}
+      className="flex h-auto w-full flex-col overflow-hidden md:h-132 md:w-180 md:flex-row"
+    >
       {/* Left Pane - Skills Tree */}
-      <div className="order-2 w-full border-t-2 border-windows-grey-dark bg-[#f2f2f2] p-4 md:order-none md:w-52 md:border-t-0 md:border-r-2 md:border-windows-grey-dark">{skillsSections}</div>
+      <div className="order-2 w-full min-h-0 border-t-2 border-windows-grey-dark bg-[#f2f2f2] p-4 md:order-none md:w-52 md:shrink-0 md:border-t-0 md:border-r-2 md:border-windows-grey-dark md:overflow-y-auto">
+        {skillsSections}
+      </div>
 
       {/* Right Pane - Main Content */}
-      <div className="box-border overflow-y-visible p-4 pb-0 md:max-w-128 md:overflow-y-auto">
+      <div className="box-border flex-1 min-h-0 min-w-0 overflow-y-visible p-4 pb-4 md:w-128 md:max-w-128 md:overflow-y-auto">
         <div className="flex flex-wrap items-center gap-4 md:flex-nowrap">
           {aboutData?.portraitUrl ? (
             <img src={aboutData.portraitUrl} alt="Portrait" className="w-16" />
@@ -101,7 +163,9 @@ const About = memo(() => {
             </div>
           )}
           <div className="flex flex-col">
-            <h2 className="m-0 mb-1 font-bold text-windows-black text-2xl">{aboutData?.name}</h2>
+            <h2 className="m-0 mb-1 font-bold text-windows-black text-2xl">
+              {aboutData?.name}
+            </h2>
             <p className="m-0 text-windows-blue">{aboutData?.tagline}</p>
           </div>
         </div>
@@ -112,10 +176,10 @@ const About = memo(() => {
             About Me
           </h3>
           <div className="space-y-4 leading-relaxed">
-            {typeof aboutData?.aboutMe === "string" ? (
-              (aboutData.aboutMe as string).split("\n\n").map((para: string, i: number) => (
-                <p key={i}>{para}</p>
-              ))
+            {typeof aboutData?.aboutMe === 'string' ? (
+              (aboutData.aboutMe as string)
+                .split('\n\n')
+                .map((para: string, i: number) => <p key={i}>{para}</p>)
             ) : aboutData?.aboutMe ? (
               <PortableText value={aboutData.aboutMe as any} />
             ) : null}
@@ -156,6 +220,6 @@ const About = memo(() => {
   );
 });
 
-About.displayName = "About";
+About.displayName = 'About';
 
 export default About;

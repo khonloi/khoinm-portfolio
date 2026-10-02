@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { getCursorStyle } from '../data/cursors';
 import { playSound } from '../data/sounds';
+import { useSystemStore } from '../stores/useSystemStore';
 
 export const useLoadingScreen = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -52,6 +53,19 @@ export const useLoadingScreen = () => {
     
     // Play startup sound
     playSound('logon', { preventDuplicate: true, audioRef });
+  }, [clearAllTimers]);
+
+  // Monitor store's isLoading to abort if skipped externally
+  useEffect(() => {
+    const unsub = useSystemStore.subscribe((state) => {
+      if (!state.isLoading && !hasCompletedRef.current) {
+        hasCompletedRef.current = true;
+        clearAllTimers();
+        document.body.style.cursor = getCursorStyle('arrow');
+        playSound('logon', { preventDuplicate: true, audioRef });
+      }
+    });
+    return unsub;
   }, [clearAllTimers]);
 
   // Handle loading cursor effect based on isDelaying
