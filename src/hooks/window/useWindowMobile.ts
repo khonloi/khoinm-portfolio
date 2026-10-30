@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { useIsMobile } from '../useIsMobile';
 import type { Position } from '../../types';
 
 export interface UseWindowMobileProps {
-  initialMobile: boolean;
+  initialMobile?: boolean;
   isMinimized?: boolean;
   isFullScreenActive?: boolean;
   position: Position;
@@ -14,7 +15,6 @@ export interface UseWindowMobileProps {
 }
 
 export const useWindowMobile = ({
-  initialMobile,
   isMinimized,
   isFullScreenActive,
   position,
@@ -24,49 +24,33 @@ export const useWindowMobile = ({
   setPreMaximizePosition,
   MENU_BAR_HEIGHT,
 }: UseWindowMobileProps) => {
-  const [isMobile, setIsMobile] = useState(initialMobile);
+  const isMobile = useIsMobile();
   const [preMobileState, setPreMobileState] = useState<{ position: Position; isMaximized: boolean } | null>(null);
   const [touchStartTime, setTouchStartTime] = useState<number | null>(null);
+  const prevIsMobileRef = useRef<boolean>(isMobile);
 
   useEffect(() => {
-    let resizeTimer: ReturnType<typeof setTimeout> | undefined;
+    if (isMobile === prevIsMobileRef.current) return;
+    prevIsMobileRef.current = isMobile;
 
-    const handleResize = () => {
-      if (resizeTimer) clearTimeout(resizeTimer);
-      resizeTimer = setTimeout(() => {
-        const mobile = window.innerWidth <= 768;
-
-        if (mobile && !isMobile && !isMinimized && !isFullScreenActive) {
-          setPreMobileState({
-            position,
-            isMaximized,
-          });
-          setPreMaximizePosition(position);
-          setPosition({ x: 0, y: MENU_BAR_HEIGHT });
-          setIsMaximized(true);
-        } else if (
-          !mobile &&
-          isMobile &&
-          preMobileState &&
-          !isMinimized &&
-          !isFullScreenActive
-        ) {
-          setPosition(preMobileState.position);
-          setIsMaximized(preMobileState.isMaximized);
-          setPreMobileState(null);
-        }
-
-        setIsMobile(mobile);
-      }, 150);
-    };
-
-    window.addEventListener('resize', handleResize);
-    handleResize(); // Initial check
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-      if (resizeTimer) clearTimeout(resizeTimer);
-    };
+    if (isMobile && !isMinimized && !isFullScreenActive) {
+      setPreMobileState({
+        position,
+        isMaximized,
+      });
+      setPreMaximizePosition(position);
+      setPosition({ x: 0, y: MENU_BAR_HEIGHT });
+      setIsMaximized(true);
+    } else if (
+      !isMobile &&
+      preMobileState &&
+      !isMinimized &&
+      !isFullScreenActive
+    ) {
+      setPosition(preMobileState.position);
+      setIsMaximized(preMobileState.isMaximized);
+      setPreMobileState(null);
+    }
   }, [
     isMobile,
     isMinimized,

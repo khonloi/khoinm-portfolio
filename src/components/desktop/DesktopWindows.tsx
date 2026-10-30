@@ -1,4 +1,4 @@
-import React, { memo, useCallback } from "react";
+import React, { memo, useCallback, Suspense } from "react";
 import Window from "../Window";
 import Explorer from "../Explorer";
 import { renderWindowContent } from "../../config/programConfig";
@@ -27,7 +27,7 @@ const DesktopWindows = memo<DesktopWindowsProps>(({
   minimizedWindowIds: passedMinimizedWindowIds,
   renderFolderContent: passedRenderFolder,
   handleCloseWindow: passedClose,
-  onTriggerBSOD,
+  onTriggerBSOD: _onTriggerBSOD,
   triggerZoomAnimation: passedZoom,
   handleMinimizeWindow: passedMinimize,
   focusWindow: passedFocus,
@@ -74,7 +74,6 @@ const DesktopWindows = memo<DesktopWindowsProps>(({
                 win.title || "",
                 () => handleCloseWindow(win.id),
                 win.iconSrc ?? undefined,
-                onTriggerBSOD,
                 win
               );
 
@@ -84,7 +83,15 @@ const DesktopWindows = memo<DesktopWindowsProps>(({
           (content.type as { displayName?: string })?.displayName === "Dialog";
 
         if (win.isDialog || isDialogElement) {
-          return <React.Fragment key={win.id}>{content}</React.Fragment>;
+          return (
+            <React.Fragment key={win.id}>
+              <ErrorBoundary name={win.title} onClose={() => handleCloseWindow(win.id)}>
+                <Suspense fallback={null}>
+                  {content}
+                </Suspense>
+              </ErrorBoundary>
+            </React.Fragment>
+          );
         }
 
         return (
@@ -110,7 +117,15 @@ const DesktopWindows = memo<DesktopWindowsProps>(({
             aria-label={`${win.title} window`}
           >
             <ErrorBoundary name={win.title} onClose={() => handleCloseWindow(win.id)}>
-              {content}
+              <Suspense
+                fallback={
+                  <div className="flex items-center justify-center h-48 w-full text-windows-black font-main text-sm">
+                    Loading program...
+                  </div>
+                }
+              >
+                {content}
+              </Suspense>
             </ErrorBoundary>
           </Window>
         );

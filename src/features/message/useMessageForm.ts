@@ -2,6 +2,7 @@ import { useState, useCallback, useRef } from 'react';
 import emailjs from '@emailjs/browser';
 import dingSound from './ding.mp3';
 import chordSound from './chord.mp3';
+import { playSound } from '../../data/sounds';
 
 // Validation constants
 const VALIDATION_RULES = {
@@ -43,13 +44,6 @@ export interface MessageFormElement extends HTMLFormElement {
   message: HTMLTextAreaElement;
 }
 
-const playSound = (soundFile: string) => {
-  const sound = new Audio(soundFile);
-  return sound.play().catch((error) => {
-    console.error('Error playing sound:', error);
-  });
-};
-
 // Validation function extractor
 const validateField = (fieldName: 'name' | 'email' | 'message', value: string) => {
   const rules = VALIDATION_RULES[fieldName];
@@ -85,8 +79,11 @@ const validateField = (fieldName: 'name' | 'email' | 'message', value: string) =
   return '';
 };
 
+export type MessageStatus = 'idle' | 'sending' | 'success' | 'error';
+
 export const useMessageForm = () => {
   const formRef = useRef<MessageFormElement | null>(null);
+  const [formStatus, setFormStatus] = useState<MessageStatus>('idle');
   const [status, setStatus] = useState('');
   const [errors, setErrors] = useState({
     name: '',
@@ -130,29 +127,34 @@ export const useMessageForm = () => {
       }
 
       setIsSending(true);
+      setFormStatus('sending');
 
       try {
         const emailData = {
           ...formData,
           user_email: formData.email,
-          to_email: import.meta.env.VITE_EMAILJS_TO_EMAIL,
+          to_email: import.meta.env.VITE_EMAILJS_TO_EMAIL || '',
           time: new Date().toLocaleString('en-US', {
             timeZone: 'Asia/Ho_Chi_Minh',
           }),
         };
 
         await emailjs.send(
-          import.meta.env.VITE_EMAILJS_SERVICE_ID,
-          import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+          import.meta.env.VITE_EMAILJS_SERVICE_ID || '',
+          import.meta.env.VITE_EMAILJS_TEMPLATE_ID || '',
           emailData,
-          import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+          import.meta.env.VITE_EMAILJS_PUBLIC_KEY || ''
         );
 
+        setFormStatus('success');
         setStatus('Message sent successfully!');
         formRef.current.reset();
         await playSound(dingSound);
-      } catch (error: any) {
-        setStatus(`Failed to send message: ${error?.text || error?.message || String(error)}`);
+      } catch (error: unknown) {
+        setFormStatus('error');
+        const errorText = error && typeof error === 'object' && 'text' in error ? String((error as { text: unknown }).text) : undefined;
+        const errorMessage = error instanceof Error ? error.message : undefined;
+        setStatus(`Failed to send message: ${errorText || errorMessage || String(error)}`);
         await playSound(chordSound);
       } finally {
         setIsSending(false);
@@ -167,6 +169,7 @@ export const useMessageForm = () => {
     if (!hasMessages) return undefined;
     
     const timer = setTimeout(() => {
+      setFormStatus('idle');
       setStatus('');
       setErrors({ name: '', email: '', message: '' });
     }, 5000);
@@ -176,6 +179,7 @@ export const useMessageForm = () => {
 
   return {
     formRef,
+    formStatus,
     status,
     errors,
     isSending,

@@ -11,7 +11,7 @@ export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement |
   rows?: number;
 }
 
-const Input = forwardRef<any, InputProps>(({
+const Input = forwardRef<HTMLInputElement | HTMLTextAreaElement, InputProps>(({
   type = 'text',
   className = '',
   boxClassName = '',
@@ -20,7 +20,6 @@ const Input = forwardRef<any, InputProps>(({
   parentBgColor = '#e0e0e0',
   ...props
 }, ref) => {
-  const Component = as;
   return (
     <LayeredBox
       variant="inward"
@@ -28,12 +27,20 @@ const Input = forwardRef<any, InputProps>(({
       parentBgColor={parentBgColor}
       className={boxClassName}
     >
-      <Component
-        type={as === 'textarea' ? undefined : type}
-        ref={ref}
-        className={`block w-full border-none p-1 font-main text-base outline-none bg-transparent ${className}`}
-        {...props}
-      />
+      {as === 'textarea' ? (
+        <textarea
+          ref={ref as React.ForwardedRef<HTMLTextAreaElement>}
+          className={`block w-full border-none p-1 font-main text-base outline-none bg-transparent ${className}`}
+          {...(props as React.TextareaHTMLAttributes<HTMLTextAreaElement>)}
+        />
+      ) : (
+        <input
+          type={type}
+          ref={ref as React.ForwardedRef<HTMLInputElement>}
+          className={`block w-full border-none p-1 font-main text-base outline-none bg-transparent ${className}`}
+          {...props}
+        />
+      )}
     </LayeredBox>
   );
 });

@@ -2,6 +2,7 @@ import React, { memo } from 'react';
 import Button from './Button';
 import { useWindowStore } from '../stores/useWindowStore';
 import { MinimizedWindow, Rect } from '../types';
+import { measureElementRect } from '../utils/dom';
 
 export interface TaskbarProps {
   minimizedWindows?: MinimizedWindow[];
@@ -16,6 +17,7 @@ const Taskbar = memo<TaskbarProps>(({
   onRestore: passedRestore,
   isCollapsed,
   onToggleCollapse,
+  'aria-label': ariaLabel = "System Taskbar",
 }) => {
   const storeMinimized = useWindowStore((s) => s.minimizedWindows);
   const storeRestore = useWindowStore((s) => s.handleRestoreWindow);
@@ -29,6 +31,8 @@ const Taskbar = memo<TaskbarProps>(({
 
   return (
     <div
+      role="toolbar"
+      aria-label={ariaLabel}
       style={{ bottom: 'calc(var(--safe-bottom-buffer, 0px))' }}
       className={`fixed left-0 z-[10000] flex h-[56px] items-center justify-center bg-windows-grey border-t-2 border-r-2 border-windows-white border-r-windows-grey-dark outline-2 outline-windows-black w-max transition-all`}
     >
@@ -40,15 +44,8 @@ const Taskbar = memo<TaskbarProps>(({
               variant="control"
               className="h-10 w-10"
               onClick={(e) => {
-                const rect = e.currentTarget.getBoundingClientRect();
-                onRestore(window.id, {
-                  originRect: {
-                    x: rect.left,
-                    y: rect.top,
-                    width: rect.width,
-                    height: rect.height,
-                  },
-                });
+                const originRect = measureElementRect(e.currentTarget);
+                onRestore(window.id, { originRect });
               }}
               title={`Restore ${window.title}`}
             >

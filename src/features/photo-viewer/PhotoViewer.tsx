@@ -1,16 +1,24 @@
 import React, { useState, memo, useEffect, useRef } from "react";
-import LayeredBox from "../../components/LayeredBox";
 import winMonaLisaIcon from "../../assets/icons/win-mona-lisa.ico";
 
 export interface PhotoViewerProps {
   id?: string;
-  fileContent?: string;
+  fileContent?: string | null;
 }
 
 const PhotoViewer = memo<PhotoViewerProps>(({ id, fileContent }) => {
   const [imgSrc, setImgSrc] = useState<string | null>(null);
   const [imgInfo, setImgInfo] = useState({ width: 0, height: 0, name: "No image" });
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  // Revoke object URL on unmount or before creating a new one
+  useEffect(() => {
+    return () => {
+      if (imgSrc && imgSrc.startsWith("blob:")) {
+        URL.revokeObjectURL(imgSrc);
+      }
+    };
+  }, [imgSrc]);
 
   useEffect(() => {
     const source = fileContent;
@@ -35,6 +43,9 @@ const PhotoViewer = memo<PhotoViewerProps>(({ id, fileContent }) => {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      if (imgSrc && imgSrc.startsWith("blob:")) {
+        URL.revokeObjectURL(imgSrc);
+      }
       const url = URL.createObjectURL(file);
       setImgSrc(url);
       setImgInfo({ width: 0, height: 0, name: file.name });
@@ -58,6 +69,7 @@ const PhotoViewer = memo<PhotoViewerProps>(({ id, fileContent }) => {
         ref={fileInputRef}
         className="hidden"
         accept="image/*"
+        aria-label="Choose image file"
         onChange={handleFileChange}
       />
 

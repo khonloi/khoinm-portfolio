@@ -1,5 +1,7 @@
 import React, { useEffect } from 'react';
 import type { Rect, TriggerZoomAnimationOptions } from '../../types';
+import { measureElementRect } from '../../utils/dom';
+import { runWindowZoom } from './runWindowZoom';
 
 export interface UseWindowTransitionsProps {
   id: string;
@@ -14,7 +16,9 @@ export interface UseWindowTransitionsProps {
   originRect?: Rect | null;
   elementRef: React.RefObject<HTMLDivElement | null>;
   setPosition: React.Dispatch<React.SetStateAction<{ x: number; y: number }>>;
-  setPreMaximizePosition: React.Dispatch<React.SetStateAction<{ x: number; y: number }>>;
+  setPreMaximizePosition: React.Dispatch<
+    React.SetStateAction<{ x: number; y: number }>
+  >;
   hasCentered: boolean;
   setHasCentered: (hasCentered: boolean) => void;
   isMaximized?: boolean;
@@ -70,12 +74,7 @@ export const useWindowTransitions = ({
       }
 
       // Handle centering calculation if required
-      if (
-        !isMobile &&
-        !isFullScreenActive &&
-        !isMaximized &&
-        !hasCentered
-      ) {
+      if (!isMobile && !isFullScreenActive && !isMaximized && !hasCentered) {
         const viewportWidth = window.innerWidth;
         const viewportHeight = window.innerHeight;
         const safeBottomBuffer =
@@ -90,8 +89,14 @@ export const useWindowTransitions = ({
           viewportHeight - MENU_BAR_HEIGHT - safeBottomBuffer;
         const centerY = (availableHeight - windowHeight) / 2;
 
-        const finalX = Math.max(0, Math.min(centerX, viewportWidth - windowWidth));
-        const finalY = Math.max(0, Math.min(centerY, availableHeight - windowHeight));
+        const finalX = Math.max(
+          0,
+          Math.min(centerX, viewportWidth - windowWidth)
+        );
+        const finalY = Math.max(
+          0,
+          Math.min(centerY, availableHeight - windowHeight)
+        );
 
         setPosition({ x: finalX, y: finalY });
         setPreMaximizePosition({ x: finalX, y: finalY });
@@ -100,60 +105,34 @@ export const useWindowTransitions = ({
         // After position state updates, measure the exact DOM bounding box in next frame
         requestAnimationFrame(() => {
           if (cancelRef || !elementRef.current) return;
-          const updatedRect = elementRef.current.getBoundingClientRect();
+          const targetRect = measureElementRect(elementRef.current);
           hasAnimatedOpenRef.current = true;
 
-          const targetRect = {
-            x: updatedRect.left,
-            y: updatedRect.top,
-            width: updatedRect.width,
-            height: updatedRect.height,
-          };
-
-          if (triggerZoomAnimation) {
-            triggerZoomAnimation({
-              id: `open-${id}`,
-              fromRect: originRect,
-              toRect: targetRect,
-              type: 'open',
-              duration: 220,
-              steps: 7,
-              onComplete: () => {
-                setIsOpening(false);
-              },
-            });
-          } else {
-            setIsOpening(false);
-          }
+          runWindowZoom(triggerZoomAnimation, {
+            id: `open-${id}`,
+            fromRect: originRect,
+            toRect: targetRect,
+            type: 'open',
+            onComplete: () => {
+              setIsOpening(false);
+            },
+          });
         });
         return;
       }
 
       hasAnimatedOpenRef.current = true;
+      const targetRect = measureElementRect(elementRef.current);
 
-      // Exact pixel-perfect viewport coordinates
-      const targetRect = {
-        x: windowRect.left,
-        y: windowRect.top,
-        width: windowRect.width,
-        height: windowRect.height,
-      };
-
-      if (triggerZoomAnimation) {
-        triggerZoomAnimation({
-          id: `open-${id}`,
-          fromRect: originRect,
-          toRect: targetRect,
-          type: 'open',
-          duration: 220,
-          steps: 7,
-          onComplete: () => {
-            setIsOpening(false);
-          },
-        });
-      } else {
-        setIsOpening(false);
-      }
+      runWindowZoom(triggerZoomAnimation, {
+        id: `open-${id}`,
+        fromRect: originRect,
+        toRect: targetRect,
+        type: 'open',
+        onComplete: () => {
+          setIsOpening(false);
+        },
+      });
     };
 
     const animFrameId = requestAnimationFrame(runSetupAndAnimate);
@@ -179,7 +158,7 @@ export const useWindowTransitions = ({
     setPreMaximizePosition,
     setHasCentered,
     setIsOpening,
-    hasAnimatedOpenRef
+    hasAnimatedOpenRef,
   ]);
 
   // Handle un-minimizing / restore animation
@@ -203,33 +182,23 @@ export const useWindowTransitions = ({
           return;
         }
 
-        const targetRect = {
-          x: rect.left,
-          y: rect.top,
-          width: rect.width,
-          height: rect.height,
+        const targetRect = measureElementRect(elementRef.current);
+        const fallbackTaskbarRect: Rect = {
+          x: 20,
+          y: window.innerHeight - 56,
+          width: 44,
+          height: 44,
         };
 
-        if (triggerZoomAnimation) {
-          triggerZoomAnimation({
-            id: `restore-${id}`,
-            fromRect: originRect || {
-              x: 20,
-              y: window.innerHeight - 56,
-              width: 44,
-              height: 44,
-            },
-            toRect: targetRect,
-            type: 'restore',
-            duration: 220,
-            steps: 7,
-            onComplete: () => {
-              setIsOpening(false);
-            },
-          });
-        } else {
-          setIsOpening(false);
-        }
+        runWindowZoom(triggerZoomAnimation, {
+          id: `restore-${id}`,
+          fromRect: originRect || fallbackTaskbarRect,
+          toRect: targetRect,
+          type: 'restore',
+          onComplete: () => {
+            setIsOpening(false);
+          },
+        });
       };
 
       const animFrame = requestAnimationFrame(runRestoreAnimation);
@@ -249,6 +218,6 @@ export const useWindowTransitions = ({
     isFullScreenActive,
     elementRef,
     setIsOpening,
-    prevMinimizedRef
+    prevMinimizedRef,
   ]);
 };

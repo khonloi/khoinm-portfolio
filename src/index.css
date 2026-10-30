@@ -77,6 +77,11 @@ body {
   );
 }
 
+.window-outer.maximized,
+.window-outer.maximized .trim-corners {
+  clip-path: none !important;
+}
+
 /* --- Content merged from App.css --- */
 
 :root {

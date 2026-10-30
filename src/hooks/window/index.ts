@@ -5,3 +5,4 @@ export * from './useZoomAnimationManager';
 export * from './useWindowLifecycle';
 export * from './useWindowMobile';
 export * from './useWindowPosition';
+export * from './runWindowZoom';

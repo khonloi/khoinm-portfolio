@@ -10,10 +10,10 @@ export interface PlaySoundOptions {
 
 /**
  * Play a sound file with caching and fallback support.
- * @param soundType - The name of the sound file (without extension)
+ * @param soundTypeOrUrl - Sound name (without extension) or direct asset URL/path
  * @param options - Optional configuration
  */
-export const playSound = async (soundType: string, options: PlaySoundOptions = {}): Promise<void> => {
+export const playSound = async (soundTypeOrUrl: string, options: PlaySoundOptions = {}): Promise<void> => {
   const { volume = 0.7, preventDuplicate = false, audioRef = null } = options;
   const baseUrl = import.meta.env.BASE_URL || '/';
 
@@ -21,12 +21,22 @@ export const playSound = async (soundType: string, options: PlaySoundOptions = {
     return;
   }
 
-  let audio = audioCache.get(soundType);
+  let audio = audioCache.get(soundTypeOrUrl);
+
+  const isExplicitUrl = soundTypeOrUrl.includes('/') ||
+    soundTypeOrUrl.startsWith('data:') ||
+    soundTypeOrUrl.startsWith('blob:') ||
+    soundTypeOrUrl.endsWith('.mp3') ||
+    soundTypeOrUrl.endsWith('.wav');
+
+  const resolvedSrc = isExplicitUrl
+    ? soundTypeOrUrl
+    : `${baseUrl}sounds/${soundTypeOrUrl}.mp3`;
 
   if (!audio) {
     audio = new Audio();
-    audio.src = `${baseUrl}sounds/${soundType}.mp3`;
-    audioCache.set(soundType, audio);
+    audio.src = resolvedSrc;
+    audioCache.set(soundTypeOrUrl, audio);
   }
 
   // Clone or reset audio to allow overlapping plays or restarts
@@ -52,15 +62,15 @@ export const playSound = async (soundType: string, options: PlaySoundOptions = {
       await playPromise;
     }
   } catch (error) {
-    console.warn(`Failed to play cached sound ${soundType}:`, error);
+    console.warn(`Failed to play cached sound ${soundTypeOrUrl}:`, error);
 
     // Manual fallback attempt if cache/clone failed
     try {
-      const fallbackAudio = new Audio(`/sounds/${soundType}.mp3`);
+      const fallbackAudio = new Audio(resolvedSrc);
       fallbackAudio.volume = volume;
       await fallbackAudio.play();
     } catch {
-      console.error(`Sound ${soundType} failed all playback attempts`);
+      console.error(`Sound ${soundTypeOrUrl} failed all playback attempts`);
     }
   }
 };

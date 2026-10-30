@@ -23,7 +23,7 @@ describe('useCMSContent', () => {
       }
     ];
 
-    vi.mocked(client.fetch).mockResolvedValueOnce(mockData as any);
+    vi.mocked(client.fetch).mockResolvedValueOnce(mockData as unknown as never);
 
     const { result } = renderHook(() => useCMSContent());
 

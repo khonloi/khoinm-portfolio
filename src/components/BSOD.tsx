@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 
 interface BSODProps {
   onClose: () => void;
@@ -12,7 +12,6 @@ const generateErrorCode = () => {
 const BSOD: React.FC<BSODProps> = ({ onClose }) => {
   const [stage, setStage] = useState<'black' | 'bsod'>('black'); // 'black' -> 'bsod'
   const [errorCode] = useState(generateErrorCode());
-  const lastTapRef = useRef<number>(0);
 
   useEffect(() => {
     // Stage 1: Brief black screen
@@ -21,26 +20,22 @@ const BSOD: React.FC<BSODProps> = ({ onClose }) => {
     }, 1000); // 1 second black screen
 
     const handleInteraction = () => {
-      const now = Date.now();
-      const isDoubleTap = now - lastTapRef.current < 600;
-      lastTapRef.current = now;
-
-      if (isDoubleTap) {
-        onClose();
-      }
+      onClose();
     };
 
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
+      if (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ') {
         onClose();
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('click', handleInteraction);
     window.addEventListener('touchstart', handleInteraction);
     return () => {
       clearTimeout(timer);
       window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('click', handleInteraction);
       window.removeEventListener('touchstart', handleInteraction);
     };
   }, [onClose]);
@@ -59,18 +54,12 @@ const BSOD: React.FC<BSODProps> = ({ onClose }) => {
         <div className="[&_p]:leading-relaxed [&_p]:my-4">
           <p>An error has occurred. To continue:</p>
 
-          <p>Press Esc or double-tap to return to Pane, or</p>
-
-          <p>
-            Press CTRL+R or Reset button to restart your browser.
-          </p>
-
-          <p> If you do this, you will lose any unsaved information in all open applications.</p>
+          <p>Press Esc, Enter, or click anywhere to return to Pane.</p>
 
           <p className="uppercase">Error: {errorCode}</p>
 
           <div className="flex justify-center mt-5">
-            <p>Press Esc or double-tap to continue</p>
+            <p>Press Esc or click to continue</p>
           </div>
         </div>
       </div>

@@ -31,7 +31,8 @@
       "@data/*": ["src/data/*"],
       "@lib/*": ["src/lib/*"],
       "@assets/*": ["src/assets/*"],
-      "@context/*": ["src/context/*"]
+      "@stores/*": ["src/stores/*"],
+      "@constants/*": ["src/constants/*"]
     },
     "types": ["vite/client", "vitest/globals", "node", "@testing-library/jest-dom"]
   },

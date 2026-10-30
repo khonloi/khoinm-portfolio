@@ -50,17 +50,19 @@ export interface WindowStoreState {
   handleAnimationComplete: (id: string) => void;
   cancelZoomAnimation: (id: string) => void;
 
+  // Internal store tracking
+  nextZIndex: number;
+  lastCloseTime: number;
+  lastTrackedId: string | null;
+  lastTrackedTime: number;
+
   // Reset state (useful for tests and cleanup)
   reset: () => void;
 }
 
-// Module-level state tracking
-let nextZIndex = 1000;
+// Map references for asynchronous timeouts & animation callbacks
 const loadingTimeouts = new Map<string, ReturnType<typeof setTimeout>>();
 const animationCallbacks = new Map<string, () => void>();
-let lastCloseTime = 0;
-let lastTrackedId: string | null = null;
-let lastTrackedTime = 0;
 
 const initialWindowState = {
   openWindows: [] as WindowState[],
@@ -70,19 +72,19 @@ const initialWindowState = {
   loadingWindows: new Set<string>(),
   windowLoadingStates: {} as Record<string, boolean>,
   zoomAnimations: [] as ZoomAnimation[],
+  nextZIndex: 1000,
+  lastCloseTime: 0,
+  lastTrackedId: null as string | null,
+  lastTrackedTime: 0,
 };
 
 export const useWindowStore = create<WindowStoreState>((set, get) => ({
   ...initialWindowState,
 
   reset: () => {
-    nextZIndex = 1000;
     loadingTimeouts.forEach((timeout) => clearTimeout(timeout));
     loadingTimeouts.clear();
     animationCallbacks.clear();
-    lastCloseTime = 0;
-    lastTrackedId = null;
-    lastTrackedTime = 0;
     set({
       ...initialWindowState,
       minimizedWindowIds: new Set<string>(),
@@ -93,13 +95,11 @@ export const useWindowStore = create<WindowStoreState>((set, get) => ({
   },
 
   focusWindow: (id: string) => {
-    nextZIndex += 1;
-    const currentZIndex = nextZIndex;
-
     set((state) => {
+      const currentZIndex = state.nextZIndex + 1;
       const windowIndex = state.openWindows.findIndex((win) => win.id === id);
       if (windowIndex === -1) {
-        return { focusedWindow: id };
+        return { focusedWindow: id, nextZIndex: currentZIndex };
       }
 
       const updatedWindows = [...state.openWindows];
@@ -111,20 +111,19 @@ export const useWindowStore = create<WindowStoreState>((set, get) => ({
       return {
         focusedWindow: id,
         openWindows: updatedWindows,
+        nextZIndex: currentZIndex,
       };
     });
   },
 
   openWindow: (windowData: Partial<WindowState> & { id: string; title?: string }) => {
-    nextZIndex += 1;
-    const currentZIndex = nextZIndex;
-
     set((state) => {
       const existing = state.openWindows.find((win) => win.id === windowData.id);
       if (existing) {
         return state;
       }
 
+      const currentZIndex = state.nextZIndex + 1;
       const newWindow: WindowState = {
         id: windowData.id,
         title: windowData.title,
@@ -145,6 +144,7 @@ export const useWindowStore = create<WindowStoreState>((set, get) => ({
       return {
         openWindows: [...state.openWindows, newWindow],
         focusedWindow: windowData.id,
+        nextZIndex: currentZIndex,
       };
     });
   },
@@ -174,34 +174,33 @@ export const useWindowStore = create<WindowStoreState>((set, get) => ({
       return;
     }
 
-    if (now - lastCloseTime < 300 && !skipTracking) {
+    const state = get();
+    if (now - state.lastCloseTime < 300 && !skipTracking) {
       return;
     }
 
-    const isDeduplication = id === lastTrackedId && now - lastTrackedTime < 200;
+    const isDeduplication = id === state.lastTrackedId && now - state.lastTrackedTime < 200;
 
     if (!skipTracking && !isDeduplication) {
-      lastTrackedId = id;
-      lastTrackedTime = now;
+      set({ lastTrackedId: id, lastTrackedTime: now });
     }
 
     if (item.link) {
       if (!isDeduplication) {
         window.open(item.link, '_blank', 'noopener,noreferrer');
         playSound('open').catch(() => {});
-        lastTrackedId = id;
-        lastTrackedTime = now;
+        set({ lastTrackedId: id, lastTrackedTime: now });
       }
       return;
     }
 
-    const state = get();
-    const isWindowOpen = state.openWindows.some((win) => win.id === id);
-    const isWindowMinimized = state.minimizedWindowIds.has(id);
+    const currentState = get();
+    const isWindowOpen = currentState.openWindows.some((win) => win.id === id);
+    const isWindowMinimized = currentState.minimizedWindowIds.has(id);
 
     if (isWindowOpen) {
       if (isWindowMinimized) {
-        const nextMinimized = state.minimizedWindows.filter((w) => w.id !== id);
+        const nextMinimized = currentState.minimizedWindows.filter((w) => w.id !== id);
         const nextMinimizedIds = new Set(nextMinimized.map((w) => w.id));
         set({
           minimizedWindows: nextMinimized,
@@ -301,7 +300,7 @@ export const useWindowStore = create<WindowStoreState>((set, get) => ({
   },
 
   handleCloseWindow: (windowId: string) => {
-    lastCloseTime = Date.now();
+    const now = Date.now();
 
     set((state) => {
       const remainingWindows = state.openWindows.filter((win) => win.id !== windowId);
@@ -327,6 +326,7 @@ export const useWindowStore = create<WindowStoreState>((set, get) => ({
         minimizedWindows: nextMinimized,
         minimizedWindowIds: new Set(nextMinimized.map((w) => w.id)),
         windowLoadingStates: nextLoadingStates,
+        lastCloseTime: now,
       };
     });
   },

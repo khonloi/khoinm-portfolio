@@ -1,5 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
-import client from "../../lib/sanityClient";
+import { useSanityQuery } from '../../hooks/useSanityQuery';
 
 /**
  * GROQ Query for About Information
@@ -29,50 +28,21 @@ export interface AboutData {
   name: string;
   tagline: string;
   portraitUrl?: string | null;
-  aboutMe?: any;
+  aboutMe?: unknown;
   experience?: ExperienceItem[];
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 /**
  * Hook to fetch About Information from Sanity.
  * Falls back to local data if Sanity is unavailable.
- * 
+ *
  * @param fallbackData - The hardcoded data to use as fallback
  * @returns {{ data, isLoading, error, refetch }}
  */
 export function useAbout(fallbackData: AboutData) {
-  const [data, setData] = useState<AboutData>(fallbackData);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<unknown | null>(null);
-
-  const isSanityConfigured = Boolean(import.meta.env.VITE_SANITY_PROJECT_ID);
-
-  const fetchData = useCallback(async () => {
-    if (!isSanityConfigured) return;
-
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      const result = await client.fetch(ABOUT_QUERY);
-      if (result) {
-        // Ensure structure matches what About expects
-        setData(result);
-      }
-    } catch (err) {
-      console.error("[useAbout] Failed to fetch About from Sanity:", err);
-      setError(err);
-      setData(fallbackData);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [isSanityConfigured, fallbackData]);
-
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
-
-  return { data, isLoading, error, refetch: fetchData };
+  return useSanityQuery<AboutData>({
+    query: ABOUT_QUERY,
+    initialData: fallbackData,
+  });
 }
-

@@ -5,6 +5,7 @@ import winWindowBlankIcon from '../assets/icons/win-window-blank.ico';
 import winFolderIcon from '../assets/icons/win-folder.ico';
 import shortcutIcon from '../assets/icons/win-shortcut.ico';
 import type { Position, Rect } from '../types';
+import { measureElementRect } from '../utils/dom';
 
 export interface IconProps {
   id: string;
@@ -47,6 +48,7 @@ const Icon = memo<IconProps>(({
     draggable,
     onDragStart,
     link,
+    'aria-label': ariaLabel,
 }) => {
     // Stage-based state
     const [isFlashing, setIsFlashing] = useState(false);
@@ -89,16 +91,7 @@ const Icon = memo<IconProps>(({
         flashTimeoutRef.current = setTimeout(() => {
             if (elementRef.current) setIsFlashing(false);
         }, 400);
-        let originRect: Rect | undefined = undefined;
-        if (elementRef.current) {
-            const rect = elementRef.current.getBoundingClientRect();
-            originRect = {
-                x: rect.left,
-                y: rect.top,
-                width: rect.width,
-                height: rect.height,
-            };
-        }
+        const originRect = measureElementRect(elementRef.current);
         onDoubleClick?.(e, { originRect });
     }, [onDoubleClick, elementRef]);
 
@@ -174,7 +167,7 @@ const Icon = memo<IconProps>(({
                 onDragStart?.(e, id);
             }}
             role="button"
-            aria-label={label}
+            aria-label={ariaLabel || label}
             tabIndex={0}
         >
             <div className="relative h-12">

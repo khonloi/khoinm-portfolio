@@ -2,22 +2,22 @@ import { create } from 'zustand';
 import { desktopItems } from '../config/programConfig';
 import type { DesktopItem, Position } from '../types';
 
+import { POSITIONING_CONSTANTS } from '../constants/ui';
+export { POSITIONING_CONSTANTS };
+
 const STORAGE_KEY_POSITIONS = 'pane_icon_positions_v1';
 
-export const POSITIONING_CONSTANTS = {
-  EDGE_PADDING: 20,
-  EDGE_PADDING_RESIZE: 20,
-  ICON_SPACING: 100,
-  ICON_WIDTH: 80,
-  TOP_PADDING: 20,
-};
+export interface CdDriveConfig {
+  label?: string;
+  fileContent?: string;
+}
 
 export interface DesktopStoreState {
   allDesktopItems: DesktopItem[];
   itemPositions: Record<string, Position>;
   selectedIcon: string | null;
   folderDataMap: Map<string, DesktopItem>;
-  cdDrive: any;
+  cdDrive: CdDriveConfig | null;
   cmsLoading: boolean;
 
   // Actions
@@ -25,8 +25,8 @@ export interface DesktopStoreState {
   handleItemPositionChange: (id: string, newPosition: Position, contextFolderId?: string | null) => void;
   resetDefaultPositions: () => void;
   setCMSContent: (data: {
-    folderMap?: Record<string, any>;
-    cdDrive?: any;
+    folderMap?: Record<string, DesktopItem[]>;
+    cdDrive?: CdDriveConfig | null;
     customShortcuts?: DesktopItem[];
     loading?: boolean;
   }) => void;
@@ -65,13 +65,13 @@ export const calculatePositions = (
 
 export const buildFolderDataMap = (
   items: DesktopItem[],
-  folderMap?: Record<string, any>
+  folderMap?: Record<string, DesktopItem[]>
 ): Map<string, DesktopItem> => {
   const map = new Map<string, DesktopItem>();
   const processItems = (itemList: DesktopItem[]) => {
     itemList.forEach((item) => {
       if (item.type === 'folder') {
-        map.set(item.id, item);
+        map.set(item.id, { ...item, contents: item.contents ? [...item.contents] : undefined });
       }
       if (item.contents) {
         processItems(item.contents);
@@ -80,15 +80,16 @@ export const buildFolderDataMap = (
   };
   processItems(items);
 
-  // Merge dynamic folder contents from Sanity
+  // Merge dynamic folder contents from Sanity without mutating original item references
   Object.entries(folderMap || {}).forEach(([folderId, dynamicItems]) => {
     const folder = map.get(folderId);
     if (folder) {
-      folder.contents = dynamicItems as DesktopItem[];
+      const clonedFolder = { ...folder, contents: dynamicItems as DesktopItem[] };
+      map.set(folderId, clonedFolder);
       const processDynamic = (subItems: DesktopItem[]) => {
         subItems.forEach((subItem) => {
           if (subItem.type === 'folder') {
-            map.set(subItem.id, subItem);
+            map.set(subItem.id, { ...subItem, contents: subItem.contents ? [...subItem.contents] : undefined });
             if (subItem.contents) processDynamic(subItem.contents);
           }
         });

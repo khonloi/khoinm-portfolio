@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, memo, useRef } from "react";
 import Button from "./Button";
+import { WindowTitleBar, WindowContentFrame } from "./window-frame";
 import { useDragDrop } from "../hooks/useDragDrop";
 import type { Position } from "../types";
 
@@ -143,62 +144,45 @@ const Dialog = memo<DialogProps>(({
             <div className="h-full relative bg-windows-grey trim-corners" onMouseDown={handleTitleBarAction} onTouchStart={handleTitleBarAction}>
                 <div className="h-full flex flex-col border-t-2 border-l-2 border-windows-white p-1 pr-1.5 pb-1.5 bg-windows-grey overflow-hidden">
                     {/* Window Frame: Title and Controls */}
-                    <div className="bg-windows-black p-[2px] mb-1.5 relative shrink-0">
-                      <div className="window-title-bar flex justify-between items-center w-full h-full bg-windows-purple text-windows-white">
-                        <span id={`${id}-title`} className="font-bold absolute left-1/2 -translate-x-1/2 select-none">{title}</span>
-                        <div className="flex gap-0.5">
-                            <Button
-                                variant="control"
-                                onClick={() => onClose?.(id)}
-                                ariaLabel="Close Window"
-                                title="Close Window"
-                                className="control-button bg-[#ff746d]"
-                                layer1ClassName="border-[#ffb3a7] text-white group-active:border-[#c94a3a]"
-                                layer2ClassName="border-[#c94a3a]"
-                            >
-                                ×
-                            </Button>
-                        </div>
-                      </div>
-                    </div>
+                    <WindowTitleBar
+                      title={title}
+                      titleId={`${id}-title`}
+                      isFocused={true}
+                      onClose={() => onClose?.(id)}
+                    />
 
                     {/* Window Content: Message, Icon, and Buttons */}
-                    <div className="window-content-outer flex-1 flex relative min-h-0 trim-corners">
-                        <div className="border-l-2 border-t-2 border-windows-grey-dark flex-1 flex min-h-0 pr-0.5 pb-0.5">
-                            <div className="border-2 border-windows-black bg-windows-white overflow-auto flex-1 select-text min-h-0 min-w-0 z-10 flex flex-col">
-                                <div className="p-4 text-windows-black text-left max-w-[26rem] flex flex-col justify-center flex-1">
-                                    <div className="flex items-center justify-center gap-4 mb-4">
-                                        {showIcon && icon && (
-                                            <img
-                                                src={icon}
-                                                alt=""
-                                                className="w-10 h-10 object-contain align-middle select-none shrink-0"
-                                                loading="eager"
-                                                decoding="async"
-                                                onError={(e) => {
-                                                    (e.currentTarget as HTMLImageElement).style.display = 'none';
-                                                }}
-                                            />
-                                        )}
-                                        <span className="text-lg whitespace-pre-line">{message}</span>
-                                    </div>
-                                    {buttons.length > 0 && (
-                                        <div className="flex justify-center gap-3">
-                                            {buttons.slice(0, 3).map((btn, i) => (
-                                                <Button
-                                                    key={i}
-                                                    onClick={btn.onClick}
-                                                >
-                                                    {btn.label}
-                                                </Button>
-                                            ))}
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
+                    <WindowContentFrame contentClassName="flex flex-col">
+                      <div className="p-4 text-windows-black text-left max-w-[26rem] flex flex-col justify-center flex-1">
+                        <div className="flex items-center justify-center gap-4 mb-4">
+                          {showIcon && icon && (
+                            <img
+                              src={icon}
+                              alt=""
+                              className="w-10 h-10 object-contain align-middle select-none shrink-0"
+                              loading="eager"
+                              decoding="async"
+                              onError={(e) => {
+                                (e.currentTarget as HTMLImageElement).style.display = 'none';
+                              }}
+                            />
+                          )}
+                          <span className="text-lg whitespace-pre-line">{message}</span>
                         </div>
-                        <div className="absolute inset-0 border-r-2 border-b-2 border-windows-white"></div>
-                    </div>
+                        {buttons.length > 0 && (
+                          <div className="flex justify-center gap-3">
+                            {buttons.slice(0, 3).map((btn, i) => (
+                              <Button
+                                key={i}
+                                onClick={btn.onClick}
+                              >
+                                {btn.label}
+                              </Button>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </WindowContentFrame>
                 </div>
                 <div className="absolute inset-0 pointer-events-none border-r-2 border-b-2 border-windows-grey-dark"></div>
             </div>

@@ -1,11 +1,13 @@
-import { useState, useCallback, useRef, useMemo } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { useWindowPosition } from './useWindowPosition';
 import { useWindowMobile } from './useWindowMobile';
 import { useWindowLifecycle } from './useWindowLifecycle';
 import { useWindowTransitions } from './useWindowTransitions';
+import { runWindowZoom } from './runWindowZoom';
+import { useIsMobile } from '../useIsMobile';
+import { measureElementRect } from '../../utils/dom';
+import { MENU_BAR_HEIGHT } from '../../constants/ui';
 import type { Position, Rect, TriggerZoomAnimationOptions } from '../../types';
-
-const MENU_BAR_HEIGHT_CONST = 36;
 
 export interface UseWindowInstanceProps {
   id: string;
@@ -40,9 +42,8 @@ export const useWindowInstance = ({
   isMaximized: initialMaximized,
   isFullScreen,
 }: UseWindowInstanceProps) => {
-  const MENU_BAR_HEIGHT = useRef(MENU_BAR_HEIGHT_CONST).current;
-  const initialMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
-  const initialMaximizedState = initialMobile || initialMaximized || false;
+  const isMobile = useIsMobile();
+  const initialMaximizedState = isMobile || initialMaximized || false;
 
   const [isFullScreenActive, setIsFullScreenActive] = useState(isFullScreen || false);
 
@@ -67,14 +68,13 @@ export const useWindowInstance = ({
     initialPosition,
     initialMaximizedState,
     isFullScreenActive,
-    isMobile: initialMobile, // updated below
+    isMobile,
     onFocus,
     MENU_BAR_HEIGHT,
   });
 
   // Mobile hook
-  const { isMobile, touchStartTime, setTouchStartTime } = useWindowMobile({
-    initialMobile,
+  const { touchStartTime, setTouchStartTime } = useWindowMobile({
     isMinimized,
     isFullScreenActive,
     position,
@@ -195,52 +195,32 @@ export const useWindowInstance = ({
   const handleMinimizeClick = useCallback(() => {
     if (isMinimizing || isClosing) return;
 
-    if (isFullScreen || isFullScreenActive || !triggerZoomAnimation) {
-      if (onMinimize) {
-        setIsFullScreenActive(false);
-        onMinimize(id, { title, icon, position });
-      }
+    if (isFullScreen || isFullScreenActive) {
+      setIsFullScreenActive(false);
+      onMinimize?.(id, { title, icon, position });
       return;
     }
 
-    if (elementRef.current) {
-      setIsMinimizing(true);
-      const rect = elementRef.current.getBoundingClientRect();
-      const fromRect = {
-        x: rect.left,
-        y: rect.top,
-        width: rect.width,
-        height: rect.height,
-      };
+    const fromRect = measureElementRect(elementRef.current);
+    const taskbarTargetRect: Rect = {
+      x: 20,
+      y: window.innerHeight - 56,
+      width: 44,
+      height: 44,
+    };
 
-      const taskbarTargetRect = {
-        x: 20,
-        y: window.innerHeight - 56,
-        width: 44,
-        height: 44,
-      };
-
-      triggerZoomAnimation({
-        id: `minimize-${id}`,
-        fromRect,
-        toRect: taskbarTargetRect,
-        type: 'minimize',
-        duration: 220,
-        steps: 7,
-        onComplete: () => {
-          setIsFullScreenActive(false);
-          setIsMinimizing(false);
-          if (onMinimize) {
-            onMinimize(id, { title, icon, position });
-          }
-        },
-      });
-    } else {
-      if (onMinimize) {
+    setIsMinimizing(true);
+    runWindowZoom(triggerZoomAnimation, {
+      id: `minimize-${id}`,
+      fromRect,
+      toRect: taskbarTargetRect,
+      type: 'minimize',
+      onComplete: () => {
         setIsFullScreenActive(false);
-        onMinimize(id, { title, icon, position });
-      }
-    }
+        setIsMinimizing(false);
+        onMinimize?.(id, { title, icon, position });
+      },
+    });
   }, [
     id,
     title,
@@ -272,13 +252,7 @@ export const useWindowInstance = ({
       return;
     }
 
-    const currentRect = elementRef.current.getBoundingClientRect();
-    const fromRect = {
-      x: currentRect.left,
-      y: currentRect.top,
-      width: currentRect.width,
-      height: currentRect.height,
-    };
+    const fromRect = measureElementRect(elementRef.current);
 
     if (!isMaximized) {
       // Maximizing: normal -> maximized
@@ -288,22 +262,12 @@ export const useWindowInstance = ({
       setIsOpening(true);
 
       requestAnimationFrame(() => {
-        if (!elementRef.current) return;
-        const maxRect = elementRef.current.getBoundingClientRect();
-        const toRect = {
-          x: maxRect.left,
-          y: maxRect.top,
-          width: maxRect.width,
-          height: maxRect.height,
-        };
-
-        triggerZoomAnimation({
+        const toRect = measureElementRect(elementRef.current);
+        runWindowZoom(triggerZoomAnimation, {
           id: `maximize-${id}-${Date.now()}`,
           fromRect,
           toRect,
           type: 'maximize',
-          duration: 220,
-          steps: 7,
           onComplete: () => {
             setIsOpening(false);
           },
@@ -316,22 +280,12 @@ export const useWindowInstance = ({
       setIsOpening(true);
 
       requestAnimationFrame(() => {
-        if (!elementRef.current) return;
-        const normRect = elementRef.current.getBoundingClientRect();
-        const toRect = {
-          x: normRect.left,
-          y: normRect.top,
-          width: normRect.width,
-          height: normRect.height,
-        };
-
-        triggerZoomAnimation({
+        const toRect = measureElementRect(elementRef.current);
+        runWindowZoom(triggerZoomAnimation, {
           id: `unmaximize-${id}-${Date.now()}`,
           fromRect,
           toRect,
           type: 'unmaximize',
-          duration: 220,
-          steps: 7,
           onComplete: () => {
             setIsOpening(false);
           },
@@ -348,7 +302,6 @@ export const useWindowInstance = ({
     isMaximized,
     position,
     preMaximizePosition,
-    MENU_BAR_HEIGHT,
     triggerZoomAnimation,
     elementRef,
     setIsMaximized,
@@ -360,44 +313,25 @@ export const useWindowInstance = ({
   const handleCloseClick = useCallback(() => {
     if (isClosing) return;
 
-    if (isFullScreen || isFullScreenActive || !triggerZoomAnimation) {
+    if (isFullScreen || isFullScreenActive) {
       setIsFullScreenActive(false);
-      if (onClose) {
-        onClose(id);
-      }
+      onClose?.(id);
       return;
     }
 
-    if (elementRef.current) {
-      setIsClosing(true);
-      const rect = elementRef.current.getBoundingClientRect();
-      const fromRect = {
-        x: rect.left,
-        y: rect.top,
-        width: rect.width,
-        height: rect.height,
-      };
+    const fromRect = measureElementRect(elementRef.current);
+    setIsClosing(true);
 
-      triggerZoomAnimation({
-        id: `close-${id}`,
-        fromRect,
-        toRect: originRect,
-        type: 'close',
-        duration: 220,
-        steps: 7,
-        onComplete: () => {
-          setIsFullScreenActive(false);
-          if (onClose) {
-            onClose(id);
-          }
-        },
-      });
-    } else {
-      if (onClose) {
+    runWindowZoom(triggerZoomAnimation, {
+      id: `close-${id}`,
+      fromRect,
+      toRect: originRect,
+      type: 'close',
+      onComplete: () => {
         setIsFullScreenActive(false);
-        onClose(id);
-      }
-    }
+        onClose?.(id);
+      },
+    });
   }, [
     id,
     originRect,
@@ -454,7 +388,6 @@ export const useWindowInstance = ({
       handleMinimizeClick,
       handleMaximizeClick,
       handleCloseClick,
-      MENU_BAR_HEIGHT,
     ]
   );
 };

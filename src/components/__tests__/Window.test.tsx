@@ -41,6 +41,36 @@ describe('Window component', () => {
     expect(screen.getByText('Document Content')).toBeInTheDocument();
   });
 
+  it('renders control buttons on the left of the title bar without redundant left padding', () => {
+    act(() => {
+      render(
+        <Window id="win-controls" title="Control Position Test" onClose={vi.fn()}>
+          <div>Content</div>
+        </Window>
+      );
+    });
+
+    const closeBtn = screen.getByTitle('Close Window');
+    const controlGroup = closeBtn.parentElement;
+    expect(controlGroup).toHaveClass('z-10');
+    expect(controlGroup).not.toHaveClass('ml-auto');
+    expect(controlGroup).not.toHaveClass('pl-0.5');
+  });
+
+  it('applies square corners on maximize without trimmed corners', () => {
+    act(() => {
+      render(
+        <Window id="win-max-corners" title="Square Corners" onClose={vi.fn()} isMaximized={true}>
+          <div>Maximized Content</div>
+        </Window>
+      );
+    });
+
+    const windowOuter = screen.getByText('Maximized Content').closest('.window-outer');
+    expect(windowOuter).not.toHaveClass('trim-window-corners');
+    expect(windowOuter).toHaveClass('maximized');
+  });
+
   it('triggers onClose when close button is clicked', () => {
     const handleClose = vi.fn();
 
@@ -79,9 +109,12 @@ describe('Window component', () => {
     act(() => {
       fireEvent.click(minBtn);
     });
-    expect(handleMinimize).toHaveBeenCalledWith('win-min-test', expect.objectContaining({
-      title: 'Terminal',
-    }));
+    expect(handleMinimize).toHaveBeenCalledWith(
+      'win-min-test',
+      expect.objectContaining({
+        title: 'Terminal',
+      })
+    );
   });
 
   it('renders Maximize button when window is not maximized', () => {
@@ -121,26 +154,32 @@ describe('Window component', () => {
   });
 
   it('applies focused style when isFocused is true', () => {
-    let rerenderFn: any;
-    act(() => {
-      const { rerender } = render(
-        <Window id="win-focus" title="Active Win" onClose={vi.fn()} isFocused={true}>
-          <div>Body</div>
-        </Window>
-      );
-      rerenderFn = rerender;
-    });
+    const { rerender } = render(
+      <Window
+        id="win-focus"
+        title="Active Win"
+        onClose={vi.fn()}
+        isFocused={true}
+      >
+        <div>Body</div>
+      </Window>
+    );
 
-    const titleBar = screen.getByText('Active Win').closest('.window-title-bar');
+    const titleBar = screen
+      .getByText('Active Win')
+      .closest('.window-title-bar');
     expect(titleBar).toHaveClass('bg-windows-purple');
 
-    act(() => {
-      rerenderFn(
-        <Window id="win-focus" title="Active Win" onClose={vi.fn()} isFocused={false}>
-          <div>Body</div>
-        </Window>
-      );
-    });
+    rerender(
+      <Window
+        id="win-focus"
+        title="Active Win"
+        onClose={vi.fn()}
+        isFocused={false}
+      >
+        <div>Body</div>
+      </Window>
+    );
 
     expect(titleBar).toHaveClass('bg-windows-grey');
   });

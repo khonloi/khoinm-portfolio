@@ -87,7 +87,8 @@ export default defineConfig({
       '@data': '/src/data',
       '@lib': '/src/lib',
       '@assets': '/src/assets',
-      '@context': '/src/context',
+      '@stores': '/src/stores',
+      '@constants': '/src/constants',
     },
   },
   // Optimize dependencies

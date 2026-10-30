@@ -32,11 +32,14 @@ const Standby = lazy(() => import("../features/standby"));
 
 export interface WindowData {
   filetype?: string | null;
-  [key: string]: any;
+  fileContent?: string | null;
+  crop43?: boolean;
+  onClose?: () => void;
+  [key: string]: unknown;
 }
 
 // Window content registry for better maintainability and performance
-const windowContentRegistry: Record<string, ComponentType<any>> = {
+const windowContentRegistry: Record<string, ComponentType<WindowData & { id?: string }>> = {
   about: About,
   welcome: Welcome,
   message: Message,
@@ -77,13 +80,17 @@ const windowContentRegistry: Record<string, ComponentType<any>> = {
   standby: Standby,
 };
 
+export const isRegisteredWindow = (windowId: string, filetype?: string | null): boolean => {
+  if (filetype === 'txt' || filetype === 'img' || filetype === 'vid') return true;
+  return Boolean(windowContentRegistry[windowId]);
+};
+
 // Window content renderer function - optimized with registry lookup
 export const renderWindowContent = (
   windowId: string,
   windowTitle: string,
   onClose: () => void,
   icon?: string,
-  onTriggerBSOD?: () => void,
   winData: WindowData = {}
 ): ReactNode => {
   // If filetype is provided, override the component mapping
@@ -95,14 +102,6 @@ export const renderWindowContent = (
 
   if (Component) {
     return <Component onClose={onClose} id={windowId} {...winData} />;
-  }
-
-  // If the program is not implemented, there is a chance to BSOD
-  const BSOD_CHANCE = 0.25;
-  if (onTriggerBSOD && Math.random() < BSOD_CHANCE) {
-    onTriggerBSOD();
-    onClose();
-    return null;
   }
 
   return (

@@ -2,13 +2,13 @@ import React, { memo, useEffect } from "react";
 import Icon from "../Icon";
 import { useDesktopStore } from "../../stores/useDesktopStore";
 import { useWindowStore } from "../../stores/useWindowStore";
-import type { DesktopItem, Position } from "../../types";
+import type { DesktopItem, Position, Rect } from "../../types";
 
 export interface DesktopIconsProps {
   allDesktopItems?: DesktopItem[];
   itemPositions?: Record<string, Position>;
   handleItemPositionChange?: (id: string, newPosition: Position, contextFolderId?: string | null) => void;
-  handleItemDoubleClick?: (item: DesktopItem | string, label?: string, extra?: any) => void;
+  handleItemDoubleClick?: (item: DesktopItem | string, label?: string, extra?: { originRect?: Rect; skipTracking?: boolean }) => void;
   selectedIcon?: string | null;
   setSelectedIcon?: (id: string | null) => void;
 }

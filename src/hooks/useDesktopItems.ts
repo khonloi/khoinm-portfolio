@@ -15,6 +15,19 @@ export interface CdDriveConfig {
   fileContent?: string;
 }
 
+interface RawDesktopItem extends Partial<DesktopItem> {
+  id: string;
+  customIconUrl?: string;
+  contents?: RawDesktopItem[];
+}
+
+interface CmsDocument {
+  _type: string;
+  jsonContent?: string;
+  label?: string;
+  fileContent?: string;
+}
+
 export const useCMSContent = () => {
   const [folderMap, setFolderMap] = useState<Record<string, DesktopItem[]>>({});
   const [cdDrive, setCdDrive] = useState<CdDriveConfig | null>(null);
@@ -28,8 +41,8 @@ export const useCMSContent = () => {
         const map: Record<string, DesktopItem[]> = {};
         let cdDriveConfig: CdDriveConfig | null = null;
 
-        const processItems = (items: any[]): DesktopItem[] => {
-          return items.map((item: any) => {
+        const processItems = (items: RawDesktopItem[]): DesktopItem[] => {
+          return items.map((item) => {
             let iconSrc = item.iconSrc;
             const type = item.type || 'icon';
 
@@ -43,7 +56,11 @@ export const useCMSContent = () => {
             const transformedItem: DesktopItem = {
               ...item,
               type,
-              iconSrc: item.customIconUrl || (ICON_MAP as Record<string, string>)[iconSrc] || iconSrc,
+              iconSrc:
+                item.customIconUrl ||
+                (iconSrc
+                  ? (ICON_MAP as Record<string, string>)[iconSrc] || iconSrc
+                  : ''),
               // Recursive processing for sub-folders
               contents: item.contents ? processItems(item.contents) : undefined,
             };
@@ -51,7 +68,7 @@ export const useCMSContent = () => {
           });
         };
 
-        data.forEach((doc: any) => {
+        (data as CmsDocument[]).forEach((doc) => {
           if (doc._type === 'cdDrive') {
             cdDriveConfig = {
               label: doc.label,
@@ -76,15 +93,17 @@ export const useCMSContent = () => {
               console.error(`Failed to parse JSON for ${folderId}:`, e);
             }
           }
-          
+
           if (doc._type === 'customShortcut' && doc.jsonContent) {
             try {
               const parsed = JSON.parse(doc.jsonContent);
               if (Array.isArray(parsed)) {
-                const shortcuts: DesktopItem[] = processItems(parsed).map(item => ({
-                  ...item,
-                  position: 'right' as const, // Force position right to line up below CD Drive
-                }));
+                const shortcuts: DesktopItem[] = processItems(parsed).map(
+                  (item) => ({
+                    ...item,
+                    position: 'right' as const, // Force position right to line up below CD Drive
+                  })
+                );
                 setCustomShortcuts(shortcuts);
               }
             } catch (e) {

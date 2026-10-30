@@ -7,7 +7,7 @@ import { useMessageForm } from "./useMessageForm";
 
 
 const Message = memo(() => {
-  const { formRef, status, errors, isSending, sendEmail, clearMessages } =
+  const { formRef, formStatus, status, errors, isSending, sendEmail, clearMessages } =
     useMessageForm();
 
   const editorRef = useRef<HTMLDivElement | null>(null);
@@ -20,11 +20,11 @@ const Message = memo(() => {
 
   // Clear editor on success
   useEffect(() => {
-    if (status === 'Message sent successfully!' && editorRef.current) {
+    if (formStatus === 'success' && editorRef.current) {
       editorRef.current.innerHTML = '';
       setMessageHtml('');
     }
-  }, [status]);
+  }, [formStatus]);
 
 
 
@@ -39,10 +39,11 @@ const Message = memo(() => {
       <form ref={formRef} onSubmit={sendEmail} className="flex flex-col flex-grow min-h-0 md:h-auto md:flex-none">
         {/* Name Input Group */}
         <div className="flex items-baseline gap-2">
-          <label className="mb-2 block text-base font-bold text-windows-black">Name:</label>
+          <label htmlFor="user_name" className="mb-2 block text-base font-bold text-windows-black">Name:</label>
           {errors.name && <span className="m-0 text-red-600 text-base">{errors.name}</span>}
         </div>
         <Input
+          id="user_name"
           type="text"
           name="user_name"
           boxClassName="mb-4"
@@ -51,12 +52,13 @@ const Message = memo(() => {
 
         {/* Email Input Group */}
         <div className="flex items-baseline gap-2">
-          <label className="mb-2 block text-base font-bold text-windows-black">Email:</label>
+          <label htmlFor="user_email" className="mb-2 block text-base font-bold text-windows-black">Email:</label>
           {errors.email && (
             <span className="m-0 text-red-600 text-base">{errors.email}</span>
           )}
         </div>
         <Input
+          id="user_email"
           type="email"
           name="user_email"
           boxClassName="mb-4"
@@ -66,7 +68,7 @@ const Message = memo(() => {
         {/* Message Input Group */}
         <div className="mb-2 flex flex-col flex-grow min-h-0 md:flex-none">
           <div className="flex items-baseline gap-2 flex-none">
-            <label className="mb-2 block text-base font-bold text-windows-black">Message:</label>
+            <label htmlFor="user_message_editor" className="mb-2 block text-base font-bold text-windows-black">Message:</label>
             {errors.message && (
               <span className="m-0 text-red-600 text-base">{errors.message}</span>
             )}
@@ -80,8 +82,13 @@ const Message = memo(() => {
             className="mb-1 flex-grow min-h-0 md:flex-none"
           >
             <div
+              id="user_message_editor"
               ref={editorRef}
               contentEditable
+              role="textbox"
+              aria-multiline="true"
+              aria-label="Message content"
+              tabIndex={0}
               onInput={handleInput}
               onBlur={handleInput}
               className="w-full h-full overflow-auto p-2 font-main text-base outline-none bg-transparent break-all md:h-48"

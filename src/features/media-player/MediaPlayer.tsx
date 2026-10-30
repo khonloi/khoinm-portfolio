@@ -1,6 +1,8 @@
-import React, { useState, useRef, useCallback, memo, useEffect } from "react";
+import React, { useCallback, memo } from "react";
 import Button from "../../components/Button";
 import treeIcon from "../../assets/icons/tree.ico";
+import { useYouTubePlayer } from "./hooks/useYouTubePlayer";
+import { useNativeMedia } from "./hooks/useNativeMedia";
 
 import playIcon from "../../assets/icons/music/play.svg";
 import pauseIcon from "../../assets/icons/music/pause.svg";
@@ -9,278 +11,64 @@ import prevIcon from "../../assets/icons/music/prev.svg";
 import nextIcon from "../../assets/icons/music/next.svg";
 import ejectIcon from "../../assets/icons/music/eject.svg";
 
-declare global {
-  interface Window {
-    YT?: any;
-    onYouTubeIframeAPIReady?: () => void;
-  }
-}
-
 export interface MediaPlayerProps {
   id?: string;
-  fileContent?: string;
+  fileContent?: string | null;
   crop43?: boolean;
 }
 
+const formatTime = (time: number): string => {
+  const minutes = Math.floor(time / 60);
+  const seconds = Math.floor(time % 60);
+  return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+};
+
 const MediaPlayer = memo<MediaPlayerProps>(({ id, fileContent, crop43 }) => {
-  const [mediaSrc, setMediaSrc] = useState<string | null>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [currentTime, setCurrentTime] = useState(0);
-  const [duration, setDuration] = useState(0);
-  const [isYoutube, setIsYoutube] = useState(false);
-  const mediaRef = useRef<HTMLVideoElement | null>(null);
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const ytPlayerRef = useRef<any>(null);
-  const pollIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const yt = useYouTubePlayer({ id, url: fileContent });
+  const native = useNativeMedia({ initialSrc: fileContent });
 
-  useEffect(() => { }, [id]); // Placeholder for logic below
-
-  // Use the crop43 prop directly from window data
-  const isCropped = crop43;
-
-  const getYouTubeParams = (url: string | null | undefined) => {
-    if (!url) return { videoId: null, playlistId: null };
-    try {
-      // Handle the various YouTube URL formats
-      const videoMatch = url.match(/[?&]v=([^#&?]+)/) || url.match(/youtu\.be\/([^#&?]+)/) || url.match(/embed\/([^#&?]+)/);
-      const listMatch = url.match(/[?&]list=([^#&?]+)/);
-
-      return {
-        videoId: videoMatch ? videoMatch[1] : null,
-        playlistId: listMatch ? listMatch[1] : null
-      };
-    } catch {
-      return { videoId: null, playlistId: null };
-    }
-  };
-
-  // Load YouTube API
-  useEffect(() => {
-    if (!window.YT) {
-      const tag = document.createElement("script");
-      tag.src = "https://www.youtube.com/iframe_api";
-      const firstScriptTag = document.getElementsByTagName("script")[0];
-      firstScriptTag?.parentNode?.insertBefore(tag, firstScriptTag);
-    }
-  }, []);
-
-  const initializeYTPlayer = useCallback(
-    (videoId: string | null, playlistId: string | null) => {
-      if (ytPlayerRef.current) {
-        ytPlayerRef.current.destroy();
-      }
-
-      const onPlayerReady = (event: any) => {
-        setDuration(event.target.getDuration());
-      };
-
-      const onPlayerStateChange = (event: any) => {
-        if (event.data === window.YT.PlayerState.PLAYING) {
-          setIsPlaying(true);
-          // Update duration when track transitions in a playlist
-          setDuration(event.target.getDuration());
-        } else if (
-          event.data === window.YT.PlayerState.PAUSED ||
-          event.data === window.YT.PlayerState.ENDED
-        ) {
-          setIsPlaying(false);
-        }
-      };
-
-      const playerVars: Record<string, any> = {
-        controls: 0,
-        disablekb: 1,
-        modestbranding: 1,
-        rel: 0,
-        showinfo: 0,
-        enablejsapi: 1,
-        origin: window.location.origin,
-      };
-
-      if (playlistId) {
-        playerVars.listType = "playlist";
-        playerVars.list = playlistId;
-      }
-
-      ytPlayerRef.current = new window.YT.Player(`yt-player-${id}`, {
-        height: "100%",
-        width: "100%",
-        videoId: videoId,
-        playerVars,
-        events: {
-          onReady: onPlayerReady,
-          onStateChange: onPlayerStateChange,
-        },
-      });
-    },
-    [id]
-  );
-
-  useEffect(() => {
-    const src = fileContent;
-    if (src) {
-      const { videoId, playlistId } = getYouTubeParams(src);
-      setMediaSrc(src);
-
-      if (videoId || playlistId) {
-        setIsYoutube(true);
-        const checkYT = setInterval(() => {
-          if (window.YT && window.YT.Player) {
-            clearInterval(checkYT);
-            initializeYTPlayer(videoId, playlistId);
-          }
-        }, 100);
-      } else {
-        setIsYoutube(false);
-      }
-    }
-  }, [id, fileContent, initializeYTPlayer]);
-
-  useEffect(() => {
-    if (isYoutube && isPlaying) {
-      pollIntervalRef.current = setInterval(() => {
-        if (ytPlayerRef.current && ytPlayerRef.current.getCurrentTime) {
-          setCurrentTime(ytPlayerRef.current.getCurrentTime());
-          // Sync duration for playlists as it changes between videos
-          if (ytPlayerRef.current.getDuration) {
-            setDuration(ytPlayerRef.current.getDuration());
-          }
-        }
-      }, 500);
-    } else {
-      if (pollIntervalRef.current) {
-        clearInterval(pollIntervalRef.current);
-        pollIntervalRef.current = null;
-      }
-    }
-    return () => {
-      if (pollIntervalRef.current) {
-        clearInterval(pollIntervalRef.current);
-        pollIntervalRef.current = null;
-      }
-    };
-  }, [isYoutube, isPlaying]);
-
-  useEffect(() => {
-    return () => {
-      if (mediaSrc && mediaSrc.startsWith("blob:")) {
-        URL.revokeObjectURL(mediaSrc);
-      }
-      if (ytPlayerRef.current) {
-        ytPlayerRef.current.destroy();
-      }
-      if (pollIntervalRef.current) {
-        clearInterval(pollIntervalRef.current);
-        pollIntervalRef.current = null;
-      }
-    };
-  }, [mediaSrc]);
-
-  const handleImport = useCallback(() => {
-    fileInputRef.current?.click();
-  }, []);
-
-  const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const url = URL.createObjectURL(file);
-      setMediaSrc(url);
-      setIsYoutube(false);
-      setIsPlaying(false);
-      setCurrentTime(0);
-      if (ytPlayerRef.current) {
-        ytPlayerRef.current.destroy();
-        ytPlayerRef.current = null;
-      }
-    }
-  }, []);
+  const isYoutube = yt.isYoutube;
+  const isPlaying = isYoutube ? yt.isPlaying : native.isPlaying;
+  const currentTime = isYoutube ? yt.currentTime : native.currentTime;
+  const duration = isYoutube ? yt.duration : native.duration;
+  const mediaSrc = isYoutube ? fileContent : native.mediaSrc;
 
   const togglePlay = useCallback(() => {
     if (isYoutube) {
-      if (ytPlayerRef.current) {
-        if (isPlaying) {
-          ytPlayerRef.current.pauseVideo();
-        } else {
-          ytPlayerRef.current.playVideo();
-        }
-      }
-      return;
+      yt.togglePlay();
+    } else {
+      native.togglePlay();
     }
-
-    if (mediaRef.current) {
-      if (isPlaying) {
-        mediaRef.current.pause();
-      } else {
-        mediaRef.current.play();
-      }
-      setIsPlaying(!isPlaying);
-    }
-  }, [isPlaying, isYoutube]);
+  }, [isYoutube, yt, native]);
 
   const stopMedia = useCallback(() => {
     if (isYoutube) {
-      if (ytPlayerRef.current) {
-        ytPlayerRef.current.stopVideo();
-        setIsPlaying(false);
-        setCurrentTime(0);
-      }
-      return;
+      yt.stop();
+    } else {
+      native.stop();
     }
-    if (mediaRef.current) {
-      mediaRef.current.pause();
-      mediaRef.current.currentTime = 0;
-      setIsPlaying(false);
-      setCurrentTime(0);
-    }
-  }, [isYoutube]);
-
-  const nextVideo = useCallback(() => {
-    if (isYoutube && ytPlayerRef.current && ytPlayerRef.current.nextVideo) {
-      ytPlayerRef.current.nextVideo();
-    }
-  }, [isYoutube]);
-
-  const prevVideo = useCallback(() => {
-    if (isYoutube && ytPlayerRef.current && ytPlayerRef.current.previousVideo) {
-      ytPlayerRef.current.previousVideo();
-    }
-  }, [isYoutube]);
-
-  const handleTimeUpdate = useCallback(() => {
-    if (mediaRef.current) {
-      setCurrentTime(mediaRef.current.currentTime);
-    }
-  }, []);
-
-  const handleLoadedMetadata = useCallback(() => {
-    if (mediaRef.current) {
-      setDuration(mediaRef.current.duration);
-    }
-  }, []);
+  }, [isYoutube, yt, native]);
 
   const handleSeek = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const time = parseFloat(e.target.value);
       if (isYoutube) {
-        if (ytPlayerRef.current) {
-          ytPlayerRef.current.seekTo(time, true);
-          setCurrentTime(time);
-        }
-        return;
-      }
-      if (mediaRef.current) {
-        mediaRef.current.currentTime = time;
-        setCurrentTime(time);
+        yt.seek(time);
+      } else {
+        native.seek(time);
       }
     },
-    [isYoutube]
+    [isYoutube, yt, native]
   );
 
-  const formatTime = (time: number) => {
-    const minutes = Math.floor(time / 60);
-    const seconds = Math.floor(time % 60);
-    return `${minutes}:${seconds.toString().padStart(2, "0")}`;
-  };
+  const handleFileChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      native.handleFileChange(e, () => {
+        yt.resetPlayer();
+      });
+    },
+    [native, yt]
+  );
 
   const renderDisplay = () => {
     if (!mediaSrc) {
@@ -300,23 +88,22 @@ const MediaPlayer = memo<MediaPlayerProps>(({ id, fileContent, crop43 }) => {
         <div
           id={`yt-player-${id}`}
           className={
-            isCropped
+            crop43
               ? "absolute w-[133.33%] h-full top-0 left-[-16.66%]"
               : "w-full h-full"
           }
-        ></div>
+        />
       );
     }
 
     return (
       <video
-        ref={mediaRef}
+        ref={native.mediaRef}
         src={mediaSrc}
-        onTimeUpdate={handleTimeUpdate}
-        onLoadedMetadata={handleLoadedMetadata}
+        onTimeUpdate={native.handleTimeUpdate}
+        onLoadedMetadata={native.handleLoadedMetadata}
         onClick={togglePlay}
-        className={`w-full h-full ${isCropped ? "object-cover" : "object-contain"
-          }`}
+        className={`w-full h-full ${crop43 ? "object-cover" : "object-contain"}`}
       />
     );
   };
@@ -334,7 +121,7 @@ const MediaPlayer = memo<MediaPlayerProps>(({ id, fileContent, crop43 }) => {
           <div className="flex gap-4 md:gap-[2px] flex-wrap justify-center md:justify-start">
             <Button
               variant="control"
-              onClick={prevVideo}
+              onClick={yt.prev}
               title="Previous"
               disabled={!isYoutube}
               className="w-10 h-10 md:w-8 md:h-8"
@@ -371,7 +158,7 @@ const MediaPlayer = memo<MediaPlayerProps>(({ id, fileContent, crop43 }) => {
             </Button>
             <Button
               variant="control"
-              onClick={nextVideo}
+              onClick={yt.next}
               title="Next"
               disabled={!isYoutube}
               className="w-10 h-10 md:w-8 md:h-8"
@@ -384,7 +171,7 @@ const MediaPlayer = memo<MediaPlayerProps>(({ id, fileContent, crop43 }) => {
             </Button>
             <Button
               variant="control"
-              onClick={handleImport}
+              onClick={native.handleImport}
               title="Import"
               className="w-10 h-10 md:w-8 md:h-8"
             >
@@ -400,16 +187,13 @@ const MediaPlayer = memo<MediaPlayerProps>(({ id, fileContent, crop43 }) => {
           <div className="flex items-center flex-1 w-full gap-4">
             <input
               type="range"
+              aria-label="Seek slider"
               min="0"
               max={duration || 0}
               step="0.1"
               value={currentTime}
               onChange={handleSeek}
-              className="flex-1 h-8 cursor-pointer appearance-none bg-windows-grey
-                                    [&::-webkit-slider-runnable-track]:w-full [&::-webkit-slider-runnable-track]:h-[14px] [&::-webkit-slider-runnable-track]:cursor-pointer [&::-webkit-slider-runnable-track]:bg-windows-grey [&::-webkit-slider-runnable-track]:border-[2px] [&::-webkit-slider-runnable-track]:border-inset [&::-webkit-slider-runnable-track]:border-windows-grey-dark
-                                    [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-[28px] [&::-webkit-slider-thumb]:w-[12px] [&::-webkit-slider-thumb]:bg-windows-grey [&::-webkit-slider-thumb]:border-r-[2px] [&::-webkit-slider-thumb]:border-b-[2px] [&::-webkit-slider-thumb]:border-windows-grey-dark [&::-webkit-slider-thumb]:border-l-[2px] [&::-webkit-slider-thumb]:border-t-[2px] [&::-webkit-slider-thumb]:border-l-windows-white [&::-webkit-slider-thumb]:border-t-windows-white [&::-webkit-slider-thumb]:shadow-[0_0_0_2px_black] [&::-webkit-slider-thumb]:mt-[-9px] [&::-webkit-slider-thumb]:cursor-pointer
-                                    [&::-moz-range-track]:w-full [&::-moz-range-track]:h-[14px] [&::-moz-range-track]:cursor-pointer [&::-moz-range-track]:bg-windows-grey [&::-moz-range-track]:border-[1px] [&::-moz-range-track]:border-inset [&::-moz-range-track]:border-windows-grey-dark
-                                    [&::-moz-range-thumb]:h-[28px] [&::-moz-range-thumb]:w-[12px] [&::-moz-range-thumb]:bg-windows-grey [&::-moz-range-thumb]:border-r-[2px] [&::-moz-range-thumb]:border-b-[2px] [&::-moz-range-thumb]:border-windows-grey-dark [&::-moz-range-thumb]:border-l-[2px] [&::-moz-range-thumb]:border-t-[2px] [&::-moz-range-thumb]:border-l-windows-white [&::-moz-range-thumb]:border-t-windows-white [&::-moz-range-thumb]:shadow-[0_0_0_1px_black] [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:rounded-none"
+              className="win-range-slider"
             />
 
             <div className="flex items-center gap-2 font-bold text-windows-black whitespace-nowrap font-number shrink-0 justify-end text-md tabular-nums">
@@ -422,9 +206,10 @@ const MediaPlayer = memo<MediaPlayerProps>(({ id, fileContent, crop43 }) => {
 
         <input
           type="file"
-          ref={fileInputRef}
+          ref={native.fileInputRef}
           onChange={handleFileChange}
           accept="video/*,audio/*"
+          aria-label="Upload media file"
           style={{ display: "none" }}
         />
       </div>
@@ -433,5 +218,4 @@ const MediaPlayer = memo<MediaPlayerProps>(({ id, fileContent, crop43 }) => {
 });
 
 MediaPlayer.displayName = "MediaPlayer";
-
 export default MediaPlayer;

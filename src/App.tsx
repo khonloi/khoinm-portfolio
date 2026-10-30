@@ -3,9 +3,8 @@ import { Analytics } from '@vercel/analytics/react';
 import Desktop from './components/Desktop';
 import BSOD from './components/BSOD';
 import Dialog from './components/Dialog';
-import { SystemProvider } from './context/SystemContext';
-import { DesktopProvider } from './context/DesktopContext';
-import { WindowProvider } from './context/WindowContext';
+import { useSystemBootstrap } from './hooks/useSystemBootstrap';
+import { useDesktopBootstrap } from './hooks/useDesktopBootstrap';
 import { useWindowStore } from './stores/useWindowStore';
 import { useSystemStore } from './stores/useSystemStore';
 import { setCursorVariables } from './data/cursors';
@@ -54,6 +53,9 @@ function WindowAnnouncer() {
 }
 
 function AppShell() {
+  useSystemBootstrap();
+  useDesktopBootstrap();
+
   const isFullScreen = useSystemStore((s) => s.isFullScreen);
   const isBSODActive = useSystemStore((s) => s.isBSODActive);
   const closeBSOD = useSystemStore((s) => s.closeBSOD);
@@ -120,15 +122,11 @@ function App() {
   }
 
   return (
-    <SystemProvider>
-      <DesktopProvider>
-        <WindowProvider>
-          <ErrorBoundary name="Desktop" onClose={() => window.location.reload()}>
-            <AppShell />
-          </ErrorBoundary>
-        </WindowProvider>
-      </DesktopProvider>
-    </SystemProvider>
+    <ErrorBoundary name="Desktop">
+      <React.Suspense fallback={<div className="fixed inset-0 bg-windows-black" />}>
+        <AppShell />
+      </React.Suspense>
+    </ErrorBoundary>
   );
 }
 

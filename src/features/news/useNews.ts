@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback } from "react";
-import client from "../../lib/sanityClient";
+import { useMemo } from "react";
+import { useSanityQuery } from "../../hooks/useSanityQuery";
 
 // ─── GROQ Query ───────────────────────────────────────────────────────────────
 // Maps the Sanity "newsArticle" schema to the shape News.jsx expects:
@@ -28,7 +28,7 @@ export interface NewsArticle {
   date: string;
   isLeadership?: boolean;
   summary: string;
-  body: string;
+  body: string | unknown;
 }
 
 /**
@@ -40,46 +40,35 @@ export interface NewsArticle {
  * @returns {{ articles, isLoading, error, refetch }}
  */
 export function useNews(fallbackArticles: NewsArticle[] = []) {
-  const [articles, setArticles] = useState<NewsArticle[]>(fallbackArticles);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<unknown | null>(null);
-
-  const isSanityConfigured = Boolean(import.meta.env.VITE_SANITY_PROJECT_ID);
-
-  const fetchArticles = useCallback(async () => {
-    if (!isSanityConfigured) return; // silently use fallback
-
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      const data = await client.fetch(NEWS_QUERY);
-
-      // Normalise the date string from ISO to a human-readable format
-      const normalised = data.map((article: any) => ({
+  const transform = useMemo(
+    () => (data: unknown): NewsArticle[] => {
+      if (!Array.isArray(data)) return fallbackArticles;
+      const normalised = data.map((article: Record<string, unknown>) => ({
         ...article,
+        id: (article.id as string | number) || (article._id as string),
+        category: String(article.category || ''),
+        title: String(article.title || ''),
+        source: String(article.source || ''),
+        summary: String(article.summary || ''),
+        body: typeof article.body === 'string' ? article.body : (article.body ?? ''),
         date: article.date
-          ? new Date(article.date).toLocaleDateString("en-US", {
+          ? new Date(article.date as string | number).toLocaleDateString("en-US", {
               year: "numeric",
               month: "long",
               day: "numeric",
             })
           : "Unknown date",
       }));
+      return normalised.length > 0 ? (normalised as NewsArticle[]) : fallbackArticles;
+    },
+    [fallbackArticles]
+  );
 
-      setArticles(normalised.length > 0 ? normalised : fallbackArticles);
-    } catch (err) {
-      console.error("[useNews] Failed to fetch from Sanity:", err);
-      setError(err);
-      setArticles(fallbackArticles); // degrade gracefully
-    } finally {
-      setIsLoading(false);
-    }
-  }, [isSanityConfigured]); // eslint-disable-line react-hooks/exhaustive-deps
+  const { data: articles, isLoading, error, refetch } = useSanityQuery<NewsArticle[]>({
+    query: NEWS_QUERY,
+    initialData: fallbackArticles,
+    transform,
+  });
 
-  useEffect(() => {
-    fetchArticles();
-  }, [fetchArticles]);
-
-  return { articles, isLoading, error, refetch: fetchArticles };
+  return { articles, isLoading, error, refetch };
 }

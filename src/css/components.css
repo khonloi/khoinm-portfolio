@@ -22,3 +22,51 @@
   pointer-events: none;
   z-index: 99999;
 }
+
+/* Win95 Range Slider */
+.win-range-slider {
+  flex: 1 1 0%;
+  height: 2rem;
+  cursor: pointer;
+  appearance: none;
+  background-color: var(--windows-grey, #c0c0c0);
+}
+.win-range-slider::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 14px;
+  cursor: pointer;
+  background-color: var(--windows-grey, #c0c0c0);
+  border: 2px inset var(--windows-grey-dark, #808080);
+}
+.win-range-slider::-webkit-slider-thumb {
+  appearance: none;
+  height: 28px;
+  width: 12px;
+  background-color: var(--windows-grey, #c0c0c0);
+  border-right: 2px solid var(--windows-grey-dark, #808080);
+  border-bottom: 2px solid var(--windows-grey-dark, #808080);
+  border-left: 2px solid var(--windows-white, #ffffff);
+  border-top: 2px solid var(--windows-white, #ffffff);
+  box-shadow: 0 0 0 2px black;
+  margin-top: -9px;
+  cursor: pointer;
+}
+.win-range-slider::-moz-range-track {
+  width: 100%;
+  height: 14px;
+  cursor: pointer;
+  background-color: var(--windows-grey, #c0c0c0);
+  border: 1px inset var(--windows-grey-dark, #808080);
+}
+.win-range-slider::-moz-range-thumb {
+  height: 28px;
+  width: 12px;
+  background-color: var(--windows-grey, #c0c0c0);
+  border-right: 2px solid var(--windows-grey-dark, #808080);
+  border-bottom: 2px solid var(--windows-grey-dark, #808080);
+  border-left: 2px solid var(--windows-white, #ffffff);
+  border-top: 2px solid var(--windows-white, #ffffff);
+  box-shadow: 0 0 0 1px black;
+  cursor: pointer;
+  border-radius: 0;
+}

@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import networkIcon from '../assets/icons/win-local-area-network.ico';
+import { playSound } from '../data/sounds';
 
 export interface SystemStoreState {
   isFullScreen: boolean;
@@ -32,6 +33,13 @@ export interface SystemStoreState {
   reset: () => void;
 }
 
+let shutdownTimers: ReturnType<typeof setTimeout>[] = [];
+
+const clearShutdownTimers = () => {
+  shutdownTimers.forEach((timer) => clearTimeout(timer));
+  shutdownTimers = [];
+};
+
 const initialSystemState = {
   isFullScreen: false,
   isBSODActive: false,
@@ -50,6 +58,7 @@ export const useSystemStore = create<SystemStoreState>((set) => ({
   ...initialSystemState,
 
   reset: () => {
+    clearShutdownTimers();
     set({
       ...initialSystemState,
       isOnline: typeof navigator !== 'undefined' ? navigator.onLine : true,
@@ -93,7 +102,19 @@ export const useSystemStore = create<SystemStoreState>((set) => ({
   },
 
   startShutdown: () => {
-    set({ isShuttingDown: true });
+    clearShutdownTimers();
+    set({ isShuttingDown: true, shutdownStage: 0 });
+    playSound('logoff').catch(() => {});
+
+    const timer1 = setTimeout(() => {
+      set({ shutdownStage: 1 });
+    }, 3000);
+
+    const timer2 = setTimeout(() => {
+      set({ shutdownStage: 2 });
+    }, 6000);
+
+    shutdownTimers.push(timer1, timer2);
   },
 
   setShutdownStage: (stage: number) => {

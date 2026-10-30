@@ -20,76 +20,61 @@ describe('useStartup hook', () => {
   it('does not start while loading or delaying', () => {
     const handleDoubleClick = vi.fn();
 
-    let hookResult: any;
-    act(() => {
-      const { result } = renderHook(() =>
-        useStartup({
-          isLoading: true,
-          isDelaying: false,
-          isShuttingDown: false,
-          handleItemDoubleClick: handleDoubleClick,
-        })
-      );
-      hookResult = result;
-    });
+    const { result } = renderHook(() =>
+      useStartup({
+        isLoading: true,
+        isDelaying: false,
+        isShuttingDown: false,
+        handleItemDoubleClick: handleDoubleClick,
+      })
+    );
 
-    expect(hookResult.current.hasStarted).toBe(false);
+    expect(result.current.hasStarted).toBe(false);
     expect(handleDoubleClick).not.toHaveBeenCalled();
   });
 
   it('triggers startup programs and boots when loading completes', async () => {
     const handleDoubleClick = vi.fn();
 
-    let hookResult: any;
-    let rerenderFn: any;
+    const { result, rerender } = renderHook(
+      ({ isLoading }) =>
+        useStartup({
+          isLoading,
+          isDelaying: false,
+          isShuttingDown: false,
+          handleItemDoubleClick: handleDoubleClick,
+        }),
+      { initialProps: { isLoading: true } }
+    );
 
-    act(() => {
-      const { result, rerender } = renderHook(
-        ({ isLoading }) =>
-          useStartup({
-            isLoading,
-            isDelaying: false,
-            isShuttingDown: false,
-            handleItemDoubleClick: handleDoubleClick,
-          }),
-        { initialProps: { isLoading: true } }
-      );
-      hookResult = result;
-      rerenderFn = rerender;
-    });
-
-    expect(hookResult.current.hasStarted).toBe(false);
+    expect(result.current.hasStarted).toBe(false);
 
     // Transition to loaded state
     await act(async () => {
-      rerenderFn({ isLoading: false });
+      rerender({ isLoading: false });
     });
 
-    expect(hookResult.current.hasStarted).toBe(true);
+    expect(result.current.hasStarted).toBe(true);
     expect(handleDoubleClick).toHaveBeenCalled();
   });
 
   it('resets idle counter on user activity', async () => {
     const handleDoubleClick = vi.fn();
 
-    let hookResult: any;
-    act(() => {
-      const { result } = renderHook(() =>
-        useStartup({
-          isLoading: false,
-          isDelaying: false,
-          isShuttingDown: false,
-          handleItemDoubleClick: handleDoubleClick,
-        })
-      );
-      hookResult = result;
-    });
+    const { result } = renderHook(() =>
+      useStartup({
+        isLoading: false,
+        isDelaying: false,
+        isShuttingDown: false,
+        handleItemDoubleClick: handleDoubleClick,
+      })
+    );
 
     await act(async () => {
       vi.advanceTimersByTime(2000);
     });
 
-    expect(hookResult.current.hasStarted).toBe(true);
+    expect(result.current.hasStarted).toBe(true);
 
     // Simulate mouse move to trigger idle reset
     act(() => {

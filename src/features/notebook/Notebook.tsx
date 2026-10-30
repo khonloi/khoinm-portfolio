@@ -93,30 +93,24 @@ const FORMATTING_TOOLS: FormattingToolItem[] = [
 
 export interface NotebookProps {
   id?: string;
-  fileContent?: string;
+  fileContent?: string | null;
 }
 
 const Notebook = memo<NotebookProps>(({ id, fileContent }) => {
-  const [text, setText] = useState("");
+  const [plainText, setPlainText] = useState("");
   const editorRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    if (fileContent !== undefined) {
-      setText(fileContent);
-      if (editorRef.current) {
-        editorRef.current.innerText = fileContent || "";
-      }
-    } else {
-      setText("");
-      if (editorRef.current) {
-        editorRef.current.innerText = "";
-      }
+    const initialText = fileContent ?? "";
+    setPlainText(initialText);
+    if (editorRef.current) {
+      editorRef.current.innerText = initialText;
     }
   }, [id, fileContent]);
 
   const handleInput = useCallback(() => {
     if (editorRef.current) {
-      setText(editorRef.current.innerHTML);
+      setPlainText(editorRef.current.innerText || "");
     }
   }, []);
 
@@ -128,13 +122,11 @@ const Notebook = memo<NotebookProps>(({ id, fileContent }) => {
       document.execCommand(command, false, value);
     }
     if (editorRef.current) {
-      setText(editorRef.current.innerHTML);
+      setPlainText(editorRef.current.innerText || "");
     }
   }, []);
 
   // Calculate line and column for the status bar
-  // Using a simplified calculation based on innerText
-  const plainText = (editorRef.current ? editorRef.current.innerText || text : text) || "";
   const lines = plainText.split("\n");
 
   return (

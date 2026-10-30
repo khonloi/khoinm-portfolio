@@ -9,7 +9,7 @@ import winSwissArmyKnifeIcon from '../../assets/icons/win-swiss-army-knife.ico';
 import winBriefcaseIcon from '../../assets/icons/win-briefcase.ico';
 
 import { useAbout } from './useAbout';
-import { PortableText } from '@portabletext/react';
+import { PortableText, type PortableTextBlock } from '@portabletext/react';
 import { User } from 'lucide-react';
 
 const DEFAULT_ABOUT_DATA = {
@@ -45,49 +45,6 @@ const About = memo(() => {
     INITIAL_FOLDER_STATES
   );
   const { data: aboutData } = useAbout(DEFAULT_ABOUT_DATA);
-  const containerRef = React.useRef<HTMLDivElement>(null);
-
-  React.useEffect(() => {
-    if (!containerRef.current) return;
-    let curr: HTMLElement | null = containerRef.current;
-    console.log('=== ABOUT OVERFLOW TRACE START ===');
-    while (curr) {
-      console.log(
-        'TRACE ELEMENT: ' +
-          JSON.stringify({
-            tag: curr.tagName,
-            class: curr.className,
-            clientHeight: curr.clientHeight,
-            scrollHeight: curr.scrollHeight,
-            offsetHeight: curr.offsetHeight,
-            height: window.getComputedStyle(curr).height,
-            maxHeight: window.getComputedStyle(curr).maxHeight,
-            overflow: window.getComputedStyle(curr).overflow,
-            overflowY: window.getComputedStyle(curr).overflowY,
-          })
-      );
-      curr = curr.parentElement;
-    }
-    const children = containerRef.current.children;
-    for (let i = 0; i < children.length; i++) {
-      const child = children[i] as HTMLElement;
-      console.log(
-        `TRACE CHILD[${i}]: ` +
-          JSON.stringify({
-            tag: child.tagName,
-            class: child.className,
-            clientHeight: child.clientHeight,
-            scrollHeight: child.scrollHeight,
-            offsetHeight: child.offsetHeight,
-            height: window.getComputedStyle(child).height,
-            maxHeight: window.getComputedStyle(child).maxHeight,
-            overflow: window.getComputedStyle(child).overflow,
-            overflowY: window.getComputedStyle(child).overflowY,
-          })
-      );
-    }
-    console.log('=== ABOUT OVERFLOW TRACE END ===');
-  }, []);
 
   const toggleFolder = useCallback((folderId: string) => {
     setOpenFolders((prev) => ({
@@ -144,7 +101,6 @@ const About = memo(() => {
 
   return (
     <div
-      ref={containerRef}
       className="flex h-auto w-full flex-col overflow-hidden md:h-132 md:w-180 md:flex-row"
     >
       {/* Left Pane - Skills Tree */}
@@ -181,7 +137,7 @@ const About = memo(() => {
                 .split('\n\n')
                 .map((para: string, i: number) => <p key={i}>{para}</p>)
             ) : aboutData?.aboutMe ? (
-              <PortableText value={aboutData.aboutMe as any} />
+              <PortableText value={aboutData.aboutMe as PortableTextBlock[]} />
             ) : null}
           </div>
         </div>
