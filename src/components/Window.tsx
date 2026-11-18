@@ -145,17 +145,20 @@ const Window = memo<WindowProps>(
               onTouchStart={handleTouchStart}
             >
               <div className="h-full flex flex-col border-t-2 border-l-2 border-windows-white p-1 pr-1.5 pb-1.5 bg-windows-grey overflow-hidden">
-                <WindowTitleBar
-                  title={title}
-                  isFocused={isFocused}
-                  onClose={handleCloseClick}
-                  showMaximize={!isMobile && isMaximizable && !isFullScreenActive}
-                  isMaximized={isMaximized}
-                  onMaximize={handleMaximizeClick}
-                  showMinimize={true}
-                  onMinimize={handleMinimizeClick}
-                />
-                <WindowContentFrame>
+                <WindowContentFrame
+                  header={
+                    <WindowTitleBar
+                      title={title}
+                      isFocused={isFocused}
+                      onClose={handleCloseClick}
+                      showMaximize={!isMobile && isMaximizable && !isFullScreenActive}
+                      isMaximized={isMaximized}
+                      onMaximize={handleMaximizeClick}
+                      showMinimize={true}
+                      onMinimize={handleMinimizeClick}
+                    />
+                  }
+                >
                   {children}
                 </WindowContentFrame>
               </div>

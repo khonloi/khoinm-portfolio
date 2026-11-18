@@ -103,7 +103,7 @@ export const desktopItems: DesktopItem[] = [
         label: "Clock",
         iconSrc: winClockIcon,
         type: "icon",
-        isMaximizable: false,
+        isMaximizable: true,
       },
       {
         id: "compressor",

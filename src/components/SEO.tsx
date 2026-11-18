@@ -67,6 +67,10 @@ const METADATA_MAP: Record<string, MetaInfo> = {
     title: 'Media Player | Khoi NM Windows 3.1',
     description: 'Retro audio and media player with classic sound effects and retro tracks.',
   },
+  clock: {
+    title: 'Clock | Khoi NM Windows 3.1',
+    description: 'Classic Windows 3.1 analog and digital clock utility.',
+  },
 };
 
 const DEFAULT_SEO: MetaInfo = {

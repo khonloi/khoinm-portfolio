@@ -41,6 +41,22 @@ describe('Window component', () => {
     expect(screen.getByText('Document Content')).toBeInTheDocument();
   });
 
+  it('renders the title bar inside the inner window frame', () => {
+    act(() => {
+      render(
+        <Window id="win-inner" title="Inner Title" onClose={vi.fn()}>
+          <div>Inner Content</div>
+        </Window>
+      );
+    });
+
+    const titleBar = screen.getByText('Inner Title').closest('.window-title-bar');
+    const contentOuter = screen.getByText('Inner Content').closest('.window-content-outer');
+    expect(titleBar).toBeInTheDocument();
+    expect(contentOuter).toBeInTheDocument();
+    expect(contentOuter).toContainElement(titleBar as HTMLElement);
+  });
+
   it('renders control buttons on the left of the title bar without redundant left padding', () => {
     act(() => {
       render(

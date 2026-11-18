@@ -29,6 +29,7 @@ const FragileWorld = lazy(() => import("../features/fragile-world"));
 const Notebook = lazy(() => import("../features/notebook"));
 const PhotoViewer = lazy(() => import("../features/photo-viewer"));
 const Standby = lazy(() => import("../features/standby"));
+const Clock = lazy(() => import("../features/clock"));
 
 export interface WindowData {
   filetype?: string | null;
@@ -46,6 +47,7 @@ const windowContentRegistry: Record<string, ComponentType<WindowData & { id?: st
   media: MediaPlayer,
   line98: Line98,
   safe: Safe,
+  clock: Clock,
   internet: News,
   matrix: MatrixRain,
   fragile: FragileWorld,

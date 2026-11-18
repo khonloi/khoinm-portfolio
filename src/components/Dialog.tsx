@@ -143,16 +143,18 @@ const Dialog = memo<DialogProps>(({
         >
             <div className="h-full relative bg-windows-grey trim-corners" onMouseDown={handleTitleBarAction} onTouchStart={handleTitleBarAction}>
                 <div className="h-full flex flex-col border-t-2 border-l-2 border-windows-white p-1 pr-1.5 pb-1.5 bg-windows-grey overflow-hidden">
-                    {/* Window Frame: Title and Controls */}
-                    <WindowTitleBar
-                      title={title}
-                      titleId={`${id}-title`}
-                      isFocused={true}
-                      onClose={() => onClose?.(id)}
-                    />
-
-                    {/* Window Content: Message, Icon, and Buttons */}
-                    <WindowContentFrame contentClassName="flex flex-col">
+                    {/* Window Content: Title Bar inside Inner Window + Message, Icon, and Buttons */}
+                    <WindowContentFrame
+                      header={
+                        <WindowTitleBar
+                          title={title}
+                          titleId={`${id}-title`}
+                          isFocused={true}
+                          onClose={() => onClose?.(id)}
+                        />
+                      }
+                      contentClassName="flex flex-col"
+                    >
                       <div className="p-4 text-windows-black text-left max-w-[26rem] flex flex-col justify-center flex-1">
                         <div className="flex items-center justify-center gap-4 mb-4">
                           {showIcon && icon && (

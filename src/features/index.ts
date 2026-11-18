@@ -1,4 +1,5 @@
 export { default as About } from './about';
+export { default as Clock } from './clock';
 export { default as Editor } from './editor';
 export { default as FragileWorld } from './fragile-world';
 export { default as Line98 } from './games/line98';

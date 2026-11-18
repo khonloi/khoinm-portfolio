@@ -41,6 +41,7 @@ export interface WindowStoreState {
     options?: { skipTracking?: boolean; originRect?: Rect }
   ) => void;
   updateWindowOriginRect: (id: string, originRect: Rect) => void;
+  updateWindowTitle: (id: string, title: string) => void;
   handleWindowLoadingChange: (windowId: string, isLoading: boolean) => void;
   minimizeAll: () => void;
   closeAll: () => void;
@@ -327,6 +328,21 @@ export const useWindowStore = create<WindowStoreState>((set, get) => ({
         minimizedWindowIds: new Set(nextMinimized.map((w) => w.id)),
         windowLoadingStates: nextLoadingStates,
         lastCloseTime: now,
+      };
+    });
+  },
+
+  updateWindowTitle: (id: string, title: string) => {
+    set((state) => {
+      const target = state.openWindows.find((win) => win.id === id);
+      if (!target || target.title === title) return state;
+      return {
+        openWindows: state.openWindows.map((win) =>
+          win.id === id ? { ...win, title } : win
+        ),
+        minimizedWindows: state.minimizedWindows.map((win) =>
+          win.id === id ? { ...win, title } : win
+        ),
       };
     });
   },

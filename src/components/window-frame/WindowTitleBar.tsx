@@ -27,7 +27,7 @@ export const WindowTitleBar = memo<WindowTitleBarProps>(({
   titleId,
 }) => {
   return (
-    <div className="bg-windows-black p-[2px] mb-1.5 relative shrink-0">
+    <div className="border-b-2 border-windows-black relative shrink-0">
       <div
         className={`window-title-bar flex items-center w-full h-full relative ${
           isFocused ? 'bg-windows-purple text-windows-white' : 'bg-windows-grey text-windows-black'
