@@ -96,7 +96,7 @@ export const desktopItems: DesktopItem[] = [
         label: "Calendar",
         iconSrc: winCalendarIcon,
         type: "icon",
-        isMaximizable: false,
+        isMaximizable: true,
       },
       {
         id: "clock",

@@ -220,7 +220,7 @@ const Clock = memo<ClockProps>(({ id = 'clock', initialDate }) => {
       {/* Classic Windows Settings Menu Bar */}
       <div
         ref={menuContainerRef}
-        className="relative flex items-center bg-windows-grey p-1 shrink-0 z-20"
+        className="relative flex items-center bg-windows-grey p-2 shrink-0 z-20"
       >
         <button
           type="button"

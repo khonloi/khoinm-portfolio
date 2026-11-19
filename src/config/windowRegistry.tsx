@@ -30,6 +30,7 @@ const Notebook = lazy(() => import("../features/notebook"));
 const PhotoViewer = lazy(() => import("../features/photo-viewer"));
 const Standby = lazy(() => import("../features/standby"));
 const Clock = lazy(() => import("../features/clock"));
+const Calendar = lazy(() => import("../features/calendar"));
 
 export interface WindowData {
   filetype?: string | null;
@@ -48,6 +49,7 @@ const windowContentRegistry: Record<string, ComponentType<WindowData & { id?: st
   line98: Line98,
   safe: Safe,
   clock: Clock,
+  calendar: Calendar,
   internet: News,
   matrix: MatrixRain,
   fragile: FragileWorld,

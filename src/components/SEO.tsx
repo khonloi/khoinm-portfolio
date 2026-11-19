@@ -71,6 +71,10 @@ const METADATA_MAP: Record<string, MetaInfo> = {
     title: 'Clock | Khoi NM Windows 3.1',
     description: 'Classic Windows 3.1 analog and digital clock utility.',
   },
+  calendar: {
+    title: 'Calendar | Khoi NM Windows 3.1',
+    description: 'Classic Windows 3.1 monthly calendar and daily scratchpad utility.',
+  },
 };
 
 const DEFAULT_SEO: MetaInfo = {
