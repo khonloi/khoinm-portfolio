@@ -31,6 +31,7 @@ const PhotoViewer = lazy(() => import("../features/photo-viewer"));
 const Standby = lazy(() => import("../features/standby"));
 const Clock = lazy(() => import("../features/clock"));
 const Calendar = lazy(() => import("../features/calendar"));
+const Calculator = lazy(() => import("../features/calculator"));
 
 export interface WindowData {
   filetype?: string | null;
@@ -50,6 +51,7 @@ const windowContentRegistry: Record<string, ComponentType<WindowData & { id?: st
   safe: Safe,
   clock: Clock,
   calendar: Calendar,
+  calculator: Calculator,
   internet: News,
   matrix: MatrixRain,
   fragile: FragileWorld,

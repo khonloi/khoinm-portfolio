@@ -1,4 +1,5 @@
 export { default as About } from './about';
+export { default as Calculator } from './calculator';
 export { default as Calendar } from './calendar';
 export { default as Clock } from './clock';
 export { default as Editor } from './editor';

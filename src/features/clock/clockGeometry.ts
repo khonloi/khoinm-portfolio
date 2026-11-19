@@ -23,8 +23,8 @@ export interface ClockDot {
   topPct: number;
 }
 
-export const CLOCK_VIEWBOX_SIZE = 200;
-export const CLOCK_CENTER = 100;
+export const CLOCK_VIEWBOX_SIZE = 120;
+export const CLOCK_CENTER = 60;
 export const DOT_RADIUS_PCT = 45.5;
 
 const roundCoord = (value: number): number => Math.round(value * 100) / 100;

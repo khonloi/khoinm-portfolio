@@ -54,7 +54,7 @@ const FacetedHandSvg: React.FC<FacetedHandSvgProps> = ({
         x2={edge.x2}
         y2={edge.y2}
         stroke={edge.isHighlight ? CLOCK_HIGHLIGHT : CLOCK_SHADOW}
-        strokeWidth={1.25}
+        strokeWidth={0.9}
       />
     ))}
   </g>
@@ -185,17 +185,17 @@ const Clock = memo<ClockProps>(({ id = 'clock', initialDate }) => {
   );
 
   const hourHand = useMemo(
-    () => buildFacetedHand(hourDeg, 54, 14, 4, 7.5),
+    () => buildFacetedHand(hourDeg, 32, 8, 2.5, 4.5),
     [hourDeg]
   );
 
   const minuteHand = useMemo(
-    () => buildFacetedHand(minuteDeg, 74, 16, 4, 6),
+    () => buildFacetedHand(minuteDeg, 44, 10, 2.5, 3.5),
     [minuteDeg]
   );
 
   const secondHand = useMemo(
-    () => buildSecondHand(secondDeg, 77, 10),
+    () => buildSecondHand(secondDeg, 46, 6),
     [secondDeg]
   );
 
@@ -216,7 +216,7 @@ const Clock = memo<ClockProps>(({ id = 'clock', initialDate }) => {
   const minuteDotSizeClass = clockSize >= 480 ? 'w-1.5 h-1.5' : 'w-1 h-1';
 
   return (
-    <div className="flex flex-col w-full h-full md:w-[24rem] md:h-[26rem] [.maximized_&]:md:w-full [.maximized_&]:md:h-full bg-windows-grey font-main text-sm select-none overflow-hidden">
+    <div className="flex flex-col w-full h-full md:w-[24rem] md:h-[26.25rem] [.maximized_&]:md:w-full [.maximized_&]:md:h-full bg-windows-grey font-main text-sm select-none overflow-hidden">
       {/* Classic Windows Settings Menu Bar */}
       <div
         ref={menuContainerRef}
