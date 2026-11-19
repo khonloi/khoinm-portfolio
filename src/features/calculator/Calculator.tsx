@@ -93,9 +93,9 @@ const Calculator = memo<CalculatorProps>(() => {
       tabIndex={0}
       onKeyDown={handleKeyDown}
       aria-label="Calculator"
-      className="flex flex-col items-center justify-center w-full h-full md:min-w-[18rem] md:h-auto [.maximized_&]:md:w-full [.maximized_&]:md:h-full bg-windows-grey text-windows-black font-main select-none overflow-y-auto p-3 outline-none"
+      className="flex flex-col items-center justify-center w-full h-full md:w-[15.75rem] md:h-auto [.maximized_&]:md:w-full [.maximized_&]:md:h-full bg-windows-grey text-windows-black font-main select-none overflow-y-auto p-3 outline-none"
     >
-      <div className="flex flex-col w-full max-w-[268px] [.maximized_&]:max-w-[320px] gap-3">
+      <div className="flex flex-col w-full max-w-[228px] [.maximized_&]:max-w-[280px] gap-2.5">
         {/* Sunken LCD Display */}
         <LayeredBox
           variant="inward"

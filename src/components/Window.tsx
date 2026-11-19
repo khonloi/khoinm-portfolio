@@ -123,7 +123,7 @@ const Window = memo<WindowProps>(
           role="region"
           aria-label={ariaLabel || (title ? `${title} window` : undefined)}
           className={[
-            "window-outer bg-windows-black p-[2px] min-w-[320px] origin-center",
+            "window-outer bg-windows-black p-[2px] min-w-[260px] origin-center",
             isMinimized ? "invisible absolute" : "",
             isFullScreenActive ? "!w-screen !h-[100dvh] !top-0 !left-0 !z-[40000] !p-0 !bg-windows-white ![clip-path:none]" : "",
             isMaximized || isMobile ? "maximized !-top-0.5 ![clip-path:none]" : "trim-window-corners",
